@@ -28,6 +28,7 @@
 		F88649BC15B8C2D600073204 /* UCLEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BB15B8C2D600073204 /* UCLEntity.m */; };
 		F88649BF15B8C31900073204 /* UCLSpell.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BE15B8C31900073204 /* UCLSpell.m */; };
 		F88649C215B9A06F00073204 /* UCLFight.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C115B9A06F00073204 /* UCLFight.m */; };
+		F88649C515B9A9D900073204 /* UCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C415B9A9D900073204 /* UCLLogFile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +73,8 @@
 		F88649BE15B8C31900073204 /* UCLSpell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSpell.m; sourceTree = "<group>"; };
 		F88649C015B9A06F00073204 /* UCLFight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLFight.h; sourceTree = "<group>"; };
 		F88649C115B9A06F00073204 /* UCLFight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFight.m; sourceTree = "<group>"; };
+		F88649C315B9A9D900073204 /* UCLLogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLogFile.h; sourceTree = "<group>"; };
+		F88649C415B9A9D900073204 /* UCLLogFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLogFile.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,11 +185,13 @@
 			isa = PBXGroup;
 			children = (
 				F88649BA15B8C2D600073204 /* UCLEntity.h */,
+				F88649BB15B8C2D600073204 /* UCLEntity.m */,
 				F88649C015B9A06F00073204 /* UCLFight.h */,
 				F88649C115B9A06F00073204 /* UCLFight.m */,
-				F88649BB15B8C2D600073204 /* UCLEntity.m */,
 				F88649B715B8BEF000073204 /* UCLLogEvent.h */,
 				F88649B815B8BEF000073204 /* UCLLogEvent.m */,
+				F88649C315B9A9D900073204 /* UCLLogFile.h */,
+				F88649C415B9A9D900073204 /* UCLLogFile.m */,
 				F88649BD15B8C31900073204 /* UCLSpell.h */,
 				F88649BE15B8C31900073204 /* UCLSpell.m */,
 			);
@@ -309,6 +314,7 @@
 				F88649BC15B8C2D600073204 /* UCLEntity.m in Sources */,
 				F88649BF15B8C31900073204 /* UCLSpell.m in Sources */,
 				F88649C215B9A06F00073204 /* UCLFight.m in Sources */,
+				F88649C515B9A9D900073204 /* UCLLogFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

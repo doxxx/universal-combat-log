@@ -24,6 +24,10 @@
 		F886499A15B82E8F00073204 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497615B82E8F00073204 /* CoreData.framework */; };
 		F88649A215B82E8F00073204 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F88649A015B82E8F00073204 /* InfoPlist.strings */; };
 		F88649A515B82E8F00073204 /* UniversalCombatLogTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649A415B82E8F00073204 /* UniversalCombatLogTests.m */; };
+		F88649B915B8BEF000073204 /* UCLLogEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649B815B8BEF000073204 /* UCLLogEvent.m */; };
+		F88649BC15B8C2D600073204 /* UCLEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BB15B8C2D600073204 /* UCLEntity.m */; };
+		F88649BF15B8C31900073204 /* UCLSpell.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BE15B8C31900073204 /* UCLSpell.m */; };
+		F88649C215B9A06F00073204 /* UCLFight.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C115B9A06F00073204 /* UCLFight.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,29 +41,37 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F886496C15B82E8F00073204 /* UniversalCombatLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalCombatLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F886496C15B82E8F00073204 /* UniversalCombatLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = UniversalCombatLog.app; path = "Combat Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886497015B82E8F00073204 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F886497215B82E8F00073204 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F886497415B82E8F00073204 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F886497615B82E8F00073204 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		F886497A15B82E8F00073204 /* UniversalCombatLog-Info.plist */ = {isa = PBXFileReference; path = "UniversalCombatLog-Info.plist"; sourceTree = "<group>"; };
+		F886497A15B82E8F00073204 /* UniversalCombatLog-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UniversalCombatLog-Info.plist"; sourceTree = "<group>"; };
 		F886497C15B82E8F00073204 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F886497E15B82E8F00073204 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		F886498015B82E8F00073204 /* UniversalCombatLog-Prefix.pch */ = {isa = PBXFileReference; path = "UniversalCombatLog-Prefix.pch"; sourceTree = "<group>"; };
-		F886498115B82E8F00073204 /* UCLAppDelegate.h */ = {isa = PBXFileReference; path = UCLAppDelegate.h; sourceTree = "<group>"; };
+		F886498015B82E8F00073204 /* UniversalCombatLog-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UniversalCombatLog-Prefix.pch"; sourceTree = "<group>"; };
+		F886498115B82E8F00073204 /* UCLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UCLAppDelegate.h; sourceTree = "<group>"; };
 		F886498215B82E8F00073204 /* UCLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UCLAppDelegate.m; sourceTree = "<group>"; };
 		F886498515B82E8F00073204 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		F886498815B82E8F00073204 /* UniversalCombatLog.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UniversalCombatLog.xcdatamodel; sourceTree = "<group>"; };
-		F886498A15B82E8F00073204 /* UCLMasterViewController.h */ = {isa = PBXFileReference; path = UCLMasterViewController.h; sourceTree = "<group>"; };
+		F886498A15B82E8F00073204 /* UCLMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UCLMasterViewController.h; sourceTree = "<group>"; };
 		F886498B15B82E8F00073204 /* UCLMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UCLMasterViewController.m; sourceTree = "<group>"; };
-		F886498D15B82E8F00073204 /* UCLDetailViewController.h */ = {isa = PBXFileReference; path = UCLDetailViewController.h; sourceTree = "<group>"; };
+		F886498D15B82E8F00073204 /* UCLDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UCLDetailViewController.h; sourceTree = "<group>"; };
 		F886498E15B82E8F00073204 /* UCLDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UCLDetailViewController.m; sourceTree = "<group>"; };
 		F886499515B82E8F00073204 /* UniversalCombatLogTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UniversalCombatLogTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886499615B82E8F00073204 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		F886499F15B82E8F00073204 /* UniversalCombatLogTests-Info.plist */ = {isa = PBXFileReference; path = "UniversalCombatLogTests-Info.plist"; sourceTree = "<group>"; };
+		F886499F15B82E8F00073204 /* UniversalCombatLogTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UniversalCombatLogTests-Info.plist"; sourceTree = "<group>"; };
 		F88649A115B82E8F00073204 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		F88649A315B82E8F00073204 /* UniversalCombatLogTests.h */ = {isa = PBXFileReference; path = UniversalCombatLogTests.h; sourceTree = "<group>"; };
+		F88649A315B82E8F00073204 /* UniversalCombatLogTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UniversalCombatLogTests.h; sourceTree = "<group>"; };
 		F88649A415B82E8F00073204 /* UniversalCombatLogTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UniversalCombatLogTests.m; sourceTree = "<group>"; };
+		F88649B715B8BEF000073204 /* UCLLogEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLogEvent.h; sourceTree = "<group>"; };
+		F88649B815B8BEF000073204 /* UCLLogEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLogEvent.m; sourceTree = "<group>"; };
+		F88649BA15B8C2D600073204 /* UCLEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLEntity.h; sourceTree = "<group>"; };
+		F88649BB15B8C2D600073204 /* UCLEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLEntity.m; sourceTree = "<group>"; };
+		F88649BD15B8C31900073204 /* UCLSpell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSpell.h; sourceTree = "<group>"; };
+		F88649BE15B8C31900073204 /* UCLSpell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSpell.m; sourceTree = "<group>"; };
+		F88649C015B9A06F00073204 /* UCLFight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLFight.h; sourceTree = "<group>"; };
+		F88649C115B9A06F00073204 /* UCLFight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFight.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +134,7 @@
 		F886497815B82E8F00073204 /* UniversalCombatLog */ = {
 			isa = PBXGroup;
 			children = (
+				F88649B615B8BEA800073204 /* Model */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
 				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
@@ -165,12 +178,27 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F88649B615B8BEA800073204 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F88649BA15B8C2D600073204 /* UCLEntity.h */,
+				F88649C015B9A06F00073204 /* UCLFight.h */,
+				F88649C115B9A06F00073204 /* UCLFight.m */,
+				F88649BB15B8C2D600073204 /* UCLEntity.m */,
+				F88649B715B8BEF000073204 /* UCLLogEvent.h */,
+				F88649B815B8BEF000073204 /* UCLLogEvent.m */,
+				F88649BD15B8C31900073204 /* UCLSpell.h */,
+				F88649BE15B8C31900073204 /* UCLSpell.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F886496B15B82E8F00073204 /* UniversalCombatLog */ = {
+		F886496B15B82E8F00073204 /* Combat Log */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "UniversalCombatLog" */;
+			buildConfigurationList = F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "Combat Log" */;
 			buildPhases = (
 				F886496815B82E8F00073204 /* Sources */,
 				F886496915B82E8F00073204 /* Frameworks */,
@@ -180,7 +208,7 @@
 			);
 			dependencies = (
 			);
-			name = UniversalCombatLog;
+			name = "Combat Log";
 			productName = UniversalCombatLog;
 			productReference = F886496C15B82E8F00073204 /* UniversalCombatLog.app */;
 			productType = "com.apple.product-type.application";
@@ -225,7 +253,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F886496B15B82E8F00073204 /* UniversalCombatLog */,
+				F886496B15B82E8F00073204 /* Combat Log */,
 				F886499415B82E8F00073204 /* UniversalCombatLogTests */,
 			);
 		};
@@ -277,6 +305,10 @@
 				F886498915B82E8F00073204 /* UniversalCombatLog.xcdatamodeld in Sources */,
 				F886498C15B82E8F00073204 /* UCLMasterViewController.m in Sources */,
 				F886498F15B82E8F00073204 /* UCLDetailViewController.m in Sources */,
+				F88649B915B8BEF000073204 /* UCLLogEvent.m in Sources */,
+				F88649BC15B8C2D600073204 /* UCLEntity.m in Sources */,
+				F88649BF15B8C31900073204 /* UCLSpell.m in Sources */,
+				F88649C215B9A06F00073204 /* UCLFight.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +325,7 @@
 /* Begin PBXTargetDependency section */
 		F886499C15B82E8F00073204 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F886496B15B82E8F00073204 /* UniversalCombatLog */;
+			target = F886496B15B82E8F00073204 /* Combat Log */;
 			targetProxy = F886499B15B82E8F00073204 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -441,13 +473,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "UniversalCombatLog" */ = {
+		F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "Combat Log" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F88649A915B82E8F00073204 /* Debug */,
 				F88649AA15B82E8F00073204 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F88649AB15B82E8F00073204 /* Build configuration list for PBXNativeTarget "UniversalCombatLogTests" */ = {
 			isa = XCConfigurationList;
@@ -456,6 +489,7 @@
 				F88649AD15B82E8F00073204 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

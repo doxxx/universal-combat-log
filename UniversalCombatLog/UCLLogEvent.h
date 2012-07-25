@@ -11,8 +11,9 @@
 #import "UCLSpell.h"
 
 enum EventType {
-    DirectDamage = 3,
-    DamageOverTime = 4
+    ETUnknown = 0,
+    ETDirectDamage = 3,
+    ETDamageOverTime = 4
 };
 
 @interface UCLLogEvent : NSObject

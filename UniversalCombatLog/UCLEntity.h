@@ -24,17 +24,17 @@ enum EntityRelationship {
 
 @interface UCLEntity : NSObject
 
-@property (readonly, nonatomic) long idNum;
+@property (readonly, nonatomic) uint64_t idNum;
 @property (readonly, nonatomic) enum EntityType type;
 @property (readonly, nonatomic) enum EntityRelationship relationship;
 @property (readonly, weak, nonatomic) UCLEntity* owner;
 @property (readonly, strong, nonatomic) NSString* name;
 
-- (id)initWithIdNum:(long)theIdNum type:(enum EntityType)theType 
+- (id)initWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
        relationship:(enum EntityRelationship)theRelationship 
               owner:(UCLEntity*)theOwner name:(NSString*)theName;
 
-+ (UCLEntity*)entityWithIdNum:(long)theIdNum type:(enum EntityType)theType 
++ (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
                  relationship:(enum EntityRelationship)theRelationship 
                         owner:(UCLEntity*)theOwner name:(NSString*)theName;
 

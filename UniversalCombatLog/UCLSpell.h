@@ -10,11 +10,11 @@
 
 @interface UCLSpell : NSObject
 
-@property (readonly, nonatomic) long idNum;
+@property (readonly, nonatomic) uint64_t idNum;
 @property (readonly, strong, nonatomic) NSString* name;
 
-- (id)initWithIdNum:(long)theIdNum name:(NSString*)theName;
+- (id)initWithIdNum:(uint64_t)theIdNum name:(NSString*)theName;
 
-+ (UCLSpell*)spellWithIdNum:(long)theIdNum name:(NSString*)theName;
++ (UCLSpell*)spellWithIdNum:(uint64_t)theIdNum name:(NSString*)theName;
 
 @end

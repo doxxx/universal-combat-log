@@ -12,7 +12,7 @@
 
 @synthesize idNum=_idNum, name=_name;
 
-- (id)initWithIdNum:(long)theIdNum name:(NSString*)theName
+- (id)initWithIdNum:(uint64_t)theIdNum name:(NSString*)theName
 {
     self = [super init];
     if (self) {
@@ -22,7 +22,7 @@
     return self;
 }
 
-+ (UCLSpell*)spellWithIdNum:(long)theIdNum name:(NSString*)theName
++ (UCLSpell*)spellWithIdNum:(uint64_t)theIdNum name:(NSString*)theName
 {
     return [[UCLSpell alloc] initWithIdNum:theIdNum name:theName];
 }

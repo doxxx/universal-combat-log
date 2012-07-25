@@ -12,7 +12,7 @@
 
 @synthesize idNum=_idNum, type=_type, relationship=_relationship, owner=_owner, name=_name;
 
-- (id)initWithIdNum:(long)theIdNum type:(enum EntityType)theType 
+- (id)initWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
        relationship:(enum EntityRelationship)theRelationship 
               owner:(UCLEntity*)theOwner name:(NSString*)theName
 {
@@ -27,7 +27,7 @@
     return self;
 }
 
-+ (UCLEntity*)entityWithIdNum:(long)theIdNum type:(enum EntityType)theType 
++ (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
                  relationship:(enum EntityRelationship)theRelationship 
                         owner:(UCLEntity*)theOwner name:(NSString*)theName {
     return [[UCLEntity alloc] initWithIdNum:theIdNum type:theType relationship:theRelationship owner:theOwner 

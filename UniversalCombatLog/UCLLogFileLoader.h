@@ -18,12 +18,6 @@
 
 - (id)initWithURL:(NSURL*)url;
 
-- (uint8_t)readUInt8;
-- (uint16_t)readUInt16;
-- (uint32_t)readUInt32;
-- (uint64_t)readUInt64;
-- (NSString*)readUTF8;
-
 - (UCLLogFile*)load;
 
 + (UCLLogFile*)loadFromURL:(NSURL*)url;

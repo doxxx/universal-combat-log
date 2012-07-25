@@ -18,6 +18,16 @@
         @throw [NSException exceptionWithName:NSRangeException reason:reason userInfo:nil]; \
     }
 
+@interface UCLLogFileLoader () // Private methods
+
+- (uint8_t)readUInt8;
+- (uint16_t)readUInt16;
+- (uint32_t)readUInt32;
+- (uint64_t)readUInt64;
+- (NSString*)readUTF8;
+
+@end
+
 @implementation UCLLogFileLoader
 
 - (id)initWithURL:(NSURL *)url
@@ -31,49 +41,6 @@
         NSLog(@"Loaded data; length=%u", _length);
     }
     return self;
-}
-
-- (uint8_t)readUInt8
-{
-    CHECK_LENGTH(1)
-    uint8_t value = *((uint8_t*)_cursor);
-    _cursor++;
-    return value;
-}
-
-- (uint16_t)readUInt16
-{
-    CHECK_LENGTH(2)
-    uint16_t value = NSSwapBigShortToHost(*((uint16_t*)_cursor));
-    _cursor += 2;
-    return value;
-}
-
-- (uint32_t)readUInt32
-{
-    CHECK_LENGTH(4)
-    uint32_t value = NSSwapBigIntToHost(*((uint32_t*)_cursor));
-    _cursor += 4;
-    return value;
-}
-
-- (uint64_t)readUInt64
-{
-    CHECK_LENGTH(8)
-    uint64_t value = NSSwapBigLongLongToHost(*((uint64_t*)_cursor));
-    _cursor += 8;
-    return value;
-}
-
-- (NSString*)readUTF8
-{
-    uint16_t length = [self readUInt16];
-
-    CHECK_LENGTH(length)
-
-    NSString* string = [[NSString alloc] initWithBytes:_cursor length:length encoding:NSUTF8StringEncoding];
-    _cursor += length;
-    return string;
 }
 
 - (UCLLogFile*)load
@@ -209,6 +176,51 @@
 + (UCLLogFile*)loadFromURL:(NSURL*)url
 {
     return [[[UCLLogFileLoader alloc] initWithURL:url] load];
+}
+
+// Private methods
+
+- (uint8_t)readUInt8
+{
+    CHECK_LENGTH(1)
+    uint8_t value = *((uint8_t*)_cursor);
+    _cursor++;
+    return value;
+}
+
+- (uint16_t)readUInt16
+{
+    CHECK_LENGTH(2)
+    uint16_t value = NSSwapBigShortToHost(*((uint16_t*)_cursor));
+    _cursor += 2;
+    return value;
+}
+
+- (uint32_t)readUInt32
+{
+    CHECK_LENGTH(4)
+    uint32_t value = NSSwapBigIntToHost(*((uint32_t*)_cursor));
+    _cursor += 4;
+    return value;
+}
+
+- (uint64_t)readUInt64
+{
+    CHECK_LENGTH(8)
+    uint64_t value = NSSwapBigLongLongToHost(*((uint64_t*)_cursor));
+    _cursor += 8;
+    return value;
+}
+
+- (NSString*)readUTF8
+{
+    uint16_t length = [self readUInt16];
+    
+    CHECK_LENGTH(length)
+    
+    NSString* string = [[NSString alloc] initWithBytes:_cursor length:length encoding:NSUTF8StringEncoding];
+    _cursor += length;
+    return string;
 }
 
 @end

@@ -138,12 +138,7 @@
                 break;
         }
         
-        uint64_t ownerID = [self readUInt64];
-        UCLEntity* owner = nil;
-        if (ownerID != 0) {
-            owner = [entityIndex objectForKey:[NSNumber numberWithLongLong:ownerID]];
-        }
-        
+        UCLEntity* owner = [entityIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
         NSString* name = [self readUTF8];
         
         UCLEntity* entity = [UCLEntity entityWithIdNum:idNum type:type relationship:rel owner:owner name:name];
@@ -188,27 +183,10 @@
         
         while (eventCount > 0) {
             NSDate* time = [NSDate dateWithTimeIntervalSince1970:([self readUInt64] / 1000.0)];
-
             enum EventType type = [self readUInt8];
-            
-            uint64_t actorID = [self readUInt64];
-            UCLEntity* actor = nil;
-            if (actorID != 0) {
-                actor = [entityIndex objectForKey:[NSNumber numberWithLongLong:actorID]];
-            }
-            
-            uint64_t targetID = [self readUInt64];
-            UCLEntity* target = nil;
-            if (targetID != 0) {
-                target = [entityIndex objectForKey:[NSNumber numberWithLongLong:targetID]];
-            }
-            
-            uint64_t spellID = [self readUInt64];
-            UCLSpell* spell = nil;
-            if (spellID != 0) {
-                spell = [spellIndex objectForKey:[NSNumber numberWithLongLong:spellID]];
-            }
-            
+            UCLEntity* actor = [entityIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
+            UCLEntity* target = [entityIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
+            UCLSpell* spell = [spellIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
             uint64_t amount = [self readUInt64];
             NSString* text = [self readUTF8];
 

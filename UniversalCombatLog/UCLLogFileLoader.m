@@ -13,7 +13,7 @@
 #import "UCLLogEvent.h"
 
 #define CHECK_LENGTH(l) \
-    if (_cursor - _data + l >= _length) { \
+    if (_cursor - _data + l > _length) { \
         NSString* reason = [NSString stringWithFormat:@"Cannot read %u bytes at position %u", l, (_cursor - _data)]; \
         @throw [NSException exceptionWithName:NSRangeException reason:reason userInfo:nil]; \
     }
@@ -200,7 +200,7 @@
             uint64_t targetID = [self readUInt64];
             UCLEntity* target = nil;
             if (targetID != 0) {
-                actor = [entityIndex objectForKey:[NSNumber numberWithLongLong:targetID]];
+                target = [entityIndex objectForKey:[NSNumber numberWithLongLong:targetID]];
             }
             
             uint64_t spellID = [self readUInt64];

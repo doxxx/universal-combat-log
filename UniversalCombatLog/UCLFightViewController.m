@@ -16,7 +16,9 @@
 @implementation UCLFightViewController
 
 @synthesize fight = _fight;
-@synthesize detailDescriptionLabel = _detailDescriptionLabel;
+@synthesize titleLabel = _titleLabel;
+@synthesize selectorControl = _selectorControl;
+@synthesize tableView = _tableView;
 @synthesize masterPopoverController = _masterPopoverController;
 
 #pragma mark - Managing the detail item
@@ -40,22 +42,35 @@
     // Update the user interface for the detail item.
 
     if (self.fight) {
-        self.detailDescriptionLabel.text = self.fight.title;
+        self.titleLabel.text = self.fight.title;
+        
+        if (self.selectorControl.selectedSegmentIndex == 0) { // DPS
+            
+        }
+        else if (self.selectorControl.selectedSegmentIndex == 1) { // HPS
+            
+        }
+        
+        [self.tableView reloadData];
     }
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+
+    // Do any additional setup after loading the view, typically from a nib.
     [self configureView];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+
     // Release any retained subviews of the main view.
-    self.detailDescriptionLabel = nil;
+    self.titleLabel = nil;
+    self.selectorControl = nil;
+    self.tableView = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -79,4 +94,27 @@
     self.masterPopoverController = nil;
 }
 
+#pragma mark - Table view delegate
+
+#pragma mark - Table view datasource
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 5;
+}
+
+- (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSArray* names = [NSArray arrayWithObjects:@"Bob", @"Jane", @"Dick", @"Harry", @"Tom", nil];
+    int values[] = {100, 75, 50, 25, 1};
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"SummaryCell"];
+    cell.textLabel.text = [names objectAtIndex:indexPath.row];
+    cell.detailTextLabel.text = [[NSNumber numberWithInt:values[indexPath.row]] stringValue];
+    return cell;
+}
+
+#pragma mark - Actions
+
+- (IBAction)selectorChanged:(UISegmentedControl *)sender {
+    [self configureView];
+}
 @end

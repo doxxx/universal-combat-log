@@ -10,10 +10,14 @@
 
 #import "UCLFight.h"
 
-@interface UCLFightViewController : UIViewController <UISplitViewControllerDelegate>
+@interface UCLFightViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (readwrite, weak, nonatomic) UCLFight* fight;
 
-@property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *selectorControl;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
+- (IBAction)selectorChanged:(UISegmentedControl *)sender;
 
 @end

@@ -113,8 +113,8 @@
 			children = (
 				F886497915B82E8F00073204 /* Supporting Files */,
 				F8FDE33D15BDF8210094FE26 /* Data Storage */,
-				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
 				F88649B615B8BEA800073204 /* Model */,
+				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
 				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */,

@@ -8,9 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UCLDetailViewController : UIViewController <UISplitViewControllerDelegate>
+#import "UCLFight.h"
 
-@property (strong, nonatomic) id detailItem;
+@interface UCLFightViewController : UIViewController <UISplitViewControllerDelegate>
+
+@property (readwrite, weak, nonatomic) UCLFight* fight;
 
 @property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 

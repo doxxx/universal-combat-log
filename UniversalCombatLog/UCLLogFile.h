@@ -10,6 +10,7 @@
 
 @interface UCLLogFile : NSObject
 
+@property (readonly, strong, nonatomic) NSString* title;
 @property (readonly, strong, nonatomic) NSArray* fights;
 
 - (id)initWithFights:(NSArray*)theFights;

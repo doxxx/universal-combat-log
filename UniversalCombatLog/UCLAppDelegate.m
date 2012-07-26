@@ -8,7 +8,7 @@
 
 #import "UCLAppDelegate.h"
 
-#import "UCLMasterViewController.h"
+#import "UCLLogsViewController.h"
 
 @implementation UCLAppDelegate
 
@@ -24,9 +24,9 @@
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
     splitViewController.delegate = (id)navigationController.topViewController;
 
-    UINavigationController *masterNavigationController = [splitViewController.viewControllers objectAtIndex:0];
-    UCLMasterViewController *controller = (UCLMasterViewController *)masterNavigationController.topViewController;
-    controller.managedObjectContext = self.managedObjectContext;
+    UINavigationController *logsNavigationController = [splitViewController.viewControllers objectAtIndex:0];
+    UCLLogsViewController *logsViewController = (UCLLogsViewController *)logsNavigationController.topViewController;
+    logsViewController.managedObjectContext = self.managedObjectContext;
     return YES;
 }
 							

@@ -8,15 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@class UCLDetailViewController;
+@class UCLFightViewController;
 
 #import <CoreData/CoreData.h>
 
-@interface UCLMasterViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+#import "UCLLogFile.h"
 
-@property (strong, nonatomic) UCLDetailViewController *detailViewController;
+@interface UCLLogsViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+
+@property (strong, nonatomic) UCLFightViewController *detailViewController;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+
+@property (readwrite, strong, nonatomic) UCLLogFile* logFile;
 
 @end

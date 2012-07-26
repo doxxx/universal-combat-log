@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "UCLLogFile.h"
+
 @interface UCLAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;

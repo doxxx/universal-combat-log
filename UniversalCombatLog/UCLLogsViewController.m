@@ -6,24 +6,35 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "UCLMasterViewController.h"
+#import "UCLLogsViewController.h"
 
-#import "UCLDetailViewController.h"
+#import "UCLLogFileLoader.h"
+#import "UCLFightViewController.h"
+#import "UCLFightsViewController.h"
 
-@interface UCLMasterViewController ()
+@interface UCLLogsViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 @end
 
-@implementation UCLMasterViewController
+@implementation UCLLogsViewController
 
 @synthesize detailViewController = _detailViewController;
 @synthesize fetchedResultsController = __fetchedResultsController;
 @synthesize managedObjectContext = __managedObjectContext;
+@synthesize logFile = _logFile;
 
 - (void)awakeFromNib
 {
     self.clearsSelectionOnViewWillAppear = NO;
     self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
+    
+    // init test data
+    NSString* logFilePath = [[NSBundle mainBundle] pathForResource:@"CombatLog" ofType:@"ucl"];
+    NSLog(@"logFilePath: %@", logFilePath);
+    NSURL* url = [[NSURL alloc] initFileURLWithPath:logFilePath];
+    self.logFile = [UCLLogFileLoader loadFromURL:url];
+    NSLog(@"Log file loaded: #fights=%d", [[self.logFile fights] count]);
+    
     [super awakeFromNib];
 }
 
@@ -31,11 +42,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+//    self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
-    self.navigationItem.rightBarButtonItem = addButton;
-    self.detailViewController = (UCLDetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    //UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
+    //self.navigationItem.rightBarButtonItem = addButton;
+    self.detailViewController = (UCLFightViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (void)viewDidUnload
@@ -49,42 +60,44 @@
     return YES;
 }
 
-- (void)insertNewObject:(id)sender
-{
-    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
-    NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
-    
-    // If appropriate, configure the new managed object.
-    // Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.
-    [newManagedObject setValue:[NSDate date] forKey:@"timeStamp"];
-    
-    // Save the context.
-    NSError *error = nil;
-    if (![context save:&error]) {
-         // Replace this implementation with code to handle the error appropriately.
-         // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
-}
+//- (void)insertNewObject:(id)sender
+//{
+//    NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+//    NSEntityDescription *entity = [[self.fetchedResultsController fetchRequest] entity];
+//    NSManagedObject *newManagedObject = [NSEntityDescription insertNewObjectForEntityForName:[entity name] inManagedObjectContext:context];
+//    
+//    // If appropriate, configure the new managed object.
+//    // Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.
+//    [newManagedObject setValue:[NSDate date] forKey:@"timeStamp"];
+//    
+//    // Save the context.
+//    NSError *error = nil;
+//    if (![context save:&error]) {
+//         // Replace this implementation with code to handle the error appropriately.
+//         // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+//        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//        abort();
+//    }
+//}
 
 #pragma mark - Table View
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [[self.fetchedResultsController sections] count];
+    //return [[self.fetchedResultsController sections] count];
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];
+//    id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
+//    return [sectionInfo numberOfObjects];
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LogCell"];
     [self configureCell:cell atIndexPath:indexPath];
     return cell;
 }
@@ -92,24 +105,24 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return YES;
+    return NO;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
-        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
-        
-        NSError *error = nil;
-        if (![context save:&error]) {
-             // Replace this implementation with code to handle the error appropriately.
-             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }   
-}
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {
+//        NSManagedObjectContext *context = [self.fetchedResultsController managedObjectContext];
+//        [context deleteObject:[self.fetchedResultsController objectAtIndexPath:indexPath]];
+//        
+//        NSError *error = nil;
+//        if (![context save:&error]) {
+//             // Replace this implementation with code to handle the error appropriately.
+//             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+//            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//            abort();
+//        }
+//    }   
+//}
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -117,10 +130,18 @@
     return NO;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+//    self.detailViewController.detailItem = object;
+//}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    NSManagedObject *object = [[self fetchedResultsController] objectAtIndexPath:indexPath];
-    self.detailViewController.detailItem = object;
+    if ([[segue identifier] isEqualToString:@"LogToFight"]) {
+        UCLFightsViewController* vc = [segue destinationViewController];
+        [vc setFights:self.logFile.fights];
+    }
 }
 
 #pragma mark - Fetched results controller
@@ -224,8 +245,9 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSManagedObject *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = [[object valueForKey:@"timeStamp"] description];
+//    NSManagedObject *object = [self.fetchedResultsController objectAtIndexPath:indexPath];
+//    cell.textLabel.text = [[object valueForKey:@"timeStamp"] description];
+    cell.textLabel.text = self.logFile.title;
 }
 
 @end

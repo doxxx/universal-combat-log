@@ -141,6 +141,7 @@
     if ([[segue identifier] isEqualToString:@"LogToFight"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
         [vc setFights:self.logFile.fights];
+        vc.fightViewController = self.detailViewController;
     }
 }
 

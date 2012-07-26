@@ -18,12 +18,6 @@
 @synthesize fights=_fights;
 @synthesize fightViewController=_fightViewController;
 
-- (void)setFights:(NSArray *)fights
-{
-    _fights = fights;
-    [self.tableView reloadData];
-}
-
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -31,6 +25,12 @@
         // Custom initialization
     }
     return self;
+}
+
+- (void)setFights:(NSArray *)fights
+{
+    _fights = fights;
+    [self.tableView reloadData];
 }
 
 - (void)viewDidLoad
@@ -43,7 +43,8 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
-    self.fightViewController = (UCLFightViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    // following line doesn't work -- why???
+//    self.fightViewController = (UCLFightViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (void)viewDidUnload

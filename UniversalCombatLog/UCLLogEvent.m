@@ -29,6 +29,22 @@
     return self;
 }
 
+- (BOOL)isDamage
+{
+    BOOL result;
+    switch (self.eventType) {
+        case ETDirectDamage:
+        case ETDamageOverTime:
+            result = TRUE;
+            break;
+            
+        default:
+            result = FALSE;
+            break;
+    }
+    return result;
+}
+
 + (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
                            actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
                            spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText

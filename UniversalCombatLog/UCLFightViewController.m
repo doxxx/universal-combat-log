@@ -7,9 +7,11 @@
 //
 
 #import "UCLFightViewController.h"
+#import "UCLSummary.h"
 
 @interface UCLFightViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
+@property (strong, nonatomic) UCLSummary* summary;
 - (void)configureView;
 @end
 
@@ -20,6 +22,7 @@
 @synthesize selectorControl = _selectorControl;
 @synthesize tableView = _tableView;
 @synthesize masterPopoverController = _masterPopoverController;
+@synthesize summary = _summary;
 
 #pragma mark - Managing the detail item
 
@@ -45,10 +48,10 @@
         self.titleLabel.text = self.fight.title;
         
         if (self.selectorControl.selectedSegmentIndex == 0) { // DPS
-            
+            self.summary = [UCLSummary summaryWithFight:self.fight type:DPS];
         }
         else if (self.selectorControl.selectedSegmentIndex == 1) { // HPS
-            
+            self.summary = [UCLSummary summaryWithFight:self.fight type:HPS];
         }
         
         [self.tableView reloadData];
@@ -99,16 +102,23 @@
 #pragma mark - Table view datasource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 5;
+    if (self.summary == nil) {
+        return 0;
+    }
+    
+    return [self.summary.result count];
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray* names = [NSArray arrayWithObjects:@"Bob", @"Jane", @"Dick", @"Harry", @"Tom", nil];
-    int values[] = {100, 75, 50, 25, 1};
+    if (self.summary == nil) {
+        return nil;
+    }
+    
+    UCLSummaryEntry* entry = [self.summary.result objectAtIndex:indexPath.row];
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"SummaryCell"];
-    cell.textLabel.text = [names objectAtIndex:indexPath.row];
-    cell.detailTextLabel.text = [[NSNumber numberWithInt:values[indexPath.row]] stringValue];
+    cell.textLabel.text = entry.name;
+    cell.detailTextLabel.text = [entry.amount stringValue];
     return cell;
 }
 

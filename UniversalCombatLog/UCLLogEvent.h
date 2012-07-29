@@ -20,15 +20,17 @@ enum EventType {
 
 @property (readonly, strong, nonatomic) NSDate* time;
 @property (readonly, nonatomic) enum EventType eventType;
-@property (readonly, weak, nonatomic) UCLEntity* actor;
-@property (readonly, weak, nonatomic) UCLEntity* target;
-@property (readonly, weak, nonatomic) UCLSpell* spell;
-@property (readonly, weak, nonatomic) NSNumber* amount;
-@property (readonly, weak, nonatomic) NSString* text;
+@property (readonly, strong, nonatomic) UCLEntity* actor;
+@property (readonly, strong, nonatomic) UCLEntity* target;
+@property (readonly, strong, nonatomic) UCLSpell* spell;
+@property (readonly, strong, nonatomic) NSNumber* amount;
+@property (readonly, strong, nonatomic) NSString* text;
 
 - (id)initWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
              actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
              spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText;
+
+- (BOOL)isDamage;
 
 + (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
                            actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 

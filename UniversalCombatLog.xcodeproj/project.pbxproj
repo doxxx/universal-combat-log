@@ -26,10 +26,12 @@
 		F8FDE34115BDF8680094FE26 /* UCLLogFileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE34015BDF8680094FE26 /* UCLLogFileLoader.m */; };
 		F8FDE35E15BF60EF0094FE26 /* CombatLog.ucl in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE35D15BF60EF0094FE26 /* CombatLog.ucl */; };
 		F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */; };
+		F8FDE37615C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */; };
+		F8FDE37815C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F886496C15B82E8F00073204 /* Combat Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Combat Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F886496C15B82E8F00073204 /* UniversalCombatLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalCombatLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886497015B82E8F00073204 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F886497215B82E8F00073204 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F886497415B82E8F00073204 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -62,6 +64,8 @@
 		F8FDE35D15BF60EF0094FE26 /* CombatLog.ucl */ = {isa = PBXFileReference; lastKnownFileType = file; path = CombatLog.ucl; sourceTree = "<group>"; };
 		F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLFightsViewController.h; sourceTree = "<group>"; };
 		F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFightsViewController.m; sourceTree = "<group>"; };
+		F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "144px-Sword_battleaxe_shield.png"; path = "../144px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
+		F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "72px-Sword_battleaxe_shield.png"; path = "../72px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +95,7 @@
 		F886496D15B82E8F00073204 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F886496C15B82E8F00073204 /* Combat Log.app */,
+				F886496C15B82E8F00073204 /* UniversalCombatLog.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,6 +135,8 @@
 		F886497915B82E8F00073204 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */,
+				F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */,
 				F8FDE35D15BF60EF0094FE26 /* CombatLog.ucl */,
 				F886497A15B82E8F00073204 /* UniversalCombatLog-Info.plist */,
 				F886497B15B82E8F00073204 /* InfoPlist.strings */,
@@ -183,7 +189,7 @@
 			);
 			name = UniversalCombatLog;
 			productName = UniversalCombatLog;
-			productReference = F886496C15B82E8F00073204 /* Combat Log.app */;
+			productReference = F886496C15B82E8F00073204 /* UniversalCombatLog.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -220,6 +226,8 @@
 				F886497D15B82E8F00073204 /* InfoPlist.strings in Resources */,
 				F886498615B82E8F00073204 /* MainStoryboard.storyboard in Resources */,
 				F8FDE35E15BF60EF0094FE26 /* CombatLog.ucl in Resources */,
+				F8FDE37615C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png in Resources */,
+				F8FDE37815C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

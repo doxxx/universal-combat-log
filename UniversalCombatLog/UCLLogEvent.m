@@ -35,6 +35,8 @@
     switch (self.eventType) {
         case ETDirectDamage:
         case ETDamageOverTime:
+        case ETCritDamage:
+        case ETEnvDamage:
             result = TRUE;
             break;
             

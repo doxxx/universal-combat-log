@@ -138,10 +138,10 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"LogToFight"]) {
+    if ([[segue identifier] isEqualToString:@"LogToFights"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
         [vc setFights:self.logFile.fights];
-        vc.fightViewController = self.detailViewController;
+        //vc.fightViewController = self.detailViewController;
     }
 }
 

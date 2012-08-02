@@ -16,13 +16,14 @@ enum SummaryType {
     HPS = 2,
 };
 
-@interface UCLSummary : NSObject
+@interface UCLSummarizer : NSObject
 
 @property (readonly, nonatomic) UCLFight* fight;
-@property (readonly, nonatomic) NSArray* result;
 
-- (id)initWithFight:(UCLFight*)fight type:(enum SummaryType)type;
+- (id)initWithFight:(UCLFight*)fight;
 
-+ (UCLSummary*)summaryWithFight:(UCLFight*)fight type:(enum SummaryType)type;
+- (NSArray*)summarizeForType:(enum SummaryType)type;
+
++ (UCLSummarizer*)summarizerForFight:(UCLFight*)fight;
 
 @end

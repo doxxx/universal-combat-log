@@ -16,7 +16,7 @@
 @implementation UCLFightsViewController
 
 @synthesize fights=_fights;
-@synthesize fightViewController=_fightViewController;
+@synthesize actorsViewController=_actorsViewController;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -92,14 +92,14 @@
     return nil;
 }
 
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([indexPath section] == 0) {
-        UCLFight* fight = [self.fights objectAtIndex:[indexPath row]];
-        [self.fightViewController setFight:fight];
+    if ([[segue identifier] isEqualToString:@"FightToActors"]) {
+        UCLActorsViewController* vc = [segue destinationViewController];
+        NSIndexPath* indexPath = [self.tableView indexPathForCell:sender];
+        vc.fight = [self.fights objectAtIndex:indexPath.row];
     }
 }
+
 
 @end

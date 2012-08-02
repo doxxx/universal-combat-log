@@ -28,8 +28,9 @@
 		F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */; };
 		F8FDE37615C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */; };
 		F8FDE37815C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */; };
-		F8FDE37E15C5D20C0094FE26 /* UCLSummary.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE37D15C5D20B0094FE26 /* UCLSummary.m */; };
+		F8FDE37E15C5D20C0094FE26 /* UCLSummarizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE37D15C5D20B0094FE26 /* UCLSummarizer.m */; };
 		F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */; };
+		F8FDE38715C9572B0094FE26 /* UCLActorsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,10 +69,12 @@
 		F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFightsViewController.m; sourceTree = "<group>"; };
 		F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "144px-Sword_battleaxe_shield.png"; path = "../144px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
 		F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "72px-Sword_battleaxe_shield.png"; path = "../72px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
-		F8FDE37C15C5D20B0094FE26 /* UCLSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; path = UCLSummary.h; sourceTree = "<group>"; };
-		F8FDE37D15C5D20B0094FE26 /* UCLSummary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummary.m; sourceTree = "<group>"; };
+		F8FDE37C15C5D20B0094FE26 /* UCLSummarizer.h */ = {isa = PBXFileReference; fileEncoding = 4; path = UCLSummarizer.h; sourceTree = "<group>"; };
+		F8FDE37D15C5D20B0094FE26 /* UCLSummarizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummarizer.m; sourceTree = "<group>"; };
 		F8FDE37F15C5D4C60094FE26 /* UCLSummaryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryEntry.h; sourceTree = "<group>"; };
 		F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryEntry.m; sourceTree = "<group>"; };
+		F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorsViewController.h; sourceTree = "<group>"; };
+		F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLActorsViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 				F8FDE33D15BDF8210094FE26 /* Data Storage */,
 				F88649B615B8BEA800073204 /* Model */,
 				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
+				F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */,
+				F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
 				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */,
@@ -164,8 +169,8 @@
 				F88649C315B9A9D900073204 /* UCLLogFile.h */,
 				F88649C415B9A9D900073204 /* UCLLogFile.m */,
 				F88649BD15B8C31900073204 /* UCLSpell.h */,
-				F8FDE37C15C5D20B0094FE26 /* UCLSummary.h */,
-				F8FDE37D15C5D20B0094FE26 /* UCLSummary.m */,
+				F8FDE37C15C5D20B0094FE26 /* UCLSummarizer.h */,
+				F8FDE37D15C5D20B0094FE26 /* UCLSummarizer.m */,
 				F8FDE37F15C5D4C60094FE26 /* UCLSummaryEntry.h */,
 				F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */,
 				F88649BE15B8C31900073204 /* UCLSpell.m */,
@@ -260,8 +265,9 @@
 				F88649C515B9A9D900073204 /* UCLLogFile.m in Sources */,
 				F8FDE34115BDF8680094FE26 /* UCLLogFileLoader.m in Sources */,
 				F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */,
-				F8FDE37E15C5D20C0094FE26 /* UCLSummary.m in Sources */,
+				F8FDE37E15C5D20C0094FE26 /* UCLSummarizer.m in Sources */,
 				F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */,
+				F8FDE38715C9572B0094FE26 /* UCLActorsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

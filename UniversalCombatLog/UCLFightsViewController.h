@@ -9,10 +9,11 @@
 #import <UIKit/UIKit.h>
 
 #import "UCLFightViewController.h"
+#import "UCLActorsViewController.h"
 
 @interface UCLFightsViewController : UITableViewController
 
 @property (readwrite, weak, nonatomic) NSArray* fights;
-@property (readwrite, weak, nonatomic) UCLFightViewController* fightViewController;
+@property (readwrite, weak, nonatomic) UCLActorsViewController* actorsViewController;
 
 @end

@@ -6,39 +6,43 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "UCLSummary.h"
+#import "UCLSummarizer.h"
 #import "UCLLogEvent.h"
 
-@interface UCLSummary ()
+@interface UCLSummarizer ()
         
 - (NSArray*)calculateDPS;
 - (NSArray *)calculateHPS;
 
 @end
 
-@implementation UCLSummary
+@implementation UCLSummarizer
 
-@synthesize fight=_fight, result=_result;
+@synthesize fight=_fight;
 
--(id)initWithFight:(UCLFight *)fight type:(enum SummaryType)type
+-(id)initWithFight:(UCLFight *)fight
 {
     self = [super init];
     if (self) {
         _fight = fight;
-        switch (type) {
-            case DPS:
-                _result = [self calculateDPS];
-                break;
-                
-            case HPS:
-                _result = [self calculateHPS];
-                break;
-                
-            default:
-                break;
-        }
     }
     return self;
+}
+
+-(NSArray *)summarizeForType:(enum SummaryType)type
+{
+    switch (type) {
+        case DPS:
+            return [self calculateDPS];
+            break;
+            
+        case HPS:
+            return [self calculateHPS];
+            break;
+            
+        default:
+            return nil;
+    }
 }
 
 -(NSArray *)calculateDPS
@@ -90,9 +94,9 @@
     return nil;
 }
 
-+(UCLSummary *)summaryWithFight:(UCLFight *)fight type:(enum SummaryType)type
++(UCLSummarizer *)summarizerForFight:(UCLFight *)fight
 {
-    return [[UCLSummary alloc] initWithFight:fight type:type];
+    return [[UCLSummarizer alloc] initWithFight:fight];
 }
 
 

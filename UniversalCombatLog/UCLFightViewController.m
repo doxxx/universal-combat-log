@@ -7,12 +7,15 @@
 //
 
 #import "UCLFightViewController.h"
-#import "UCLSummary.h"
+#import "UCLSummarizer.h"
 
 @interface UCLFightViewController ()
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
-@property (strong, nonatomic) UCLSummary* summary;
+@property (strong, nonatomic) NSArray* summary;
+
 - (void)configureView;
+
 @end
 
 @implementation UCLFightViewController
@@ -47,11 +50,12 @@
     if (self.fight) {
         self.titleLabel.text = self.fight.title;
         
+        UCLSummarizer* summarizer = [UCLSummarizer summarizerForFight:self.fight];
         if (self.selectorControl.selectedSegmentIndex == 0) { // DPS
-            self.summary = [UCLSummary summaryWithFight:self.fight type:DPS];
+            self.summary = [summarizer summarizeForType:DPS];
         }
         else if (self.selectorControl.selectedSegmentIndex == 1) { // HPS
-            self.summary = [UCLSummary summaryWithFight:self.fight type:HPS];
+            self.summary = [summarizer summarizeForType:HPS];
         }
         
         [self.tableView reloadData];
@@ -106,7 +110,7 @@
         return 0;
     }
     
-    return [self.summary.result count];
+    return [self.summary count];
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -115,7 +119,7 @@
         return nil;
     }
     
-    UCLSummaryEntry* entry = [self.summary.result objectAtIndex:indexPath.row];
+    UCLSummaryEntry* entry = [self.summary objectAtIndex:indexPath.row];
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"SummaryCell"];
     cell.textLabel.text = entry.name;
     cell.detailTextLabel.text = [entry.amount stringValue];

@@ -13,6 +13,7 @@
         
 - (NSArray*)calculateDPS;
 - (NSArray *)calculateHPS;
+- (NSArray*)calculateAmountsWithSelector:(SEL)selector;
 
 @end
 
@@ -47,13 +48,26 @@
 
 -(NSArray *)calculateDPS
 {
+    return [self calculateAmountsWithSelector:@selector(isDamage)];
+}
+
+-(NSArray *)calculateHPS
+{
+    return [self calculateAmountsWithSelector:@selector(isHealing)];
+}
+
+- (NSArray *)calculateAmountsWithSelector:(SEL)selector
+{
     NSMutableDictionary* temp = [NSMutableDictionary dictionary];
     
     for (UCLLogEvent* event in _fight.events) {
         if (event.actor == nil || event.actor.name == nil) {
             continue;
         }
-        if ([event isDamage]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        if ([event performSelector:selector]) {
+#pragma clang diagnostic pop
             NSNumber* amount = [temp objectForKey:event.actor.name];
             if (amount == nil) {
                 amount = event.amount;
@@ -86,12 +100,6 @@
     }
     
     return result;
-}
-
--(NSArray *)calculateHPS
-{
-#pragma warn IMPLEMENT THIS METHOD!
-    return nil;
 }
 
 +(UCLSummarizer *)summarizerForFight:(UCLFight *)fight

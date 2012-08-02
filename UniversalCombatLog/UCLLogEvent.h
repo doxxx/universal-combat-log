@@ -56,6 +56,7 @@ enum EventType {
              spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText;
 
 - (BOOL)isDamage;
+- (BOOL)isHealing;
 
 + (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
                            actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 

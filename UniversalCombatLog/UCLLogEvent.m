@@ -31,20 +31,28 @@
 
 - (BOOL)isDamage
 {
-    BOOL result;
     switch (self.eventType) {
         case ETDirectDamage:
         case ETDamageOverTime:
         case ETCritDamage:
         case ETEnvDamage:
-            result = TRUE;
-            break;
+            return TRUE;
             
         default:
-            result = FALSE;
-            break;
+            return FALSE;
     }
-    return result;
+}
+
+- (BOOL)isHealing
+{
+    switch (self.eventType) {
+        case ETHeal:
+        case ETCritHeal:
+            return TRUE;
+            
+        default:
+            return FALSE;
+    }
 }
 
 + (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 

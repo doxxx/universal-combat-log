@@ -7,6 +7,7 @@
 //
 
 #import "UCLActorsViewController.h"
+#import "UCLSummaryTypesViewController.h"
 #import "UCLSummarizer.h"
 
 @interface UCLActorsViewController ()
@@ -18,8 +19,12 @@
 @end
 
 @implementation UCLActorsViewController
+{
+    __weak UIPopoverController* _popoverController;
+}
 
 @synthesize fight = _fight;
+@synthesize summaryType = _summaryType;
 @synthesize metricButton = _metricButton;
 @synthesize summary = _summary;
 
@@ -27,7 +32,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        _summaryType = @"DPS";
     }
     return self;
 }
@@ -38,14 +43,21 @@
     [self configureView];
 }
 
+- (void)setSummaryType:(NSString *)summaryType
+{
+    _summaryType = summaryType;
+    self.metricButton.title = summaryType;
+    [self configureView];
+}
+
 -(void)configureView
 {
     if (self.fight != nil) {
         UCLSummarizer* summarizer = [UCLSummarizer summarizerForFight:self.fight];
-        if ([self.metricButton.title isEqualToString:@"DPS"]) {
+        if ([self.summaryType isEqualToString:@"DPS"]) {
             self.summary = [summarizer summarizeForType:DPS];
         }
-        else if ([self.metricButton.title isEqualToString:@"HPS"]) {
+        else if ([self.summaryType isEqualToString:@"HPS"]) {
             self.summary = [summarizer summarizeForType:HPS];
         }
     }
@@ -53,7 +65,7 @@
         self.summary = nil;
     }
     
-    [self.tableView reloadData];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void)viewDidLoad
@@ -66,7 +78,7 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    [self configureView];
+    self.summaryType = @"DPS";
 }
 
 - (void)viewDidUnload
@@ -160,14 +172,28 @@
      */
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    _popoverController = [(UIStoryboardPopoverSegue*)segue popoverController];
+    UCLSummaryTypesViewController* vc = [segue destinationViewController];
+    vc.actorsViewController = self;
+    vc.popoverController = _popoverController;
+}
+
 - (IBAction)metricSelected:(id)sender {
-    if ([self.metricButton.title isEqualToString:@"DPS"]) {
-        self.metricButton.title = @"HPS";
+    if (_popoverController) {
+        [_popoverController dismissPopoverAnimated:TRUE];
     }
-    else if ([self.metricButton.title isEqualToString:@"HPS"]) {
-        self.metricButton.title = @"DPS";
+    else {
+        [self performSegueWithIdentifier:@"SummaryTypes" sender:sender];
     }
-    [self configureView];
+//    if ([self.metricButton.title isEqualToString:@"DPS"]) {
+//        self.metricButton.title = @"HPS";
+//    }
+//    else if ([self.metricButton.title isEqualToString:@"HPS"]) {
+//        self.metricButton.title = @"DPS";
+//    }
+//    [self configureView];
 }
 
 @end

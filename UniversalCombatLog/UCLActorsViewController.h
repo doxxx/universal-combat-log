@@ -13,6 +13,7 @@
 @interface UCLActorsViewController : UITableViewController
 
 @property (weak, nonatomic) UCLFight* fight;
+@property (strong, nonatomic) NSString* summaryType;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *metricButton;
 

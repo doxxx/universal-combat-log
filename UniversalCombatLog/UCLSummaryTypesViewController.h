@@ -13,6 +13,5 @@
 @interface UCLSummaryTypesViewController : UITableViewController
 
 @property (weak, nonatomic) UCLActorsViewController* actorsViewController;
-@property (weak, nonatomic) UIPopoverController* popoverController;
 
 @end

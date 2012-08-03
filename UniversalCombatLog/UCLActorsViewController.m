@@ -12,8 +12,6 @@
 
 @interface UCLActorsViewController ()
 
-@property (strong, nonatomic) NSArray* summary;
-
 -(void)configureView;
 
 @end
@@ -21,21 +19,14 @@
 @implementation UCLActorsViewController
 {
     __weak UIPopoverController* _popoverController;
+    __strong NSArray* _summary;
 }
+
+#pragma mark - Properties
 
 @synthesize fight = _fight;
 @synthesize summaryType = _summaryType;
 @synthesize summaryTypeButton = _summaryTypeButton;
-@synthesize summary = _summary;
-
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        _summaryType = @"DPS";
-    }
-    return self;
-}
 
 -(void)setFight:(UCLFight *)fight
 {
@@ -45,39 +36,21 @@
 
 - (void)setSummaryType:(NSString *)summaryType
 {
+    if (_popoverController) {
+        [_popoverController dismissPopoverAnimated:TRUE];
+    }
     _summaryType = summaryType;
     self.summaryTypeButton.title = summaryType;
     [self configureView];
 }
 
--(void)configureView
-{
-    if (self.fight != nil) {
-        UCLSummarizer* summarizer = [UCLSummarizer summarizerForFight:self.fight];
-        if ([self.summaryType isEqualToString:@"DPS"]) {
-            self.summary = [summarizer summarizeForType:DPS];
-        }
-        else if ([self.summaryType isEqualToString:@"HPS"]) {
-            self.summary = [summarizer summarizeForType:HPS];
-        }
-    }
-    else {
-        self.summary = nil;
-    }
-    
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
+#pragma mark - View methods
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
+    // Set default summary type, which then configures the view.
     self.summaryType = @"DPS";
 }
 
@@ -85,12 +58,11 @@
 {
     [super viewDidUnload];
     
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-    
     self.summaryTypeButton = nil;
     self.fight = nil;
-    self.summary = nil;
+
+    _summary = nil;
+    _popoverController = nil;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -105,12 +77,32 @@
     return YES;
 }
 
+# pragma mark - Private methods
+
+-(void)configureView
+{
+    if (self.fight != nil) {
+        UCLSummarizer* summarizer = [UCLSummarizer summarizerForFight:self.fight];
+        if ([self.summaryType isEqualToString:@"DPS"]) {
+            _summary = [summarizer summarizeForType:DPS];
+        }
+        else if ([self.summaryType isEqualToString:@"HPS"]) {
+            _summary = [summarizer summarizeForType:HPS];
+        }
+    }
+    else {
+        _summary = nil;
+    }
+    
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [self.summary count];
+    return [_summary count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -119,7 +111,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     // Configure the cell...
-    UCLSummaryEntry* summaryEntry = [self.summary objectAtIndex:indexPath.row];
+    UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
     
     cell.textLabel.text = summaryEntry.name;
     cell.detailTextLabel.text = [summaryEntry.amount stringValue];
@@ -140,13 +132,18 @@
      */
 }
 
+#pragma mark - Segue
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    _popoverController = [(UIStoryboardPopoverSegue*)segue popoverController];
-    UCLSummaryTypesViewController* vc = [segue destinationViewController];
-    vc.actorsViewController = self;
-    vc.popoverController = _popoverController;
+    if ([segue.identifier isEqualToString:@"SummaryTypes"]) {
+        _popoverController = [(UIStoryboardPopoverSegue*)segue popoverController];
+        UCLSummaryTypesViewController* vc = [segue destinationViewController];
+        vc.actorsViewController = self;
+    }
 }
+
+#pragma mark - Actions
 
 - (IBAction)showSummaryTypes:(id)sender {
     if (_popoverController) {

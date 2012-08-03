@@ -25,7 +25,7 @@
 
 @synthesize fight = _fight;
 @synthesize summaryType = _summaryType;
-@synthesize metricButton = _metricButton;
+@synthesize summaryTypeButton = _summaryTypeButton;
 @synthesize summary = _summary;
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -46,7 +46,7 @@
 - (void)setSummaryType:(NSString *)summaryType
 {
     _summaryType = summaryType;
-    self.metricButton.title = summaryType;
+    self.summaryTypeButton.title = summaryType;
     [self configureView];
 }
 
@@ -87,10 +87,17 @@
     
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
-
-    self.metricButton = nil;
+    
+    self.summaryTypeButton = nil;
     self.fight = nil;
     self.summary = nil;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    if (_popoverController) {
+        [_popoverController dismissPopoverAnimated:TRUE];
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -120,45 +127,6 @@
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -180,20 +148,14 @@
     vc.popoverController = _popoverController;
 }
 
-- (IBAction)metricSelected:(id)sender {
+- (IBAction)showSummaryTypes:(id)sender {
     if (_popoverController) {
         [_popoverController dismissPopoverAnimated:TRUE];
     }
     else {
         [self performSegueWithIdentifier:@"SummaryTypes" sender:sender];
     }
-//    if ([self.metricButton.title isEqualToString:@"DPS"]) {
-//        self.metricButton.title = @"HPS";
-//    }
-//    else if ([self.metricButton.title isEqualToString:@"HPS"]) {
-//        self.metricButton.title = @"DPS";
-//    }
-//    [self configureView];
 }
+
 
 @end

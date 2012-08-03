@@ -10,13 +10,13 @@
 
 #import "UCLFight.h"
 
-@interface UCLActorsViewController : UITableViewController
+@interface UCLActorsViewController : UITableViewController<UINavigationControllerDelegate>
 
 @property (weak, nonatomic) UCLFight* fight;
 @property (strong, nonatomic) NSString* summaryType;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *metricButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *summaryTypeButton;
 
-- (IBAction)metricSelected:(id)sender;
+- (IBAction)showSummaryTypes:(id)sender;
 
 @end

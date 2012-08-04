@@ -9,8 +9,8 @@
 #import "UCLLogsViewController.h"
 
 #import "UCLLogFileLoader.h"
-#import "UCLFightViewController.h"
 #import "UCLFightsViewController.h"
+#import "UCLActorViewController.h"
 
 @interface UCLLogsViewController ()
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
@@ -46,7 +46,7 @@
 {
     [super viewDidLoad];
 
-    self.detailViewController = (UCLFightViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    self.detailViewController = (UCLActorViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

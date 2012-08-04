@@ -7,16 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@class UCLFightViewController;
-
 #import <CoreData/CoreData.h>
 
+#import "UCLActorViewController.h"
 #import "UCLLogFile.h"
 
 @interface UCLLogsViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 
-@property (strong, nonatomic) UCLFightViewController *detailViewController;
+@property (strong, nonatomic) UCLActorViewController* detailViewController;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;

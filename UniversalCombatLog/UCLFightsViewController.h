@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "UCLFightViewController.h"
 #import "UCLActorsViewController.h"
 
 @interface UCLFightsViewController : UITableViewController

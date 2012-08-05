@@ -40,6 +40,17 @@
     return [[self endTime] timeIntervalSinceDate:[self startTime]];
 }
 
+- (NSArray *)allEventsForEntity:(UCLEntity *)entity
+{
+    NSMutableArray *result = [NSMutableArray array];
+    for (UCLLogEvent* event in self.events) {
+        if ([event.actor isEqualToEntity:entity] || [event.target isEqualToEntity:entity]) {
+            [result addObject:event];
+        }
+    }
+    return result;
+}
+
 + (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle
 {
     return [[UCLFight alloc] initWithEvents:theEvents title:theTitle];

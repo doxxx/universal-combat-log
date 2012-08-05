@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "UCLEntity.h"
+
 @interface UCLFight : NSObject
 
 @property (readonly, strong, nonatomic) NSArray* events;
@@ -18,6 +20,8 @@
 - (NSDate*)startTime;
 - (NSDate*)endTime;
 - (NSTimeInterval)duration;
+
+- (NSArray*)allEventsForEntity:(UCLEntity*)entity;
 
 + (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle;
 

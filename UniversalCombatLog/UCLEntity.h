@@ -34,6 +34,8 @@ enum EntityRelationship {
        relationship:(enum EntityRelationship)theRelationship 
               owner:(UCLEntity*)theOwner name:(NSString*)theName;
 
+- (BOOL)isEqualToEntity:(UCLEntity*)entity;
+
 + (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
                  relationship:(enum EntityRelationship)theRelationship 
                         owner:(UCLEntity*)theOwner name:(NSString*)theName;

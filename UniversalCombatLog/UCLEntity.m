@@ -27,6 +27,19 @@
     return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if ([object class] != [self class]) {
+        return FALSE;
+    }
+    return [self isEqualToEntity:object];
+}
+
+- (BOOL)isEqualToEntity:(UCLEntity*)entity
+{
+    return self.idNum == entity.idNum;
+}
+
 + (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
                  relationship:(enum EntityRelationship)theRelationship 
                         owner:(UCLEntity*)theOwner name:(NSString*)theName {

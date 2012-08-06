@@ -126,8 +126,7 @@
 {
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
     UCLEntity* actor = summaryEntry.item;
-    NSArray* events = [self.fight allEventsForEntity:actor];
-    [self.actorViewController setActor:actor events:events];
+    [self.actorViewController setActor:actor fight:self.fight];
 }
 
 #pragma mark - Segue

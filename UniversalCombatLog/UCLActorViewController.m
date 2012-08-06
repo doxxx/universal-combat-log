@@ -19,7 +19,7 @@
 @implementation UCLActorViewController
 
 @synthesize actor = _actor;
-@synthesize events = _events;
+@synthesize fight = _fight;
 
 @synthesize nameLabel = _nameLabel;
 @synthesize lineChartView = _lineChartView;
@@ -49,14 +49,14 @@
 	return YES;
 }
 
-- (void)setActor:(UCLEntity *)actor events:(NSArray *)events
+- (void)setActor:(UCLEntity *)actor fight:(UCLFight *)fight
 {
     if (self.masterPopoverController != nil) {
         [self.masterPopoverController dismissPopoverAnimated:YES];
     }
     
     _actor = actor;
-    _events = events;
+    _fight = fight;
     
     [self configureView];
 }
@@ -82,6 +82,7 @@
     self.nameLabel.text = self.actor.name;
     
     // TODO: Calculate damage over time for lineChartView
+    NSArray* events = [self.fight allEventsForEntity:self.actor];
 }
 
 @end

@@ -40,6 +40,17 @@
     return self.idNum == entity.idNum;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    // Immutable class, can return original instead of copying.
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return 31 ^ _idNum ^ _type ^ _relationship ^ [_owner hash] ^ [_name hash];
+}
+
 + (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
                  relationship:(enum EntityRelationship)theRelationship 
                         owner:(UCLEntity*)theOwner name:(NSString*)theName {

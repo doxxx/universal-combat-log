@@ -22,7 +22,7 @@ enum EntityRelationship {
     Other = 4
 };
 
-@interface UCLEntity : NSObject
+@interface UCLEntity : NSObject <NSCopying>
 
 @property (readonly, nonatomic) uint64_t idNum;
 @property (readonly, nonatomic) enum EntityType type;

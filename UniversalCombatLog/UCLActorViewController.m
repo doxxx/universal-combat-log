@@ -8,6 +8,8 @@
 
 #import "UCLActorViewController.h"
 
+#import "UCLLogEvent.h"
+
 @interface UCLActorViewController ()
 
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -81,8 +83,30 @@
 {
     self.nameLabel.text = self.actor.name;
     
-    // TODO: Calculate damage over time for lineChartView
     NSArray* events = [self.fight allEventsForEntity:self.actor];
+    NSUInteger duration = ceil(self.fight.duration);
+    NSDate* start = self.fight.startTime;
+    double* data = malloc(sizeof(double)*duration);
+    
+    for (NSUInteger i = 0; i < duration; i++) {
+        data[i] = 0;
+    }
+    
+    for (UCLLogEvent* event in events) {
+        if ([event isDamage] && [event.actor isEqualToEntity:self.actor]) {
+            uint32_t index = floor([event.time timeIntervalSinceDate:start]);
+            data[index] = data[index] + [event.amount doubleValue];
+        }
+    }
+    
+    NSMutableArray* numbers = [NSMutableArray arrayWithCapacity:duration];
+    for (NSUInteger i = 0; i < duration; i++) {
+        [numbers addObject:[NSNumber numberWithDouble:data[i]]];
+    }
+    
+    self.lineChartView.data = numbers;
+    
+    free(data);
 }
 
 @end

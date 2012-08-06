@@ -10,12 +10,15 @@
 
 #import "UCLLogEvent.h"
 
+#define DPS_WINDOW_SIZE 5
+
 @interface UCLActorViewController ()
 
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
 - (void)configureView;
-- (NSArray*)calcualteDamage;
+- (NSArray*)calculateDamage;
+- (NSArray*)calculateDPS;
 
 @end
 
@@ -80,10 +83,10 @@
 {
     self.nameLabel.text = self.actor.name;
     
-    self.lineChartView.data = [self calcualteDamage];
+    self.lineChartView.data = [self calculateDPS];
 }
 
-- (NSArray *)calcualteDamage
+- (NSArray *)calculateDamage
 {
     NSArray* events = [self.fight allEventsForEntity:self.actor];
     NSUInteger duration = ceil(self.fight.duration);
@@ -109,6 +112,24 @@
     free(data);
     
     return numbers;
+}
+
+- (NSArray *)calculateDPS
+{
+    NSArray* damage = [self calculateDamage];
+    NSUInteger duration = [damage count];
+    NSMutableArray* dps = [NSMutableArray arrayWithCapacity:duration];
+    
+    for (NSUInteger i = 0; i < duration; i++) {
+        double value = 0;
+        NSUInteger windowSize = MIN(DPS_WINDOW_SIZE, i + 1);
+        for (NSInteger j = i - windowSize + 1; j <= i; j++) {
+            value += [[damage objectAtIndex:j] doubleValue];
+        }
+        [dps addObject:[NSNumber numberWithDouble:(value / windowSize)]];
+    }
+    
+    return dps;
 }
 
 @end

@@ -15,6 +15,7 @@
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
 - (void)configureView;
+- (NSArray*)calcualteDamage;
 
 @end
 
@@ -30,20 +31,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    self.lineChartView.data = [NSArray arrayWithObjects:[NSNumber numberWithInt:10], 
-                               [NSNumber numberWithInt:30],
-                               [NSNumber numberWithInt:20],
-                               [NSNumber numberWithInt:50],
-                               [NSNumber numberWithInt:15], nil];
+    
+    self.nameLabel.text = @"";
 }
 
 - (void)viewDidUnload
 {
-    [self setNameLabel:nil];
-    [self setLineChartView:nil];
+    self.nameLabel = nil;
+    self.lineChartView = nil;
+
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -83,6 +80,11 @@
 {
     self.nameLabel.text = self.actor.name;
     
+    self.lineChartView.data = [self calcualteDamage];
+}
+
+- (NSArray *)calcualteDamage
+{
     NSArray* events = [self.fight allEventsForEntity:self.actor];
     NSUInteger duration = ceil(self.fight.duration);
     NSDate* start = self.fight.startTime;
@@ -104,9 +106,9 @@
         [numbers addObject:[NSNumber numberWithDouble:data[i]]];
     }
     
-    self.lineChartView.data = numbers;
-    
     free(data);
+    
+    return numbers;
 }
 
 @end

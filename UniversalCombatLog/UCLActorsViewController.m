@@ -24,6 +24,7 @@
 
 #pragma mark - Properties
 
+@synthesize actorViewController = _actorViewController;
 @synthesize fight = _fight;
 @synthesize summaryType = _summaryType;
 @synthesize summaryTypeButton = _summaryTypeButton;
@@ -112,8 +113,8 @@
     
     // Configure the cell...
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
-    
-    cell.textLabel.text = summaryEntry.name;
+    UCLEntity* actor = summaryEntry.item;
+    cell.textLabel.text = actor.name;
     cell.detailTextLabel.text = [summaryEntry.amount stringValue];
     
     return cell;
@@ -123,13 +124,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
+    UCLEntity* actor = summaryEntry.item;
+    NSArray* events = [self.fight allEventsForEntity:actor];
+    [self.actorViewController setActor:actor events:events];
 }
 
 #pragma mark - Segue

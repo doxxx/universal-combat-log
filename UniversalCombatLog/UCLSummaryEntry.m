@@ -10,16 +10,41 @@
 
 @implementation UCLSummaryEntry
 
-@synthesize name=_name, amount=_amount;
+@synthesize item=_item, amount=_amount;
 
-- (id)initWithName:(NSString*)name amount:(NSNumber*)amount
+- (id)initWithItem:(id)item amount:(NSNumber*)amount
 {
     self = [super init];
     if (self) {
-        _name = name;
+        _item = item;
         _amount = amount;
     }
     return self;
 }
+
+- (BOOL)isEqual:(id)object
+{
+    if ([object class] != [self class]) {
+        return FALSE;
+    }
+    return [self isEqualToSummaryEntry:object];
+}
+
+- (BOOL)isEqualToSummaryEntry:(UCLSummaryEntry*)summaryEntry
+{
+    return [self.item isEqual:summaryEntry.item] && [self.amount isEqualToNumber:summaryEntry.amount];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    // Immutable class, can return original instead of copying.
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return 31 ^ [self.item hash] ^ [self.amount hash];
+}
+
 
 @end

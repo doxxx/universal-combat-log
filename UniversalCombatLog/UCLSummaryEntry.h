@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UCLSummaryEntry : NSObject
+@interface UCLSummaryEntry : NSObject <NSCopying>
 
-@property (readonly, nonatomic) NSString* name;
+@property (readonly, nonatomic) id item;
 @property (readonly, nonatomic) NSNumber* amount;
 
-- (id)initWithName:(NSString*)name amount:(NSNumber*)amount;
+- (id)initWithItem:(id)item amount:(NSNumber*)amount;
+
+- (BOOL)isEqualToSummaryEntry:(UCLSummaryEntry*)summaryEntry;
 
 @end

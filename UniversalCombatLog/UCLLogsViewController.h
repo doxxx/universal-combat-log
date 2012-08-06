@@ -14,7 +14,7 @@
 
 @interface UCLLogsViewController : UITableViewController <NSFetchedResultsControllerDelegate>
 
-@property (strong, nonatomic) UCLActorViewController* detailViewController;
+@property (strong, nonatomic) UCLActorViewController* actorViewController;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;

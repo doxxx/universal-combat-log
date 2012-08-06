@@ -20,7 +20,7 @@
 
 #pragma mark - Properties
 
-@synthesize detailViewController = _detailViewController;
+@synthesize actorViewController = _actorViewController;
 @synthesize fetchedResultsController = __fetchedResultsController;
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize logFile = _logFile;
@@ -46,7 +46,7 @@
 {
     [super viewDidLoad];
 
-    self.detailViewController = (UCLActorViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    self.actorViewController = (UCLActorViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -78,7 +78,7 @@
     if ([[segue identifier] isEqualToString:@"LogToFights"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
         [vc setFights:self.logFile.fights];
-        //vc.fightViewController = self.detailViewController;
+        vc.actorViewController = self.actorViewController;
     }
 }
 

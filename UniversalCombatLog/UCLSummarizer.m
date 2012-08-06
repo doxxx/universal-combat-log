@@ -68,23 +68,23 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
         if ([event performSelector:selector]) {
 #pragma clang diagnostic pop
-            NSNumber* amount = [temp objectForKey:event.actor.name];
+            NSNumber* amount = [temp objectForKey:event.actor];
             if (amount == nil) {
                 amount = event.amount;
             }
             else {
                 amount = [NSNumber numberWithLong:([amount longValue] + [event.amount longValue])];
             }
-            [temp setObject:amount forKey:event.actor.name];
+            [temp setObject:amount forKey:event.actor];
         }
     }
     
-    for (NSString* name in [temp allKeys]) {
-        double dps = ([[temp objectForKey:name] doubleValue] / self.fight.duration);
-        [temp setObject:[NSNumber numberWithLong:dps] forKey:name];
+    for (id item in [temp allKeys]) {
+        double dps = ([[temp objectForKey:item] doubleValue] / self.fight.duration);
+        [temp setObject:[NSNumber numberWithLong:dps] forKey:item];
     }
     
-    NSArray* sortedNames = [temp keysSortedByValueUsingComparator:^(id obj1, id obj2) {
+    NSArray* sortedItems = [temp keysSortedByValueUsingComparator:^(id obj1, id obj2) {
         if ([obj1 longValue] > [obj2 longValue]) {
             return NSOrderedAscending;
         }
@@ -95,8 +95,8 @@
     }];
     
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:[temp count]];
-    for (NSString* name in sortedNames) {
-        [result addObject:[[UCLSummaryEntry alloc] initWithName:name amount:[temp objectForKey:name]]];
+    for (id item in sortedItems) {
+        [result addObject:[[UCLSummaryEntry alloc] initWithItem:item amount:[temp objectForKey:item]]];
     }
     
     return result;

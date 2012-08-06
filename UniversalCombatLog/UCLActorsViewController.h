@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+#import "UCLActorViewController.h"
+
 #import "UCLFight.h"
 
 @interface UCLActorsViewController : UITableViewController<UINavigationControllerDelegate>
 
+@property (weak, nonatomic) UCLActorViewController* actorViewController;
 @property (weak, nonatomic) UCLFight* fight;
 @property (strong, nonatomic) NSString* summaryType;
 

@@ -7,6 +7,8 @@
 //
 
 #import "UCLFightsViewController.h"
+#import "UCLActorsViewController.h"
+
 #import "UCLFight.h"
 
 @interface UCLFightsViewController ()
@@ -18,7 +20,7 @@
 #pragma mark - Properties
 
 @synthesize fights=_fights;
-@synthesize actorsViewController=_actorsViewController;
+@synthesize actorViewController=_actorViewController;
 
 - (void)setFights:(NSArray *)fights
 {
@@ -73,6 +75,7 @@
     if ([[segue identifier] isEqualToString:@"FightToActors"]) {
         UCLActorsViewController* vc = [segue destinationViewController];
         NSIndexPath* indexPath = [self.tableView indexPathForCell:sender];
+        vc.actorViewController = self.actorViewController;
         vc.fight = [self.fights objectAtIndex:indexPath.row];
     }
 }

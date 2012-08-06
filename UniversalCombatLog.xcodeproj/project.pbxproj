@@ -76,7 +76,7 @@
 		F8FDE37F15C5D4C60094FE26 /* UCLSummaryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryEntry.h; sourceTree = "<group>"; };
 		F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryEntry.m; sourceTree = "<group>"; };
 		F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorsViewController.h; sourceTree = "<group>"; };
-		F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLActorsViewController.m; sourceTree = "<group>"; };
+		F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UCLActorsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F8FDE38815CAB0D50094FE26 /* UCLSummaryTypesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryTypesViewController.h; sourceTree = "<group>"; };
 		F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryTypesViewController.m; sourceTree = "<group>"; };
 		F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorViewController.h; sourceTree = "<group>"; };
@@ -138,10 +138,10 @@
 				F82F334115CC827600E9BA79 /* UCLLineChartView.m */,
 				F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */,
 				F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */,
-				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
-				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */,
 				F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */,
+				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
+				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */,
 				F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */,
 				F886498A15B82E8F00073204 /* UCLLogsViewController.h */,

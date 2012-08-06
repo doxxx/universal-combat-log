@@ -12,9 +12,14 @@
 
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
+- (void)configureView;
+
 @end
 
 @implementation UCLActorViewController
+
+@synthesize actor = _actor;
+@synthesize events = _events;
 
 @synthesize nameLabel = _nameLabel;
 @synthesize lineChartView = _lineChartView;
@@ -44,14 +49,17 @@
 	return YES;
 }
 
-/*
-
- setActorData:
- if (self.masterPopoverController != nil) {
- [self.masterPopoverController dismissPopoverAnimated:YES];
- }        
-
- */
+- (void)setActor:(UCLEntity *)actor events:(NSArray *)events
+{
+    if (self.masterPopoverController != nil) {
+        [self.masterPopoverController dismissPopoverAnimated:YES];
+    }
+    
+    _actor = actor;
+    _events = events;
+    
+    [self configureView];
+}
 
 #pragma mark - Split view
 
@@ -67,6 +75,13 @@
     // Called when the view is shown again in the split view, invalidating the button and popover controller.
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
+}
+
+- (void)configureView
+{
+    self.nameLabel.text = self.actor.name;
+    
+    // TODO: Calculate damage over time for lineChartView
 }
 
 @end

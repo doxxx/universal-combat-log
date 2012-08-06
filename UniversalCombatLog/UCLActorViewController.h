@@ -7,11 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+
 #import "UCLLineChartView.h"
+#import "UCLEntity.h"
 
 @interface UCLActorViewController : UIViewController <UISplitViewControllerDelegate>
 
+@property (strong, readonly, nonatomic) UCLEntity* actor;
+@property (strong, readonly, nonatomic) NSArray* events;
+
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UCLLineChartView *lineChartView;
+
+- (void)setActor:(UCLEntity*)actor events:(NSArray*)events;
 
 @end

@@ -27,20 +27,16 @@
 @synthesize actor = _actor;
 @synthesize fight = _fight;
 
-@synthesize nameLabel = _nameLabel;
 @synthesize lineChartView = _lineChartView;
 @synthesize masterPopoverController = _masterPopoverController;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.nameLabel.text = @"";
 }
 
 - (void)viewDidUnload
 {
-    self.nameLabel = nil;
     self.lineChartView = nil;
 
     [super viewDidUnload];
@@ -81,7 +77,7 @@
 
 - (void)configureView
 {
-    self.nameLabel.text = self.actor.name;
+    [self navigationItem].title = self.actor.name;
     
     self.lineChartView.data = [self calculateDPS];
 }

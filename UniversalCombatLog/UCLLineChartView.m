@@ -47,7 +47,7 @@
     CGContextScaleCTM(c, 1, -1);
 
     // Set line color and style
-    CGContextSetRGBStrokeColor(c, 0, 0, 0, 1);
+    CGContextSetRGBStrokeColor(c, 0, 1, 0, 1);
     CGContextSetLineWidth(c, 2);
     CGContextSetLineJoin(c, kCGLineJoinRound);
     CGContextSetLineCap(c, kCGLineCapRound);

@@ -18,7 +18,6 @@
 @property (strong, readonly, nonatomic) UCLEntity* actor;
 @property (strong, readonly, nonatomic) UCLFight* fight;
 
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UCLLineChartView *lineChartView;
 
 - (void)setActor:(UCLEntity*)actor fight:(UCLFight*)fight;

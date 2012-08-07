@@ -30,12 +30,18 @@
 
 - (void)setData:(NSArray *)data
 {
-    _data = [data copy];
-    _maxValue = [_data objectAtIndex:0];
-    for (NSNumber* value in _data) {
-        if ([value compare:_maxValue] == NSOrderedDescending) {
-            _maxValue = value;
+    if (data != nil) {
+        _data = [data copy];
+        _maxValue = [_data objectAtIndex:0];
+        for (NSNumber* value in _data) {
+            if ([value compare:_maxValue] == NSOrderedDescending) {
+                _maxValue = value;
+            }
         }
+    }
+    else {
+        _data = nil;
+        _maxValue = nil;
     }
     [self setNeedsDisplay];
 }

@@ -10,6 +10,8 @@
 
 @interface UCLLineChartView : UIView
 
+@property (nonatomic) double xInterval;
+@property (nonatomic) double yInterval;
 @property (copy, nonatomic) NSArray* data;
 
 @end

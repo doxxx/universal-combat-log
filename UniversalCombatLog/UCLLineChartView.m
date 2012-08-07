@@ -38,6 +38,17 @@
                 _maxValue = value;
             }
         }
+        
+        double yInterval = pow(10, floor(log10([_maxValue doubleValue])));
+        double yIntervalCount = [_maxValue doubleValue] / yInterval;
+        if (yIntervalCount < 3) {
+            yInterval /= 5;
+        }
+        else if (yIntervalCount < 8) {
+            yInterval /= 2;
+        }
+        self.yInterval = yInterval;
+        
     }
     else {
         _data = nil;

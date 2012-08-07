@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import <CoreText/CoreText.h>
+
 #import "UCLLineChartView.h"
 
 @implementation UCLLineChartView
@@ -120,47 +122,49 @@
     CGContextAddLineToPoint(c, LINSET + chartWidth, YINSET);
     CGContextStrokePath(c);
     
-    UIFont* axisMarkerFont = [UIFont systemFontOfSize:10];
-    
     if (_maxValue != nil) {
         // Draw markers on axes.
+        CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 10, NULL);
+        CGColorRef axisMarkerColor = [UIColor lightGrayColor].CGColor;
+        NSDictionary* axisMarkerAttr = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        (__bridge id)axisMarkerFont, kCTFontAttributeName,
+                                        axisMarkerColor, kCTForegroundColorAttributeName, nil];
+        
         NSUInteger yMarkerCount = floor([_maxValue doubleValue] / self.yInterval);
         for (NSUInteger i = 1; i <= yMarkerCount; i++) {
             CGFloat y = YINSET + (i * self.yInterval) * yScale;
             CGContextMoveToPoint(c, LINSET, y);
             CGContextAddLineToPoint(c, LINSET - MARKER_LENGTH, y);
             CGContextStrokePath(c);
+
+            NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.yInterval)];
+            NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
+                                                                          attributes:axisMarkerAttr];
+            CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
+            CGRect labelRect = CTLineGetImageBounds(line, c);
+            CGContextSetTextPosition(c, LINSET - MARKER_LENGTH - labelRect.size.width - 2, y - labelRect.size.height/2);
+            CTLineDraw(line, c);
+            CFRelease(line);
         }
         
         NSUInteger xMarkerCount = floor([self.data count] / self.xInterval);
         for (NSUInteger i = 1; i <= xMarkerCount; i++) {
-            CGFloat x = YINSET + (i * self.xInterval) * xScale;
+            CGFloat x = LINSET + (i * self.xInterval) * xScale;
             CGContextMoveToPoint(c, x, YINSET);
             CGContextAddLineToPoint(c, x, YINSET - MARKER_LENGTH);
             CGContextStrokePath(c);
+
+            NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.xInterval)];
+            NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
+                                                                          attributes:axisMarkerAttr];
+            CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
+            CGRect labelRect = CTLineGetImageBounds(line, c);
+            CGContextSetTextPosition(c, x - labelRect.size.width/2, YINSET - MARKER_LENGTH - labelRect.size.height - 2);
+            CTLineDraw(line, c);
+            CFRelease(line);
         }
 
-        // Reverse CTM so that text is not drawn upside down.
-        CGContextScaleCTM(c, 1, -1);
-        CGContextTranslateCTM(c, 0, -bounds.size.height);
-        
-        // Draw axis marker labels.
-        CGContextSetRGBFillColor(c, 0.8, 0.8, 0.8, 1);
-        for (NSUInteger i = 1; i <= yMarkerCount; i++) {
-            CGFloat y = bounds.size.height - (YINSET + (i * self.yInterval) * yScale);
-            NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.yInterval)];
-            CGSize labelSize = [markerLabel sizeWithFont:axisMarkerFont];
-            [markerLabel drawAtPoint:CGPointMake(LINSET - MARKER_LENGTH - labelSize.width, y - labelSize.height/2) 
-                            withFont:axisMarkerFont];
-        }
-        
-        for (NSUInteger i = 1; i <= xMarkerCount; i++) {
-            CGFloat x = YINSET + (i * self.xInterval) * xScale;
-            NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.xInterval)];
-            CGSize labelSize = [markerLabel sizeWithFont:axisMarkerFont];
-            [markerLabel drawAtPoint:CGPointMake(x - labelSize.width/2, bounds.size.height - YINSET + MARKER_LENGTH) 
-                            withFont:axisMarkerFont];
-        }
+        CFRelease(axisMarkerFont);
     }
 }
 

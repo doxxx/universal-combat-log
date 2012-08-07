@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F82F334115CC827600E9BA79 /* UCLLineChartView.m */; };
+		F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F844999615D1C3620090D3EB /* CoreText.framework */; };
 		F886497115B82E8F00073204 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497015B82E8F00073204 /* UIKit.framework */; };
 		F886497315B82E8F00073204 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497215B82E8F00073204 /* Foundation.framework */; };
 		F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497415B82E8F00073204 /* CoreGraphics.framework */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		F82F334015CC827600E9BA79 /* UCLLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLineChartView.h; sourceTree = "<group>"; };
 		F82F334115CC827600E9BA79 /* UCLLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLineChartView.m; sourceTree = "<group>"; };
+		F844999615D1C3620090D3EB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		F886496C15B82E8F00073204 /* UniversalCombatLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalCombatLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886497015B82E8F00073204 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F886497215B82E8F00073204 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -92,6 +94,7 @@
 				F886497315B82E8F00073204 /* Foundation.framework in Frameworks */,
 				F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */,
 				F886497715B82E8F00073204 /* CoreData.framework in Frameworks */,
+				F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +104,7 @@
 		F886496115B82E8F00073204 = {
 			isa = PBXGroup;
 			children = (
+				F844999615D1C3620090D3EB /* CoreText.framework */,
 				F886497815B82E8F00073204 /* UniversalCombatLog */,
 				F886496F15B82E8F00073204 /* Frameworks */,
 				F886496D15B82E8F00073204 /* Products */,

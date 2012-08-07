@@ -49,6 +49,12 @@
         }
         self.yInterval = yInterval;
         
+        double xInterval = 60;
+        double xIntervalCount = [_data count] / xInterval;
+        if (xIntervalCount < 3) {
+            xInterval /= 2;
+        }
+        self.xInterval = xInterval;
     }
     else {
         _data = nil;

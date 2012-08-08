@@ -79,7 +79,6 @@
 {
     [self navigationItem].title = self.actor.name;
     
-    self.lineChartView.xInterval = 60;
     self.lineChartView.data = [self calculateDPS];
 }
 

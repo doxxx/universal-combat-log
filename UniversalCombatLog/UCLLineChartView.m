@@ -51,10 +51,9 @@
         }
         self.yInterval = yInterval;
         
-        double xInterval = 60;
-        double xIntervalCount = [_data count] / xInterval;
-        if (xIntervalCount < 3) {
-            xInterval /= 2;
+        double xInterval = MAX(1, round(floor([_data count] / 10) / 15) * 15);
+        while ([_data count] / xInterval > 20) {
+            xInterval *= 2;
         }
         self.xInterval = xInterval;
     }

@@ -141,7 +141,7 @@
                                                                           attributes:axisMarkerAttr];
             CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
             CGRect labelRect = CTLineGetImageBounds(line, c);
-            CGContextSetTextPosition(c, LINSET - MARKER_LENGTH - labelRect.size.width - 2, y - labelRect.size.height/2);
+            CGContextSetTextPosition(c, LINSET - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
             CTLineDraw(line, c);
             CFRelease(line);
         }
@@ -161,7 +161,7 @@
                                                                           attributes:axisMarkerAttr];
             CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
             CGRect labelRect = CTLineGetImageBounds(line, c);
-            CGContextSetTextPosition(c, x - labelRect.size.width/2, YINSET - MARKER_LENGTH - labelRect.size.height - 2);
+            CGContextSetTextPosition(c, x - labelRect.size.width/2, YINSET - MARKER_LENGTH - labelRect.size.height - 4);
             CTLineDraw(line, c);
             CFRelease(line);
         }

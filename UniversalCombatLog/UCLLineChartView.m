@@ -111,7 +111,7 @@
     }
     
     // Draw axes.
-    CGContextSetRGBStrokeColor(c, 0.8, 0.8, 0.8, 1);
+    CGContextSetStrokeColorWithColor(c, [UIColor lightGrayColor].CGColor);
     CGContextSetLineWidth(c, 1);
     CGContextSetLineJoin(c, kCGLineJoinMiter);
     CGContextSetLineCap(c, kCGLineCapSquare);
@@ -124,7 +124,7 @@
     if (_maxValue != nil) {
         // Draw markers on axes.
         CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 10, NULL);
-        CGColorRef axisMarkerColor = [UIColor lightGrayColor].CGColor;
+        CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
         NSDictionary* axisMarkerAttr = [NSDictionary dictionaryWithObjectsAndKeys:
                                         (__bridge id)axisMarkerFont, kCTFontAttributeName,
                                         axisMarkerColor, kCTForegroundColorAttributeName, nil];

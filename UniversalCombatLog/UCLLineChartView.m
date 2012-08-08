@@ -123,7 +123,7 @@
     
     if (_maxValue != nil) {
         // Draw markers on axes.
-        CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 10, NULL);
+        CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
         CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
         NSDictionary* axisMarkerAttr = [NSDictionary dictionaryWithObjectsAndKeys:
                                         (__bridge id)axisMarkerFont, kCTFontAttributeName,

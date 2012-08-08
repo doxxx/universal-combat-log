@@ -154,7 +154,10 @@
             CGContextAddLineToPoint(c, x, YINSET - MARKER_LENGTH);
             CGContextStrokePath(c);
 
-            NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.xInterval)];
+            double value = i * self.xInterval;
+            double minutes = floor(value / 60.0);
+            double seconds = round((value / 60.0 - minutes) * 60);
+            NSString* markerLabel = [NSString stringWithFormat:@"%.0f:%02.f", minutes, seconds];
             NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
                                                                           attributes:axisMarkerAttr];
             CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);

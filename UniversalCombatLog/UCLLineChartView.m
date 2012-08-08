@@ -111,8 +111,8 @@
     }
     
     // Draw axes.
-    CGContextSetStrokeColorWithColor(c, [UIColor lightGrayColor].CGColor);
-    CGContextSetLineWidth(c, 1);
+    CGContextSetStrokeColorWithColor(c, [UIColor darkGrayColor].CGColor);
+    CGContextSetLineWidth(c, 2);
     CGContextSetLineJoin(c, kCGLineJoinMiter);
     CGContextSetLineCap(c, kCGLineCapSquare);
     

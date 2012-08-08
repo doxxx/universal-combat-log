@@ -64,7 +64,7 @@
     [self setNeedsDisplay];
 }
 
-#define LINSET 40
+#define LINSET 30
 #define RINSET 30
 #define YINSET 30
 #define MARKER_LENGTH 5
@@ -81,6 +81,24 @@
     CGContextTranslateCTM(c, 0, bounds.size.height);
     CGContextScaleCTM(c, 1, -1);
     
+    CGFloat leftInset = LINSET;
+    
+    CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
+    CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
+    NSDictionary* axisMarkerAttr = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    (__bridge id)axisMarkerFont, kCTFontAttributeName,
+                                    axisMarkerColor, kCTForegroundColorAttributeName, nil];
+    
+    if (_maxValue != nil) {
+        int numDigits = ceil(log10([_maxValue doubleValue]));
+        NSString* biggestLabel = [NSString stringWithFormat:@"%0*d", numDigits, 0];
+        NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:biggestLabel 
+                                                                      attributes:axisMarkerAttr];
+        CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
+        CGRect labelRect = CTLineGetImageBounds(line, c);
+        leftInset = MAX(leftInset, labelRect.size.width + MARKER_LENGTH + 8);
+    }
+    
     CGFloat xScale = 1;
     CGFloat yScale = 1;
 
@@ -96,7 +114,7 @@
         
         int count = 0;
         for (NSNumber* value in self.data) {
-            CGFloat x = LINSET + xScale * count;
+            CGFloat x = leftInset + xScale * count;
             CGFloat y = YINSET + [value doubleValue] * yScale;
             if (count == 0) {
                 CGContextMoveToPoint(c, x, y);
@@ -116,24 +134,18 @@
     CGContextSetLineJoin(c, kCGLineJoinMiter);
     CGContextSetLineCap(c, kCGLineCapSquare);
     
-    CGContextMoveToPoint(c, LINSET, YINSET + chartHeight);
-    CGContextAddLineToPoint(c, LINSET, YINSET);
-    CGContextAddLineToPoint(c, LINSET + chartWidth, YINSET);
+    CGContextMoveToPoint(c, leftInset, YINSET + chartHeight);
+    CGContextAddLineToPoint(c, leftInset, YINSET);
+    CGContextAddLineToPoint(c, leftInset + chartWidth, YINSET);
     CGContextStrokePath(c);
     
     if (_maxValue != nil) {
         // Draw markers on axes.
-        CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
-        CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
-        NSDictionary* axisMarkerAttr = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        (__bridge id)axisMarkerFont, kCTFontAttributeName,
-                                        axisMarkerColor, kCTForegroundColorAttributeName, nil];
-        
         NSUInteger yMarkerCount = floor([_maxValue doubleValue] / self.yInterval);
         for (NSUInteger i = 1; i <= yMarkerCount; i++) {
             CGFloat y = YINSET + (i * self.yInterval) * yScale;
-            CGContextMoveToPoint(c, LINSET, y);
-            CGContextAddLineToPoint(c, LINSET - MARKER_LENGTH, y);
+            CGContextMoveToPoint(c, leftInset, y);
+            CGContextAddLineToPoint(c, leftInset - MARKER_LENGTH, y);
             CGContextStrokePath(c);
 
             NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.yInterval)];
@@ -141,14 +153,14 @@
                                                                           attributes:axisMarkerAttr];
             CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
             CGRect labelRect = CTLineGetImageBounds(line, c);
-            CGContextSetTextPosition(c, LINSET - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
+            CGContextSetTextPosition(c, leftInset - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
             CTLineDraw(line, c);
             CFRelease(line);
         }
         
         NSUInteger xMarkerCount = floor([self.data count] / self.xInterval);
         for (NSUInteger i = 1; i <= xMarkerCount; i++) {
-            CGFloat x = LINSET + (i * self.xInterval) * xScale;
+            CGFloat x = leftInset + (i * self.xInterval) * xScale;
             CGContextMoveToPoint(c, x, YINSET);
             CGContextAddLineToPoint(c, x, YINSET - MARKER_LENGTH);
             CGContextStrokePath(c);

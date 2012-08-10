@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UCLSpell : NSObject
+@interface UCLSpell : NSObject <NSCopying>
 
 @property (readonly, nonatomic) uint64_t idNum;
 @property (readonly, strong, nonatomic) NSString* name;
 
 - (id)initWithIdNum:(uint64_t)theIdNum name:(NSString*)theName;
+
+- (BOOL)isEqualToSpell:(UCLSpell*)spell;
 
 + (UCLSpell*)spellWithIdNum:(uint64_t)theIdNum name:(NSString*)theName;
 

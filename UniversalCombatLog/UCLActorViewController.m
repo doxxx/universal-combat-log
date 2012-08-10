@@ -19,6 +19,7 @@
 - (void)configureView;
 - (NSArray*)calculateDamage;
 - (NSArray*)calculateDPS;
+- (NSDictionary*)calculateSpellBreakdown;
 
 @end
 
@@ -28,6 +29,7 @@
 @synthesize fight = _fight;
 
 @synthesize lineChartView = _lineChartView;
+@synthesize pieChartView = _pieChartView;
 @synthesize masterPopoverController = _masterPopoverController;
 
 - (void)viewDidLoad
@@ -39,6 +41,7 @@
 {
     self.lineChartView = nil;
 
+    [self setPieChartView:nil];
     [super viewDidUnload];
 }
 
@@ -80,6 +83,7 @@
     [self navigationItem].title = self.actor.name;
     
     self.lineChartView.data = [self calculateDPS];
+    self.pieChartView.data = [self calculateSpellBreakdown];
 }
 
 - (NSArray *)calculateDamage
@@ -126,6 +130,27 @@
     }
     
     return dps;
+}
+
+- (NSDictionary *)calculateSpellBreakdown
+{
+    NSMutableDictionary* spellBreakdown = [NSMutableDictionary dictionary];
+    
+    NSArray* events = [self.fight allEventsForEntity:self.actor];
+    for (UCLLogEvent* event in events) {
+        if ([event isDamage] && [event.actor isEqualToEntity:self.actor]) {
+            NSNumber* amount = [spellBreakdown objectForKey:event.spell];
+            if (amount == nil) {
+                [spellBreakdown setObject:event.amount forKey:event.spell];
+            }
+            else {
+                long newAmount = [event.amount longValue] + [amount longValue];
+                [spellBreakdown setObject:[NSNumber numberWithLong:newAmount] forKey:event.spell];
+            }
+        }
+    }
+    
+    return [NSDictionary dictionaryWithDictionary:spellBreakdown];
 }
 
 @end

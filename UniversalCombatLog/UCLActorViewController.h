@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UCLLineChartView.h"
+#import "UCLPieChartView.h"
 
 #import "UCLEntity.h"
 #import "UCLFight.h"
@@ -19,6 +20,7 @@
 @property (strong, readonly, nonatomic) UCLFight* fight;
 
 @property (weak, nonatomic) IBOutlet UCLLineChartView *lineChartView;
+@property (weak, nonatomic) IBOutlet UCLPieChartView *pieChartView;
 
 - (void)setActor:(UCLEntity*)actor fight:(UCLFight*)fight;
 

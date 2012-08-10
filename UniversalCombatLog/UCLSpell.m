@@ -22,6 +22,30 @@
     return self;
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if ([object class] != [self class]) {
+        return FALSE;
+    }
+    return [self isEqualToSpell:object];
+}
+
+- (BOOL)isEqualToSpell:(UCLSpell *)spell
+{
+    return self.idNum == spell.idNum;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    // Immutable class, can return original instead of copying.
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return 31 ^ _idNum ^ [_name hash];
+}
+
 + (UCLSpell*)spellWithIdNum:(uint64_t)theIdNum name:(NSString*)theName
 {
     return [[UCLSpell alloc] initWithIdNum:theIdNum name:theName];

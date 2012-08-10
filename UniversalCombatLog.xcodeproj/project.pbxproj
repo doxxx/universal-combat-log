@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F82F334115CC827600E9BA79 /* UCLLineChartView.m */; };
 		F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F844999615D1C3620090D3EB /* CoreText.framework */; };
+		F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F844999A15D28D8B0090D3EB /* UCLPieChartView.m */; };
 		F886497115B82E8F00073204 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497015B82E8F00073204 /* UIKit.framework */; };
 		F886497315B82E8F00073204 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497215B82E8F00073204 /* Foundation.framework */; };
 		F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497415B82E8F00073204 /* CoreGraphics.framework */; };
@@ -40,6 +41,8 @@
 		F82F334015CC827600E9BA79 /* UCLLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLineChartView.h; sourceTree = "<group>"; };
 		F82F334115CC827600E9BA79 /* UCLLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLineChartView.m; sourceTree = "<group>"; };
 		F844999615D1C3620090D3EB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		F844999915D28D8B0090D3EB /* UCLPieChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLPieChartView.h; sourceTree = "<group>"; };
+		F844999A15D28D8B0090D3EB /* UCLPieChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLPieChartView.m; sourceTree = "<group>"; };
 		F886496C15B82E8F00073204 /* UniversalCombatLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalCombatLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886497015B82E8F00073204 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F886497215B82E8F00073204 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -144,6 +147,8 @@
 				F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */,
 				F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */,
 				F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */,
+				F844999915D28D8B0090D3EB /* UCLPieChartView.h */,
+				F844999A15D28D8B0090D3EB /* UCLPieChartView.m */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
 				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */,
@@ -284,6 +289,7 @@
 				F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */,
 				F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */,
 				F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */,
+				F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

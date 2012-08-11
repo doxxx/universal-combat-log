@@ -36,14 +36,10 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="orE-Di-0Oy" customClass="UCLPieChartView">
-                                <rect key="frame" x="20" y="359" width="320" height="320"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES"/>
+                                <rect key="frame" x="20" y="347" width="663" height="337"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
-                            <view contentMode="scaleToFill" id="AIn-oW-eA8">
-                                <rect key="frame" x="363" y="359" width="320" height="320"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -310,6 +306,37 @@
             <point key="canvasLocation" x="2573" y="-1082"/>
         </scene>
     </scenes>
+    <classes>
+        <class className="UCLActorViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLActorViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="lineChartView" candidateClass="UCLLineChartView"/>
+                <relationship kind="outlet" name="pieChartView" candidateClass="UCLPieChartView"/>
+            </relationships>
+        </class>
+        <class className="UCLActorsViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLActorsViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="showSummaryTypes:"/>
+                <relationship kind="outlet" name="summaryTypeButton" candidateClass="UIBarButtonItem"/>
+            </relationships>
+        </class>
+        <class className="UCLFightsViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLFightsViewController.h"/>
+        </class>
+        <class className="UCLLineChartView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLLineChartView.h"/>
+        </class>
+        <class className="UCLLogsViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLLogsViewController.h"/>
+        </class>
+        <class className="UCLPieChartView" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLPieChartView.h"/>
+        </class>
+        <class className="UCLSummaryTypesViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLSummaryTypesViewController.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

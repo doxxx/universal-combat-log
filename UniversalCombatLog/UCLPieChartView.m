@@ -7,6 +7,7 @@
 //
 
 #import <math.h>
+#import <CoreText/CoreText.h>
 
 #import "UCLPieChartView.h"
 #import "UCLSpell.h"
@@ -15,15 +16,6 @@
 {
     double _sum;
     NSArray* _segmentColors;
-}
-
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -41,6 +33,10 @@
                           [UIColor purpleColor], 
                           [UIColor brownColor], 
                           nil];
+        
+        UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] 
+                                                 initWithTarget:self action:@selector(handleTap:)];
+        [self addGestureRecognizer:tapRecognizer];
     }
     return self;
 }
@@ -77,15 +73,22 @@
     CGContextSetFillColorSpace(c, rgbColorSpace);
     
     CGRect bounds = [self bounds];
-    CGFloat chartWidth = bounds.size.width - INSET*2;
+    CGFloat chartWidth = (bounds.size.width - INSET*2) / 2;
     CGFloat chartHeight = bounds.size.height - INSET*2;
 
     // Flip co-ordinate system to bottom left going up and right.
     CGContextTranslateCTM(c, 0, bounds.size.height);
     CGContextScaleCTM(c, 1, -1);
     
-    CGFloat centerX = bounds.size.width / 2;
-    CGFloat centerY = bounds.size.width / 2;
+    CTFontRef font = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
+    CGColorRef fontColor = [UIColor whiteColor].CGColor;
+    NSDictionary* fontAttr = [NSDictionary dictionaryWithObjectsAndKeys:
+                              (__bridge id)font, kCTFontAttributeName,
+                              fontColor, kCTForegroundColorAttributeName, nil];
+    double lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
+
+    CGFloat centerX = bounds.size.width / 4; // center of left side
+    CGFloat centerY = bounds.size.height / 2;
     CGFloat radius = MIN(chartWidth / 2, chartHeight / 2);
     CGFloat startAngle = 0;
     
@@ -94,6 +97,8 @@
     }];
     
     NSEnumerator* colorEnumerator = [_segmentColors objectEnumerator];
+    
+    CGFloat textY = INSET + chartHeight;
         
     for (UCLSpell* spell in sortedSpells) {
         NSNumber* value = [self.data objectForKey:spell];
@@ -101,6 +106,7 @@
         CGFloat endAngle = startAngle + (2 * M_PI * ratio);
         NSLog(@"Pie chart segment: name=%@, ratio=%.3f, startAngle=%.3f, endAngle=%.3f", 
               spell.name, ratio, startAngle, endAngle);
+
         UIColor* color = [colorEnumerator nextObject];
         if (color == nil) {
             color = [UIColor colorWithRed:(CGFloat)random() / UINT32_MAX 
@@ -116,7 +122,25 @@
         CGContextClosePath(c);
         CGContextFillPath(c);
         startAngle = endAngle;
+        
+        
+        NSString* text = [NSString stringWithFormat:@"%@\t%.0f", spell.name, [value doubleValue]];
+        NSAttributedString* attributedText = [[NSAttributedString alloc]
+                                              initWithString:text
+                                              attributes:fontAttr];
+        CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
+        textY -= lineHeight;
+        CGContextSetTextPosition(c, bounds.size.width/2 + INSET, textY);
+        CTLineDraw(line, c);
+        CFRelease(line);
+        
     }
+}
+
+- (void)handleTap:(UIGestureRecognizer*)sender
+{
+    CGPoint loc = [sender locationOfTouch:0 inView:self];
+    NSLog(@"Tap @ %f, %f", loc.x, loc.y);
 }
 
 @end

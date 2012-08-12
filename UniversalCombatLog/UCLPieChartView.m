@@ -81,10 +81,6 @@
     CGContextScaleCTM(c, 1, -1);
     
     CTFontRef font = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
-    CGColorRef fontColor = [UIColor whiteColor].CGColor;
-    NSDictionary* fontAttr = [NSDictionary dictionaryWithObjectsAndKeys:
-                              (__bridge id)font, kCTFontAttributeName,
-                              fontColor, kCTForegroundColorAttributeName, nil];
     double lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
 
     CGFloat centerX = bounds.size.width / 4; // center of left side
@@ -123,8 +119,12 @@
         CGContextFillPath(c);
         startAngle = endAngle;
         
-        
-        NSString* text = [NSString stringWithFormat:@"%@\t%.0f", spell.name, [value doubleValue]];
+        double percent = [value doubleValue] / _sum * 100;
+        NSString* text = [NSString stringWithFormat:@"%@", spell.name];
+        CGColorRef fontColor = color.CGColor;
+        NSDictionary* fontAttr = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge id)font, kCTFontAttributeName,
+                                  fontColor, kCTForegroundColorAttributeName, nil];
         NSAttributedString* attributedText = [[NSAttributedString alloc]
                                               initWithString:text
                                               attributes:fontAttr];
@@ -134,6 +134,13 @@
         CTLineDraw(line, c);
         CFRelease(line);
         
+        text = [NSString stringWithFormat:@"%0.1f", percent];
+        attributedText = [[NSAttributedString alloc] initWithString:text attributes:fontAttr];
+        line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
+        double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+        CGContextSetTextPosition(c, bounds.size.width - INSET - lineWidth, textY);
+        CTLineDraw(line, c);
+        CFRelease(line);
     }
 }
 

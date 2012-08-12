@@ -111,7 +111,7 @@
     NSEnumerator* colorEnumerator = [_segmentColors objectEnumerator];
     
     CGFloat textY = INSET + chartHeight - lineHeight;
-    uint16_t lineCount = 0;
+    uint16_t spellIndex = 0;
         
     for (UCLSpell* spell in _sortedSpells) {
         NSNumber* value = [self.data objectForKey:spell];
@@ -119,18 +119,34 @@
         CGFloat endAngle = startAngle + (2 * M_PI * ratio);
         NSLog(@"Pie chart segment: name=%@, ratio=%.3f, startAngle=%.3f, endAngle=%.3f", 
               spell.name, ratio, startAngle, endAngle);
+        
+        CGFloat segmentOriginX = centerX;
+        CGFloat segmentOriginY = centerY;
+
+        if (spellIndex == _selectedSpellIndex) {
+            CGFloat middleAngle = (startAngle + endAngle) / 2;
+            segmentOriginX = centerX + 10 * cos(middleAngle);
+            segmentOriginY = centerY + 10 * sin(middleAngle);
+        }
+        
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathMoveToPoint(path, NULL, segmentOriginX, segmentOriginY);
+        CGPathAddArc(path, NULL, segmentOriginX, segmentOriginY, radius, startAngle, endAngle, 0);
+        CGPathAddLineToPoint(path, NULL, segmentOriginX, segmentOriginY);
+        CGPathCloseSubpath(path);
 
         UIColor* color = [colorEnumerator nextObject];
         CGContextSetFillColorWithColor(c, color.CGColor);
-        CGContextSetStrokeColorWithColor(c, color.CGColor);
-        CGContextMoveToPoint(c, centerX, centerY);
-        CGContextAddArc(c, centerX, centerY, radius, startAngle, endAngle, 0);
-        CGContextAddLineToPoint(c, centerX, centerY);
-        CGContextClosePath(c);
+        CGContextAddPath(c, path);
         CGContextFillPath(c);
-        startAngle = endAngle;
-        
-        if (lineCount < 14) {
+
+        if (spellIndex == _selectedSpellIndex) {
+            CGContextSetStrokeColorWithColor(c, [UIColor whiteColor].CGColor);
+            CGContextAddPath(c, path);
+            CGContextStrokePath(c);
+        }
+
+        if (spellIndex < 14) {
             CGFloat textLeft = bounds.size.width/2 + INSET;
             CGFloat textRight = bounds.size.width - INSET;
             double percent = [value doubleValue] / _sum * 100;
@@ -155,16 +171,19 @@
             CTLineDraw(line, c);
             CFRelease(line);
             
-            if (lineCount == _selectedSpellIndex) {
+            if (spellIndex == _selectedSpellIndex) {
                 CGRect rect = CGRectMake(textLeft - 2, textY - 4, textRight - textLeft + 4, lineHeight + 4);
+                CGContextSetStrokeColorWithColor(c, color.CGColor);
                 CGContextSetLineJoin(c, kCGLineJoinMiter);
                 CGContextSetLineWidth(c, 2);
                 CGContextStrokeRect(c, rect);
             }
 
-            textY -= lineHeight + 5;
-            lineCount++;
         }
+        
+        spellIndex++;
+        startAngle = endAngle;
+        textY -= lineHeight + 5;
     }
 }
 

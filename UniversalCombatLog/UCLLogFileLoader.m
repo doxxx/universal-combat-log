@@ -101,7 +101,7 @@
                 break;
                 
             default:
-                type = NoRelation;
+                rel = NoRelation;
                 break;
         }
         

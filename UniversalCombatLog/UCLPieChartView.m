@@ -91,6 +91,7 @@
     CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextSetStrokeColorSpace(c, rgbColorSpace);
     CGContextSetFillColorSpace(c, rgbColorSpace);
+    CGColorSpaceRelease(rgbColorSpace);
     
     CGRect bounds = [self bounds];
     CGFloat chartWidth = (bounds.size.width - INSET*2) / 2;
@@ -145,6 +146,8 @@
             CGContextAddPath(c, path);
             CGContextStrokePath(c);
         }
+        
+        CGPathRelease(path);
 
         if (spellIndex < 14) {
             CGFloat textLeft = bounds.size.width/2 + INSET;

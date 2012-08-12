@@ -144,6 +144,8 @@
         if (spellIndex == _selectedSpellIndex) {
             CGContextSetStrokeColorWithColor(c, [UIColor whiteColor].CGColor);
             CGContextAddPath(c, path);
+            CGContextSetLineJoin(c, kCGLineJoinMiter);
+            CGContextSetLineWidth(c, 2);
             CGContextStrokePath(c);
         }
         
@@ -176,7 +178,7 @@
             
             if (spellIndex == _selectedSpellIndex) {
                 CGRect rect = CGRectMake(textLeft - 2, textY - 4, textRight - textLeft + 4, lineHeight + 4);
-                CGContextSetStrokeColorWithColor(c, color.CGColor);
+                CGContextSetStrokeColorWithColor(c, [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1].CGColor);
                 CGContextSetLineJoin(c, kCGLineJoinMiter);
                 CGContextSetLineWidth(c, 2);
                 CGContextStrokeRect(c, rect);

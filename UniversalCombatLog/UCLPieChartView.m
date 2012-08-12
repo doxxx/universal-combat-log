@@ -15,25 +15,15 @@
 @implementation UCLPieChartView
 {
     double _sum;
+    NSArray* _sortedSpells;
     NSArray* _segmentColors;
+    uint16_t _selectedSpellIndex;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        _segmentColors = [NSArray arrayWithObjects:
-                          [UIColor redColor], 
-                          [UIColor greenColor], 
-                          [UIColor blueColor], 
-                          [UIColor magentaColor], 
-                          [UIColor cyanColor], 
-                          [UIColor yellowColor], 
-                          [UIColor orangeColor], 
-                          [UIColor purpleColor], 
-                          [UIColor brownColor], 
-                          nil];
-        
         UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] 
                                                  initWithTarget:self action:@selector(handleTap:)];
         [self addGestureRecognizer:tapRecognizer];
@@ -55,10 +45,40 @@
         }
         _sum = sum;
         
+        _sortedSpells = [self.data keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
+            return [amount2 compare:amount1];
+        }];
+        
+        NSMutableArray* segmentColors = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
+        [segmentColors addObjectsFromArray:[NSArray arrayWithObjects:
+                                            [UIColor redColor], 
+                                            [UIColor greenColor], 
+                                            [UIColor blueColor], 
+                                            [UIColor magentaColor], 
+                                            [UIColor cyanColor], 
+                                            [UIColor yellowColor], 
+                                            [UIColor orangeColor], 
+                                            [UIColor purpleColor], 
+                                            [UIColor brownColor], 
+                                            nil]];
+
+        while ([segmentColors count] < [_sortedSpells count]) {
+            UIColor* color = [UIColor colorWithRed:(CGFloat)random() / UINT32_MAX 
+                                             green:(CGFloat)random() / UINT32_MAX 
+                                              blue:(CGFloat)random() / UINT32_MAX 
+                                             alpha:1];
+            [segmentColors addObject:color];
+        }
+        
+        _segmentColors = [NSArray arrayWithArray:segmentColors];
+        
+        _selectedSpellIndex = -1;
+        
         NSLog(@"Pie chart data: count=%d, sum=%f", [data count], sum);
     }
     else {
         _data = nil;
+        _sortedSpells = nil;
     }
     [self setNeedsDisplay];
 }
@@ -80,7 +100,7 @@
     CGContextTranslateCTM(c, 0, bounds.size.height);
     CGContextScaleCTM(c, 1, -1);
     
-    CTFontRef font = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
+    CTFontRef font = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 15, NULL);
     double lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
 
     CGFloat centerX = bounds.size.width / 4; // center of left side
@@ -88,15 +108,12 @@
     CGFloat radius = MIN(chartWidth / 2, chartHeight / 2);
     CGFloat startAngle = 0;
     
-    NSArray *sortedSpells = [self.data keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
-        return [amount2 compare:amount1];
-    }];
-    
     NSEnumerator* colorEnumerator = [_segmentColors objectEnumerator];
     
-    CGFloat textY = INSET + chartHeight;
+    CGFloat textY = INSET + chartHeight - lineHeight;
+    uint16_t lineCount = 0;
         
-    for (UCLSpell* spell in sortedSpells) {
+    for (UCLSpell* spell in _sortedSpells) {
         NSNumber* value = [self.data objectForKey:spell];
         CGFloat ratio = [value doubleValue] / _sum;
         CGFloat endAngle = startAngle + (2 * M_PI * ratio);
@@ -104,12 +121,6 @@
               spell.name, ratio, startAngle, endAngle);
 
         UIColor* color = [colorEnumerator nextObject];
-        if (color == nil) {
-            color = [UIColor colorWithRed:(CGFloat)random() / UINT32_MAX 
-                                    green:(CGFloat)random() / UINT32_MAX 
-                                     blue:(CGFloat)random() / UINT32_MAX 
-                                    alpha:1];
-        }
         CGContextSetFillColorWithColor(c, color.CGColor);
         CGContextSetStrokeColorWithColor(c, color.CGColor);
         CGContextMoveToPoint(c, centerX, centerY);
@@ -119,28 +130,41 @@
         CGContextFillPath(c);
         startAngle = endAngle;
         
-        double percent = [value doubleValue] / _sum * 100;
-        NSString* text = [NSString stringWithFormat:@"%@", spell.name];
-        CGColorRef fontColor = color.CGColor;
-        NSDictionary* fontAttr = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  (__bridge id)font, kCTFontAttributeName,
-                                  fontColor, kCTForegroundColorAttributeName, nil];
-        NSAttributedString* attributedText = [[NSAttributedString alloc]
-                                              initWithString:text
-                                              attributes:fontAttr];
-        CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
-        textY -= lineHeight;
-        CGContextSetTextPosition(c, bounds.size.width/2 + INSET, textY);
-        CTLineDraw(line, c);
-        CFRelease(line);
-        
-        text = [NSString stringWithFormat:@"%0.1f", percent];
-        attributedText = [[NSAttributedString alloc] initWithString:text attributes:fontAttr];
-        line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
-        double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-        CGContextSetTextPosition(c, bounds.size.width - INSET - lineWidth, textY);
-        CTLineDraw(line, c);
-        CFRelease(line);
+        if (lineCount < 14) {
+            CGFloat textLeft = bounds.size.width/2 + INSET;
+            CGFloat textRight = bounds.size.width - INSET;
+            double percent = [value doubleValue] / _sum * 100;
+            NSString* text = [NSString stringWithFormat:@"%@", spell.name];
+            CGColorRef fontColor = color.CGColor;
+            NSDictionary* fontAttr = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      (__bridge id)font, kCTFontAttributeName,
+                                      fontColor, kCTForegroundColorAttributeName, nil];
+            NSAttributedString* attributedText = [[NSAttributedString alloc]
+                                                  initWithString:text
+                                                  attributes:fontAttr];
+            CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
+            CGContextSetTextPosition(c, textLeft, textY);
+            CTLineDraw(line, c);
+            CFRelease(line);
+            
+            text = [NSString stringWithFormat:@"%0.1f", percent];
+            attributedText = [[NSAttributedString alloc] initWithString:text attributes:fontAttr];
+            line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
+            double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+            CGContextSetTextPosition(c, textRight - lineWidth, textY);
+            CTLineDraw(line, c);
+            CFRelease(line);
+            
+            if (lineCount == _selectedSpellIndex) {
+                CGRect rect = CGRectMake(textLeft - 2, textY - 4, textRight - textLeft + 4, lineHeight + 4);
+                CGContextSetLineJoin(c, kCGLineJoinMiter);
+                CGContextSetLineWidth(c, 2);
+                CGContextStrokeRect(c, rect);
+            }
+
+            textY -= lineHeight + 5;
+            lineCount++;
+        }
     }
 }
 
@@ -148,6 +172,26 @@
 {
     CGPoint loc = [sender locationOfTouch:0 inView:self];
     NSLog(@"Tap @ %f, %f", loc.x, loc.y);
+
+    CGRect bounds = [self bounds];
+    if (loc.x >= bounds.size.width/2 + INSET && loc.x < bounds.size.width-INSET) {
+        CTFontRef font = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 15, NULL);
+        double lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
+        CGFloat relY = loc.y - INSET;
+        uint16_t index = relY / (lineHeight + 5);
+        NSLog(@"Tap on index %d", index);
+        if (index >= 0 && index < [_sortedSpells count]) {
+            _selectedSpellIndex = index;
+        }
+        else {
+            _selectedSpellIndex = -1;
+        }
+        [self setNeedsDisplay];
+    }
+    else {
+        _selectedSpellIndex = -1;
+        [self setNeedsDisplay];
+    }
 }
 
 @end

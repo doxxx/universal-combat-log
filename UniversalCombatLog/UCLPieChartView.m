@@ -166,7 +166,7 @@
             CTLineDraw(line, c);
             CFRelease(line);
             
-            text = [NSString stringWithFormat:@"%0.1f", percent];
+            text = [NSString stringWithFormat:@"%0.1f%%", percent];
             attributedText = [[NSAttributedString alloc] initWithString:text attributes:fontAttr];
             line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedText);
             double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);

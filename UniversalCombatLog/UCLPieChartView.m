@@ -18,6 +18,7 @@
     NSArray* _sortedSpells;
     NSArray* _segmentColors;
     uint16_t _selectedSpellIndex;
+    NSMutableDictionary* _segmentPaths;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -86,11 +87,15 @@
         
         _selectedSpellIndex = -1;
         
+        _segmentPaths = [NSMutableDictionary dictionaryWithCapacity:[_sortedSpells count]];
+        
         NSLog(@"Pie chart data: count=%d, sum=%f", [data count], sum);
     }
     else {
         _data = nil;
         _sortedSpells = nil;
+        _segmentPaths = nil;
+        _segmentPaths = nil;
     }
     [self setNeedsDisplay];
 }
@@ -161,6 +166,8 @@
             CGContextStrokePath(c);
         }
         
+        [_segmentPaths setObject:(__bridge_transfer id)CGPathCreateCopy(path) forKey:spell];
+        
         CGPathRelease(path);
 
         if (spellIndex < 14) {
@@ -222,12 +229,22 @@
         else {
             _selectedSpellIndex = -1;
         }
-        [self setNeedsDisplay];
+    }
+    else if (loc.x >= 0 && loc.x < bounds.size.width/2) {
+        _selectedSpellIndex = -1;
+        CGAffineTransform xform = CGAffineTransformScale(CGAffineTransformMakeTranslation(0, bounds.size.height), 1, -1);
+        for (uint16_t i = 0; i < [_sortedSpells count]; i++) {
+            UCLSpell* spell = [_sortedSpells objectAtIndex:i];
+            CGPathRef path = (__bridge CGPathRef)[_segmentPaths objectForKey:spell];
+            if (CGPathContainsPoint(path, &xform, loc, FALSE)) {
+                _selectedSpellIndex = i;
+            }
+        }
     }
     else {
         _selectedSpellIndex = -1;
-        [self setNeedsDisplay];
     }
+    [self setNeedsDisplay];
 }
 
 @end

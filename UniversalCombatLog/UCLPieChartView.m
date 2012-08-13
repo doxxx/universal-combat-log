@@ -51,23 +51,35 @@
         
         NSMutableArray* segmentColors = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
         [segmentColors addObjectsFromArray:[NSArray arrayWithObjects:
-                                            [UIColor redColor], 
-                                            [UIColor greenColor], 
-                                            [UIColor blueColor], 
-                                            [UIColor magentaColor], 
-                                            [UIColor cyanColor], 
-                                            [UIColor yellowColor], 
-                                            [UIColor orangeColor], 
-                                            [UIColor purpleColor], 
-                                            [UIColor brownColor], 
+                                            [UIColor colorWithRed:1 green:0 blue:0 alpha:1], 
+                                            [UIColor colorWithRed:1 green:0.5 blue:0 alpha:1], 
+                                            [UIColor colorWithRed:1 green:1 blue:0 alpha:1], 
+                                            [UIColor colorWithRed:0.5 green:1 blue:0 alpha:1], 
+                                            [UIColor colorWithRed:1 green:0 blue:0.5 alpha:1], 
+                                            [UIColor colorWithRed:1 green:61.0/255.0 blue:61.0/255.0 alpha:1], 
+                                            [UIColor colorWithRed:1 green:122.0/255.0 blue:122.0/255.0 alpha:1], 
+                                            [UIColor colorWithRed:0 green:1 blue:0 alpha:1], 
+                                            [UIColor colorWithRed:1 green:0 blue:1 alpha:1], 
+                                            [UIColor colorWithRed:122.0/255.0 green:1 blue:1 alpha:1],
+                                            [UIColor colorWithRed:61.0/255.0 green:1 blue:1 alpha:1],
+                                            [UIColor colorWithRed:0 green:1 blue:0.5 alpha:1],
+                                            [UIColor colorWithRed:0.5 green:0 blue:1 alpha:1],
+                                            [UIColor colorWithRed:0 green:0 blue:1 alpha:1],
+                                            [UIColor colorWithRed:0 green:0.5 blue:1 alpha:1],
+                                            [UIColor colorWithRed:0 green:1 blue:1 alpha:1],
+                                            [UIColor colorWithRed:1 green:1 blue:61.0/255.0 alpha:1],
+                                            [UIColor colorWithRed:1 green:1 blue:122.0/255.0 alpha:1],
+                                            [UIColor colorWithRed:1 green:122.0/255.0 blue:61.0/255.0 alpha:1],
+                                            [UIColor colorWithRed:61.0/255.0 green:61.0/255.0 blue:1 alpha:1],
                                             nil]];
 
-        while ([segmentColors count] < [_sortedSpells count]) {
-            UIColor* color = [UIColor colorWithRed:(CGFloat)random() / UINT32_MAX 
-                                             green:(CGFloat)random() / UINT32_MAX 
-                                              blue:(CGFloat)random() / UINT32_MAX 
-                                             alpha:1];
-            [segmentColors addObject:color];
+        if ([segmentColors count] < [_sortedSpells count]) {
+            NSLog(@"WARNING: Insufficient colors for number of data points");
+            while ([segmentColors count] < [_sortedSpells count]) {
+                UIColor* color = [UIColor whiteColor];
+                [segmentColors addObject:color];
+            }
+            
         }
         
         _segmentColors = [NSArray arrayWithArray:segmentColors];

@@ -24,17 +24,54 @@
 @end
 
 @implementation UCLActorViewController
+{
+    NSArray* _spellBreakdownColors;
+    NSDictionary* _spellBreakdown;
+    NSArray* _sortedSpells;
+    NSArray* _sortedSpellValues;
+    double _spellBreakdownSum;
+}
 
 @synthesize actor = _actor;
 @synthesize fight = _fight;
 
 @synthesize lineChartView = _lineChartView;
 @synthesize pieChartView = _pieChartView;
+@synthesize tableView = _tableView;
+
 @synthesize masterPopoverController = _masterPopoverController;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.pieChartView.delegate = self;
+    
+    NSMutableArray* colors = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
+    [colors addObjectsFromArray:[NSArray arrayWithObjects:
+                                        [UIColor colorWithRed:1 green:0 blue:0 alpha:1], 
+                                        [UIColor colorWithRed:1 green:0.5 blue:0 alpha:1], 
+                                        [UIColor colorWithRed:1 green:1 blue:0 alpha:1], 
+                                        [UIColor colorWithRed:0.5 green:1 blue:0 alpha:1], 
+                                        [UIColor colorWithRed:1 green:0 blue:0.5 alpha:1], 
+                                        [UIColor colorWithRed:1 green:61.0/255.0 blue:61.0/255.0 alpha:1], 
+                                        [UIColor colorWithRed:1 green:122.0/255.0 blue:122.0/255.0 alpha:1], 
+                                        [UIColor colorWithRed:0 green:1 blue:0 alpha:1], 
+                                        [UIColor colorWithRed:1 green:0 blue:1 alpha:1], 
+                                        [UIColor colorWithRed:122.0/255.0 green:1 blue:1 alpha:1],
+                                        [UIColor colorWithRed:61.0/255.0 green:1 blue:1 alpha:1],
+                                        [UIColor colorWithRed:0 green:1 blue:0.5 alpha:1],
+                                        [UIColor colorWithRed:0.5 green:0 blue:1 alpha:1],
+                                        [UIColor colorWithRed:0 green:0 blue:1 alpha:1],
+                                        [UIColor colorWithRed:0 green:0.5 blue:1 alpha:1],
+                                        [UIColor colorWithRed:0 green:1 blue:1 alpha:1],
+                                        [UIColor colorWithRed:1 green:1 blue:61.0/255.0 alpha:1],
+                                        [UIColor colorWithRed:1 green:1 blue:122.0/255.0 alpha:1],
+                                        [UIColor colorWithRed:1 green:122.0/255.0 blue:61.0/255.0 alpha:1],
+                                        [UIColor colorWithRed:61.0/255.0 green:61.0/255.0 blue:1 alpha:1],
+                                        nil]];
+    
+    _spellBreakdownColors = [NSArray arrayWithArray:colors];
 }
 
 - (void)viewDidUnload
@@ -42,6 +79,7 @@
     self.lineChartView = nil;
 
     [self setPieChartView:nil];
+    [self setTableView:nil];
     [super viewDidUnload];
 }
 
@@ -59,6 +97,23 @@
     _actor = actor;
     _fight = fight;
     
+    _spellBreakdown = [self calculateSpellBreakdown];
+    _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
+        return [amount2 compare:amount1];
+    }];
+    
+    NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
+    for (UCLSpell* spell in _sortedSpells) {
+        [sortedSpellValues addObject:[_spellBreakdown objectForKey:spell]];
+    }
+    _sortedSpellValues = [NSArray arrayWithArray:sortedSpellValues];
+    
+    double sum = 0;
+    for (NSNumber* value in [_spellBreakdown allValues]) {
+        sum += [value doubleValue];
+    }
+    _spellBreakdownSum = sum;
+
     [self configureView];
 }
 
@@ -83,7 +138,9 @@
     [self navigationItem].title = self.actor.name;
     
     self.lineChartView.data = [self calculateDPS];
-    self.pieChartView.data = [self calculateSpellBreakdown];
+    
+    self.pieChartView.data = _sortedSpellValues;
+    [self.tableView reloadData];
 }
 
 - (NSArray *)calculateDamage
@@ -151,6 +208,50 @@
     }
     
     return [NSDictionary dictionaryWithDictionary:spellBreakdown];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (_spellBreakdown != nil) {
+        return [_spellBreakdown count];
+    }
+    else {
+        return 0;
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    
+    UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
+    NSNumber* value = [_spellBreakdown objectForKey:spell];
+    cell.textLabel.text = spell.name;
+    cell.textLabel.textColor = [_spellBreakdownColors objectAtIndex:indexPath.row];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f%%", 
+                                 ([value doubleValue] / _spellBreakdownSum * 100)];
+    cell.detailTextLabel.textColor = [_spellBreakdownColors objectAtIndex:indexPath.row];
+    
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self.pieChartView selectSegment:indexPath.row];
+}
+
+- (void)pieChartView:(UCLPieChartView *)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex
+{
+    [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:segmentIndex inSection:0]
+                                animated:TRUE scrollPosition:UITableViewScrollPositionMiddle];
+}
+
+- (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
+{
+    if (segmentIndex >= [_spellBreakdownColors count]) {
+        return [UIColor whiteColor];
+    }
+    return [_spellBreakdownColors objectAtIndex:segmentIndex];
 }
 
 @end

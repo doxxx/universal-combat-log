@@ -14,13 +14,14 @@
 #import "UCLEntity.h"
 #import "UCLFight.h"
 
-@interface UCLActorViewController : UIViewController <UISplitViewControllerDelegate>
+@interface UCLActorViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UCLPieChartViewDelegate>
 
 @property (strong, readonly, nonatomic) UCLEntity* actor;
 @property (strong, readonly, nonatomic) UCLFight* fight;
 
 @property (weak, nonatomic) IBOutlet UCLLineChartView *lineChartView;
 @property (weak, nonatomic) IBOutlet UCLPieChartView *pieChartView;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 - (void)setActor:(UCLEntity*)actor fight:(UCLFight*)fight;
 

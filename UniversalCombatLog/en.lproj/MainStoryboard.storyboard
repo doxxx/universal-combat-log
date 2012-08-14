@@ -36,13 +36,49 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="orE-Di-0Oy" customClass="UCLPieChartView">
-                                <rect key="frame" x="20" y="347" width="663" height="337"/>
+                                <rect key="frame" x="20" y="347" width="332" height="337"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
                             </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="25" sectionHeaderHeight="22" sectionFooterHeight="22" id="jSM-By-GTO">
+                                <rect key="frame" x="352" y="347" width="331" height="337"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="Dlz-rR-pbO" detailTextLabel="UGz-N8-je3" style="IBUITableViewCellStyleValue1" id="1qH-UO-uSD">
+                                        <rect key="frame" x="0.0" y="22" width="331" height="25"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="331" height="24"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="Dlz-rR-pbO">
+                                                    <rect key="frame" x="10" y="3" width="31" height="19"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                                <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UGz-N8-je3">
+                                                    <rect key="frame" x="282" y="3" width="39" height="19"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
+                                                    <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="4" id="KGC-TB-Y0p"/>
+                                    <outlet property="delegate" destination="4" id="aXO-sE-k7T"/>
+                                </connections>
+                            </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
                     <toolbarItems/>
@@ -50,6 +86,7 @@
                     <connections>
                         <outlet property="lineChartView" destination="dao-l9-R73" id="qKq-2t-6uX"/>
                         <outlet property="pieChartView" destination="orE-Di-0Oy" id="Yut-da-UPi"/>
+                        <outlet property="tableView" destination="jSM-By-GTO" id="B0N-Wc-0YU"/>
                     </connections>
                 </viewController>
             </objects>
@@ -312,6 +349,7 @@
             <relationships>
                 <relationship kind="outlet" name="lineChartView" candidateClass="UCLLineChartView"/>
                 <relationship kind="outlet" name="pieChartView" candidateClass="UCLPieChartView"/>
+                <relationship kind="outlet" name="spellBreakdownTableView" candidateClass="UITableView"/>
             </relationships>
         </class>
         <class className="UCLActorsViewController" superclassName="UITableViewController">

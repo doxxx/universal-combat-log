@@ -8,8 +8,27 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol UCLPieChartViewDelegate;
+
 @interface UCLPieChartView : UIView
 
-@property (copy, nonatomic) NSDictionary* data;
+@property (weak, nonatomic) id <UCLPieChartViewDelegate> delegate;
+@property (copy, nonatomic) NSArray* data;
+
+- (void)selectSegment:(NSUInteger)segmentIndex;
 
 @end
+
+
+@protocol UCLPieChartViewDelegate <NSObject>
+
+@required
+
+- (UIColor*) pieChartView:(UCLPieChartView*)pieChartView colorForSegment:(NSUInteger)segmentIndex;
+
+@optional
+
+- (void)pieChartView:(UCLPieChartView*)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex;
+
+@end
+

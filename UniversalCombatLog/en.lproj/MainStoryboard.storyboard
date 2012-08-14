@@ -30,18 +30,18 @@
                         <rect key="frame" x="0.0" y="64" width="703" height="704"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" id="dao-l9-R73" customClass="UCLLineChartView">
+                            <view contentMode="redraw" id="dao-l9-R73" customClass="UCLLineChartView">
                                 <rect key="frame" x="20" y="20" width="663" height="319"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" id="orE-Di-0Oy" customClass="UCLPieChartView">
+                            <view contentMode="redraw" id="orE-Di-0Oy" customClass="UCLPieChartView">
                                 <rect key="frame" x="20" y="347" width="332" height="337"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="25" sectionHeaderHeight="22" sectionFooterHeight="22" id="jSM-By-GTO">
+                            <tableView clipsSubviews="YES" contentMode="redraw" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="25" sectionHeaderHeight="22" sectionFooterHeight="22" id="jSM-By-GTO">
                                 <rect key="frame" x="352" y="347" width="331" height="337"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -349,7 +349,7 @@
             <relationships>
                 <relationship kind="outlet" name="lineChartView" candidateClass="UCLLineChartView"/>
                 <relationship kind="outlet" name="pieChartView" candidateClass="UCLPieChartView"/>
-                <relationship kind="outlet" name="spellBreakdownTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="tableView" candidateClass="UITableView"/>
             </relationships>
         </class>
         <class className="UCLActorsViewController" superclassName="UITableViewController">

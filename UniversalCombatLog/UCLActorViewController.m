@@ -12,19 +12,9 @@
 
 #define DPS_WINDOW_SIZE 5
 
-@interface UCLActorViewController ()
-
-@property (strong, nonatomic) UIPopoverController *masterPopoverController;
-
-- (void)configureView;
-- (NSArray*)calculateDamage;
-- (NSArray*)calculateDPS;
-- (NSDictionary*)calculateSpellBreakdown;
-
-@end
-
 @implementation UCLActorViewController
 {
+    UIPopoverController* _masterPopoverController;
     NSArray* _spellBreakdownColors;
     NSDictionary* _spellBreakdown;
     NSArray* _sortedSpells;
@@ -32,14 +22,7 @@
     double _spellBreakdownSum;
 }
 
-@synthesize actor = _actor;
-@synthesize fight = _fight;
-
-@synthesize lineChartView = _lineChartView;
-@synthesize pieChartView = _pieChartView;
-@synthesize tableView = _tableView;
-
-@synthesize masterPopoverController = _masterPopoverController;
+#pragma mark - View Methods
 
 - (void)viewDidLoad
 {
@@ -77,9 +60,15 @@
 - (void)viewDidUnload
 {
     self.lineChartView = nil;
+    self.pieChartView = nil;
+    self.tableView = nil;
+    
+    _masterPopoverController = nil;
+    _spellBreakdownColors = nil;
+    _spellBreakdown = nil;
+    _sortedSpells = nil;
+    _sortedSpellValues = nil;
 
-    [self setPieChartView:nil];
-    [self setTableView:nil];
     [super viewDidUnload];
 }
 
@@ -88,10 +77,19 @@
 	return YES;
 }
 
+#pragma mark - Properties
+
+@synthesize actor = _actor;
+@synthesize fight = _fight;
+
+@synthesize lineChartView = _lineChartView;
+@synthesize pieChartView = _pieChartView;
+@synthesize tableView = _tableView;
+
 - (void)setActor:(UCLEntity *)actor fight:(UCLFight *)fight
 {
-    if (self.masterPopoverController != nil) {
-        [self.masterPopoverController dismissPopoverAnimated:YES];
+    if (_masterPopoverController != nil) {
+        [_masterPopoverController dismissPopoverAnimated:YES];
     }
     
     _actor = actor;
@@ -123,22 +121,23 @@
 {
     barButtonItem.title = NSLocalizedString(@"Fights", @"Fights");
     [self.navigationItem setLeftBarButtonItem:barButtonItem animated:YES];
-    self.masterPopoverController = popoverController;
+    _masterPopoverController = popoverController;
 }
 
 - (void)splitViewController:(UISplitViewController *)splitController willShowViewController:(UIViewController *)viewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
 {
     // Called when the view is shown again in the split view, invalidating the button and popover controller.
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
-    self.masterPopoverController = nil;
+    _masterPopoverController = nil;
 }
+
+#pragma mark - Helper Methods
 
 - (void)configureView
 {
     [self navigationItem].title = self.actor.name;
     
     self.lineChartView.data = [self calculateDPS];
-    
     self.pieChartView.data = _sortedSpellValues;
     [self.tableView reloadData];
 }
@@ -210,6 +209,8 @@
     return [NSDictionary dictionaryWithDictionary:spellBreakdown];
 }
 
+#pragma mark - TableView DataSource & Delegate Methods
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (_spellBreakdown != nil) {
@@ -239,6 +240,8 @@
 {
     [self.pieChartView selectSegment:indexPath.row];
 }
+
+#pragma mark - PieChartView Delegate Methods
 
 - (void)pieChartView:(UCLPieChartView *)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex
 {

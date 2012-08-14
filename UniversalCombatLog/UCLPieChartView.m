@@ -59,6 +59,8 @@
     [self setNeedsDisplay];
 }
 
+#pragma mark - View Methods
+
 #define INSET 30
 
 - (void)drawRect:(CGRect)rect

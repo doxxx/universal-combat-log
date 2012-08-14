@@ -12,10 +12,6 @@
 #import "UCLFightsViewController.h"
 #import "UCLActorViewController.h"
 
-@interface UCLLogsViewController ()
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-@end
-
 @implementation UCLLogsViewController
 
 #pragma mark - Properties

@@ -10,12 +10,6 @@
 #import "UCLSummaryTypesViewController.h"
 #import "UCLSummarizer.h"
 
-@interface UCLActorsViewController ()
-
--(void)configureView;
-
-@end
-
 @implementation UCLActorsViewController
 {
     __weak UIPopoverController* _popoverController;

@@ -9,14 +9,6 @@
 #import "UCLSummarizer.h"
 #import "UCLLogEvent.h"
 
-@interface UCLSummarizer ()
-        
-- (NSArray*)calculateDPS;
-- (NSArray *)calculateHPS;
-- (NSArray*)calculateAmountsWithSelector:(SEL)selector;
-
-@end
-
 @implementation UCLSummarizer
 
 @synthesize fight=_fight;

@@ -11,10 +11,6 @@
 
 #import "UCLFight.h"
 
-@interface UCLFightsViewController ()
-
-@end
-
 @implementation UCLFightsViewController
 
 #pragma mark - Properties

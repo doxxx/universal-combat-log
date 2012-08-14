@@ -8,10 +8,6 @@
 
 #import "UCLSummaryTypesViewController.h"
 
-@interface UCLSummaryTypesViewController ()
-
-@end
-
 @implementation UCLSummaryTypesViewController
 
 @synthesize actorsViewController;

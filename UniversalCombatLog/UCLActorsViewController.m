@@ -8,7 +8,7 @@
 
 #import "UCLActorsViewController.h"
 #import "UCLSummaryTypesViewController.h"
-#import "UCLSummarizer.h"
+#import "UCLSummaryEntry.h"
 
 @implementation UCLActorsViewController
 {
@@ -77,19 +77,65 @@
 -(void)configureView
 {
     if (self.fight != nil) {
-        UCLSummarizer* summarizer = [UCLSummarizer summarizerForFight:self.fight];
+        UCLLogEventPredicate predicate = NULL;
         if ([self.summaryType isEqualToString:@"DPS"]) {
-            _summary = [summarizer summarizeForType:DPS];
+            predicate = ^BOOL(UCLLogEvent* event) {
+                return event.actor != nil && [event isDamage];
+            };
         }
         else if ([self.summaryType isEqualToString:@"HPS"]) {
-            _summary = [summarizer summarizeForType:HPS];
+            predicate = ^BOOL(UCLLogEvent* event) {
+                return event.actor != nil && [event isHealing];
+            };
         }
+        _summary = [self summarizeActorsUsingPredicate:predicate];
     }
     else {
         _summary = nil;
     }
     
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (NSArray*)summarizeActorsUsingPredicate:(UCLLogEventPredicate)predicate
+{
+    NSMutableDictionary* temp = [NSMutableDictionary dictionary];
+    
+    for (UCLLogEvent* event in _fight.events) {
+        if (predicate != NULL && predicate(event)) {
+            NSNumber* amount = [temp objectForKey:event.actor];
+            if (amount == nil) {
+                amount = event.amount;
+            }
+            else {
+                amount = [NSNumber numberWithLong:([amount longValue] + [event.amount longValue])];
+            }
+            [temp setObject:amount forKey:event.actor];
+        }
+    }
+    
+    for (id item in [temp allKeys]) {
+        double value = ([[temp objectForKey:item] doubleValue] / self.fight.duration);
+        [temp setObject:[NSNumber numberWithLong:value] forKey:item];
+    }
+    
+    NSArray* sortedItems = [temp keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
+        if ([val1 longValue] > [val2 longValue]) {
+            return NSOrderedAscending;
+        }
+        if ([val1 longValue] < [val2 longValue]) {
+            return NSOrderedDescending;
+        }
+        return (NSComparisonResult)NSOrderedSame;
+    }];
+    
+    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[temp count]];
+    for (id item in sortedItems) {
+        [result addObject:[[UCLSummaryEntry alloc] initWithItem:item amount:[temp objectForKey:item]]];
+    }
+    
+    return [NSArray arrayWithArray:result];
+    
 }
 
 #pragma mark - Table view data source

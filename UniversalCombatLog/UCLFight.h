@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 #import "UCLEntity.h"
+#import "UCLLogEvent.h"
+
+typedef BOOL (^UCLLogEventPredicate)(UCLLogEvent* event);
 
 @interface UCLFight : NSObject
 
@@ -22,6 +25,7 @@
 - (NSTimeInterval)duration;
 
 - (NSArray*)allEventsForEntity:(UCLEntity*)entity;
+- (NSArray*)allEventsForEntity:(UCLEntity*)entity withPredicate:(UCLLogEventPredicate)predicate;
 
 + (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle;
 

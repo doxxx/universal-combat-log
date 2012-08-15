@@ -10,11 +10,12 @@
 
 #import "UCLLogEvent.h"
 
-#define DPS_WINDOW_SIZE 5
+#define PER_SECOND_WINDOW_SIZE 5
 
 @implementation UCLActorViewController
 {
     UIPopoverController* _masterPopoverController;
+    NSArray* _events;
     NSArray* _spellBreakdownColors;
     NSDictionary* _spellBreakdown;
     NSArray* _sortedSpells;
@@ -94,6 +95,9 @@
     
     _actor = actor;
     _fight = fight;
+    _events = [fight allEventsForEntity:actor withPredicate:^(UCLLogEvent* event) {
+        return [event isDamage];
+    }];
     
     _spellBreakdown = [self calculateSpellBreakdown];
     _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
@@ -137,14 +141,14 @@
 {
     [self navigationItem].title = self.actor.name;
     
-    self.lineChartView.data = [self calculateDPS];
+    self.lineChartView.data = [self calculatePerSecondValues];
     self.pieChartView.data = _sortedSpellValues;
     [self.tableView reloadData];
 }
 
-- (NSArray *)calculateDamage
+- (NSArray *)calculateTotalsOverTime
 {
-    NSArray* events = [self.fight allEventsForEntity:self.actor];
+    NSArray* events = _events;
     NSUInteger duration = ceil(self.fight.duration);
     NSDate* start = self.fight.startTime;
     double* data = malloc(sizeof(double)*duration);
@@ -154,7 +158,7 @@
     }
     
     for (UCLLogEvent* event in events) {
-        if ([event isDamage] && [event.actor isEqualToEntity:self.actor]) {
+        if ([event.actor isEqualToEntity:self.actor]) {
             uint32_t index = floor([event.time timeIntervalSinceDate:start]);
             data[index] = data[index] + [event.amount doubleValue];
         }
@@ -170,31 +174,31 @@
     return numbers;
 }
 
-- (NSArray *)calculateDPS
+- (NSArray *)calculatePerSecondValues
 {
-    NSArray* damage = [self calculateDamage];
-    NSUInteger duration = [damage count];
-    NSMutableArray* dps = [NSMutableArray arrayWithCapacity:duration];
+    NSArray* totals = [self calculateTotalsOverTime];
+    NSUInteger count = [totals count];
+    NSMutableArray* result = [NSMutableArray arrayWithCapacity:count];
     
-    for (NSUInteger i = 0; i < duration; i++) {
+    for (NSUInteger i = 0; i < count; i++) {
         double value = 0;
-        NSUInteger windowSize = MIN(DPS_WINDOW_SIZE, i + 1);
+        NSUInteger windowSize = MIN(PER_SECOND_WINDOW_SIZE, i + 1);
         for (NSInteger j = i - windowSize + 1; j <= i; j++) {
-            value += [[damage objectAtIndex:j] doubleValue];
+            value += [[totals objectAtIndex:j] doubleValue];
         }
-        [dps addObject:[NSNumber numberWithDouble:(value / windowSize)]];
+        [result addObject:[NSNumber numberWithDouble:(value / windowSize)]];
     }
     
-    return dps;
+    return result;
 }
 
 - (NSDictionary *)calculateSpellBreakdown
 {
     NSMutableDictionary* spellBreakdown = [NSMutableDictionary dictionary];
     
-    NSArray* events = [self.fight allEventsForEntity:self.actor];
+    NSArray* events = _events;
     for (UCLLogEvent* event in events) {
-        if ([event isDamage] && [event.actor isEqualToEntity:self.actor]) {
+        if ([event.actor isEqualToEntity:self.actor]) {
             NSNumber* amount = [spellBreakdown objectForKey:event.spell];
             if (amount == nil) {
                 [spellBreakdown setObject:event.amount forKey:event.spell];

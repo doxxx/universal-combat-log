@@ -24,8 +24,7 @@ typedef BOOL (^UCLLogEventPredicate)(UCLLogEvent* event);
 - (NSDate*)endTime;
 - (NSTimeInterval)duration;
 
-- (NSArray*)allEventsForEntity:(UCLEntity*)entity;
-- (NSArray*)allEventsForEntity:(UCLEntity*)entity withPredicate:(UCLLogEventPredicate)predicate;
+- (NSArray*)filterEventsUsingPredicate:(UCLLogEventPredicate)predicate;
 
 + (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle;
 

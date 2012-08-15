@@ -40,23 +40,11 @@
     return [[self endTime] timeIntervalSinceDate:[self startTime]];
 }
 
-- (NSArray *)allEventsForEntity:(UCLEntity *)entity
+- (NSArray*)filterEventsUsingPredicate:(UCLLogEventPredicate)predicate
 {
     NSMutableArray *result = [NSMutableArray array];
     for (UCLLogEvent* event in self.events) {
-        if ([event.actor isEqualToEntity:entity] || [event.target isEqualToEntity:entity]) {
-            [result addObject:event];
-        }
-    }
-    return result;
-}
-
-- (NSArray *)allEventsForEntity:(UCLEntity *)entity withPredicate:(UCLLogEventPredicate)predicate;
-{
-    NSMutableArray *result = [NSMutableArray array];
-    for (UCLLogEvent* event in self.events) {
-        if (([event.actor isEqualToEntity:entity] || [event.target isEqualToEntity:entity]) &&
-            predicate(event)) {
+        if (predicate(event)) {
             [result addObject:event];
         }
     }

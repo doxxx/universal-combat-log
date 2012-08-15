@@ -95,8 +95,9 @@
     
     _actor = actor;
     _fight = fight;
-    _events = [fight allEventsForEntity:actor withPredicate:^(UCLLogEvent* event) {
-        return [event isDamage];
+    _events = [fight filterEventsUsingPredicate:^BOOL(UCLLogEvent* event) {
+        BOOL isActor = [event.actor isEqualToEntity:actor] || [event.target isEqualToEntity:actor];
+        return (isActor) && [event isDamage];
     }];
     
     _spellBreakdown = [self calculateSpellBreakdown];

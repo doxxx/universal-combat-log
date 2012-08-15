@@ -80,12 +80,12 @@
         UCLLogEventPredicate predicate = NULL;
         if ([self.summaryType isEqualToString:@"DPS"]) {
             predicate = ^BOOL(UCLLogEvent* event) {
-                return event.actor != nil && [event isDamage];
+                return event.actor != nil && event.actor.type == Player && [event isDamage];
             };
         }
         else if ([self.summaryType isEqualToString:@"HPS"]) {
             predicate = ^BOOL(UCLLogEvent* event) {
-                return event.actor != nil && [event isHealing];
+                return event.actor != nil && event.actor.type == Player && [event isHealing];
             };
         }
         _summary = [self summarizeActorsUsingPredicate:predicate];

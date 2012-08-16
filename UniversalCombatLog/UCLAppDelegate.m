@@ -23,6 +23,7 @@
     UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
     UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
     splitViewController.delegate = (id)navigationController.topViewController;
+    splitViewController.presentsWithGesture = NO;
 
     UINavigationController *logsNavigationController = [splitViewController.viewControllers objectAtIndex:0];
     UCLLogsViewController *logsViewController = (UCLLogsViewController *)logsNavigationController.topViewController;

@@ -18,7 +18,7 @@
 
 @end
 
-@interface UCLLineChartView : UIView
+@interface UCLLineChartView : UIView <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) id <UCLLineChartViewDelegate> delegate;
 @property (nonatomic) double xInterval;

@@ -13,6 +13,7 @@
 @implementation UCLLineChartView
 {
     UIPinchGestureRecognizer* _zoomGestureRecognizer;
+    UIPanGestureRecognizer* _panGestureRecognizer;
     NSNumber* _maxValue;
     CGFloat _leftInset;
     uint32_t _windowStartIndex;
@@ -28,6 +29,10 @@
         _zoomGestureRecognizer = [[UIPinchGestureRecognizer alloc] 
                                   initWithTarget:self action:@selector(handleZoomGesture:)];
         [self addGestureRecognizer:_zoomGestureRecognizer];
+        _panGestureRecognizer = [[UIPanGestureRecognizer alloc]
+                                 initWithTarget:self action:@selector(handlePanGesture:)];
+        _panGestureRecognizer.maximumNumberOfTouches = 1;
+        [self addGestureRecognizer:_panGestureRecognizer];
     }
     return self;
 }
@@ -218,6 +223,28 @@
         [self.delegate lineChartView:self didZoomToRange:NSMakeRange(_windowStartIndex, _windowSize)];
     }
 
+    [self setNeedsDisplay];
+}
+
+- (void)handlePanGesture:(UIPanGestureRecognizer*)gestureRecognizer
+{
+    CGPoint translation = [gestureRecognizer translationInView:self];
+    
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        _originalWindowStartIndex = _windowStartIndex;
+    }
+    
+    CGRect bounds = [self bounds];
+    CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
+    CGFloat xScale = chartWidth / _windowSize;
+    
+    CGFloat indexTranslation = translation.x / xScale;
+    _windowStartIndex = MAX(0, MIN([_data count] - _windowSize, 
+                                   _originalWindowStartIndex - indexTranslation));
+    if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
+        [self.delegate lineChartView:self didZoomToRange:NSMakeRange(_windowStartIndex, _windowSize)];
+    }
+    
     [self setNeedsDisplay];
 }
 

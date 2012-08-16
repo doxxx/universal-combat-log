@@ -8,8 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+@class UCLLineChartView;
+
+@protocol UCLLineChartViewDelegate <NSObject>
+
+@optional
+
+- (void)lineChartView:(UCLLineChartView*)lineChartView didZoomToRange:(NSRange)range;
+
+@end
+
 @interface UCLLineChartView : UIView
 
+@property (weak, nonatomic) id <UCLLineChartViewDelegate> delegate;
 @property (nonatomic) double xInterval;
 @property (nonatomic) double yInterval;
 @property (copy, nonatomic) NSArray* data;

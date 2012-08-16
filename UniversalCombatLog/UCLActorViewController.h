@@ -14,7 +14,7 @@
 #import "UCLEntity.h"
 #import "UCLFight.h"
 
-@interface UCLActorViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UCLPieChartViewDelegate>
+@interface UCLActorViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UCLPieChartViewDelegate, UCLLineChartViewDelegate>
 
 @property (strong, readonly, nonatomic) UCLEntity* actor;
 @property (strong, readonly, nonatomic) UCLFight* fight;

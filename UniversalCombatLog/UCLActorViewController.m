@@ -21,6 +21,7 @@
     NSArray* _sortedSpells;
     NSArray* _sortedSpellValues;
     double _spellBreakdownSum;
+    NSRange _range;
 }
 
 #pragma mark - View Methods
@@ -29,6 +30,7 @@
 {
     [super viewDidLoad];
     
+    self.lineChartView.delegate = self;
     self.pieChartView.delegate = self;
     
     NSMutableArray* colors = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
@@ -95,28 +97,14 @@
     
     _actor = actor;
     _fight = fight;
+    
     _events = [fight filterEventsUsingPredicate:^BOOL(UCLLogEvent* event) {
         BOOL isActor = [event.actor isEqualToEntity:actor] || [event.target isEqualToEntity:actor];
         return (isActor) && [event isDamage];
     }];
     
-    _spellBreakdown = [self calculateSpellBreakdown];
-    _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
-        return [amount2 compare:amount1];
-    }];
+    _range = NSMakeRange(0, ceil(_fight.duration));
     
-    NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
-    for (UCLSpell* spell in _sortedSpells) {
-        [sortedSpellValues addObject:[_spellBreakdown objectForKey:spell]];
-    }
-    _sortedSpellValues = [NSArray arrayWithArray:sortedSpellValues];
-    
-    double sum = 0;
-    for (NSNumber* value in [_spellBreakdown allValues]) {
-        sum += [value doubleValue];
-    }
-    _spellBreakdownSum = sum;
-
     [self configureView];
 }
 
@@ -141,15 +129,36 @@
 - (void)configureView
 {
     [self navigationItem].title = self.actor.name;
-    
     self.lineChartView.data = [self calculatePerSecondValues];
+    [self updateSpellBreakdowns];
+}
+
+- (void)updateSpellBreakdowns
+{
+    _spellBreakdown = [self calculateSpellBreakdown];
+    
+    _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
+        return [amount2 compare:amount1];
+    }];
+    
+    NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
+    for (UCLSpell* spell in _sortedSpells) {
+        [sortedSpellValues addObject:[_spellBreakdown objectForKey:spell]];
+    }
+    _sortedSpellValues = [NSArray arrayWithArray:sortedSpellValues];
+    
+    double sum = 0;
+    for (NSNumber* value in [_spellBreakdown allValues]) {
+        sum += [value doubleValue];
+    }
+    _spellBreakdownSum = sum;
+    
     self.pieChartView.data = _sortedSpellValues;
     [self.tableView reloadData];
 }
 
 - (NSArray *)calculateTotalsOverTime
 {
-    NSArray* events = _events;
     NSUInteger duration = ceil(self.fight.duration);
     NSDate* start = self.fight.startTime;
     double* data = malloc(sizeof(double)*duration);
@@ -158,7 +167,7 @@
         data[i] = 0;
     }
     
-    for (UCLLogEvent* event in events) {
+    for (UCLLogEvent* event in _events) {
         if ([event.actor isEqualToEntity:self.actor]) {
             uint32_t index = floor([event.time timeIntervalSinceDate:start]);
             data[index] = data[index] + [event.amount doubleValue];
@@ -197,8 +206,13 @@
 {
     NSMutableDictionary* spellBreakdown = [NSMutableDictionary dictionary];
     
-    NSArray* events = _events;
-    for (UCLLogEvent* event in events) {
+    NSDate* startTime = _fight.startTime;
+    
+    for (UCLLogEvent* event in _events) {
+        NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
+        if (timeDiff < _range.location || timeDiff >= _range.location + _range.length) {
+            continue;
+        }
         if ([event.actor isEqualToEntity:self.actor]) {
             NSNumber* amount = [spellBreakdown objectForKey:event.spell];
             if (amount == nil) {
@@ -260,6 +274,14 @@
         return [UIColor whiteColor];
     }
     return [_spellBreakdownColors objectAtIndex:segmentIndex];
+}
+
+#pragma mark - LineChartView Delegate Methods
+
+- (void)lineChartView:(UCLLineChartView *)lineChartView didZoomToRange:(NSRange)range
+{
+    _range = range;
+    [self updateSpellBreakdowns];
 }
 
 @end

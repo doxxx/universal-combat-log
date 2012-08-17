@@ -15,7 +15,7 @@
 @interface UCLActorsViewController : UITableViewController<UINavigationControllerDelegate>
 
 @property (weak, nonatomic) UCLActorViewController* actorViewController;
-@property (weak, nonatomic) UCLFight* fight;
+@property (strong, nonatomic) UCLFight* fight;
 @property (strong, nonatomic) NSString* summaryType;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *summaryTypeButton;

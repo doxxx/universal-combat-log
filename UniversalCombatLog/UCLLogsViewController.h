@@ -12,13 +12,9 @@
 #import "UCLActorViewController.h"
 #import "UCLLogFile.h"
 
-@interface UCLLogsViewController : UITableViewController <NSFetchedResultsControllerDelegate>
+@interface UCLLogsViewController : UITableViewController
 
 @property (strong, nonatomic) UCLActorViewController* actorViewController;
-
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-
-@property (readwrite, strong, nonatomic) UCLLogFile* logFile;
+@property (strong, nonatomic) NSURL* documentsDirectory;
 
 @end

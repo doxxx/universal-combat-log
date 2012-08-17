@@ -12,7 +12,7 @@
 
 @interface UCLFightsViewController : UITableViewController
 
-@property (readwrite, weak, nonatomic) NSArray* fights;
+@property (readwrite, strong, nonatomic) NSArray* fights;
 @property (readwrite, weak, nonatomic) UCLActorViewController* actorViewController;
 
 @end

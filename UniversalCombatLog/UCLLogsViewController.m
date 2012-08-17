@@ -41,6 +41,12 @@
     [self scanDocumentsDirectory];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self scanDocumentsDirectory];
+    [self.tableView reloadData];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;

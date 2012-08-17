@@ -18,16 +18,6 @@
         @throw [NSException exceptionWithName:NSRangeException reason:reason userInfo:nil]; \
     }
 
-@interface UCLLogFileLoader () // Private methods
-
-- (uint8_t)readUInt8;
-- (uint16_t)readUInt16;
-- (uint32_t)readUInt32;
-- (uint64_t)readUInt64;
-- (NSString*)readUTF8;
-
-@end
-
 @implementation UCLLogFileLoader
 
 - (id)initWithURL:(NSURL *)url
@@ -172,13 +162,7 @@
     return [UCLLogFile logFileWithFights:fights];
 }
 
-
-+ (UCLLogFile*)loadFromURL:(NSURL*)url
-{
-    return [[[UCLLogFileLoader alloc] initWithURL:url] load];
-}
-
-// Private methods
+#pragma mark - Private methods
 
 - (uint8_t)readUInt8
 {
@@ -221,6 +205,13 @@
     NSString* string = [[NSString alloc] initWithBytes:_cursor length:length encoding:NSUTF8StringEncoding];
     _cursor += length;
     return string;
+}
+
+#pragma mark - Factory methods
+
++ (UCLLogFile*)loadFromURL:(NSURL*)url
+{
+    return [[[UCLLogFileLoader alloc] initWithURL:url] load];
 }
 
 @end

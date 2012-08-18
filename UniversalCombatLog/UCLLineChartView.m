@@ -16,10 +16,10 @@
     UIPanGestureRecognizer* _panGestureRecognizer;
     NSNumber* _maxValue;
     CGFloat _leftInset;
-    uint32_t _windowStartIndex;
-    uint32_t _windowSize;
-    uint32_t _originalWindowStartIndex;
-    uint32_t _originalWindowSize;
+    CGFloat _scale;
+    CGFloat _offset;
+    CGFloat _originalScale;
+    CGFloat _originalOffset;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -71,8 +71,8 @@
         }
         self.xInterval = xInterval;
         
-        _windowStartIndex = 0;
-        _windowSize = [_data count];
+        _offset = 0;
+        _scale = 1;
     }
     else {
         _data = nil;
@@ -120,18 +120,22 @@
     CGFloat chartWidth = bounds.size.width - (leftInset + RINSET);
     CGFloat chartHeight = bounds.size.height - YINSET*2;
 
-    CGFloat xScale = chartWidth / _windowSize;
+    CGFloat xScale = chartWidth / [_data count] * _scale;
     CGFloat yScale = chartHeight / [_maxValue doubleValue];
     
     // Draw data line.
+    CGContextSaveGState(c);
     CGContextSetRGBStrokeColor(c, 0, 1, 0, 1);
     CGContextSetLineWidth(c, 2);
     CGContextSetLineJoin(c, kCGLineJoinRound);
     CGContextSetLineCap(c, kCGLineCapRound);
     
-    for (uint32_t index = 0; index < _windowSize; index++) {
-        NSNumber* value = [_data objectAtIndex:index + _windowStartIndex];
-        CGFloat x = leftInset + xScale * index;
+    CGContextClipToRect(c, CGRectMake(leftInset, YINSET, chartWidth, chartHeight));
+    
+    NSUInteger index = 0;
+    while (index < [_data count]) {
+        NSNumber* value = [_data objectAtIndex:index];
+        CGFloat x = leftInset + _offset + index * xScale;
         CGFloat y = YINSET + [value doubleValue] * yScale;
         if (index == 0) {
             CGContextMoveToPoint(c, x, y);
@@ -139,9 +143,12 @@
         else {
             CGContextAddLineToPoint(c, x, y);
         }
+        index++;
     }
     
     CGContextStrokePath(c);
+    
+    CGContextRestoreGState(c);
     
     // Draw axes.
     CGContextSetStrokeColorWithColor(c, [UIColor darkGrayColor].CGColor);
@@ -172,12 +179,12 @@
         CFRelease(line);
     }
     
-    NSUInteger xMarkerStart = floor(_windowStartIndex / self.xInterval) * self.xInterval;
-    if (xMarkerStart == 0) {
-        xMarkerStart += self.xInterval;
-    }
-    for (NSUInteger i = xMarkerStart; i < _windowStartIndex + _windowSize; i += self.xInterval) {
-        CGFloat x = leftInset + (i - _windowStartIndex) * xScale;
+    CGContextSaveGState(c);
+    
+    CGContextClipToRect(c, CGRectMake(leftInset, 0, chartWidth, bounds.size.height));
+
+    for (NSUInteger i = _xInterval; i < [_data count] * _xInterval; i += _xInterval) {
+        CGFloat x = leftInset + _offset + i * xScale;
         CGContextMoveToPoint(c, x, YINSET);
         CGContextAddLineToPoint(c, x, YINSET - MARKER_LENGTH);
         CGContextStrokePath(c);
@@ -193,6 +200,8 @@
         CTLineDraw(line, c);
         CFRelease(line);
     }
+    
+    CGContextRestoreGState(c);
 
     CFRelease(axisMarkerFont);
 }
@@ -203,24 +212,27 @@
     CGPoint loc = [gestureRecognizer locationInView:self];
     
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        _originalWindowStartIndex = _windowStartIndex;
-        _originalWindowSize = _windowSize;
+        _originalScale = _scale;
+        _originalOffset = _offset;
     }
-    
-    _windowSize = MIN([_data count], MAX(1, _originalWindowSize / scale));
-    
-    CGRect bounds = [self bounds];
-    CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
-    CGFloat xScale = chartWidth / _originalWindowSize;
+    else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        _offset = MIN(0, _offset);
 
-    CGFloat relIndex = (loc.x - _leftInset) / xScale;
-    CGFloat ratio = relIndex / _originalWindowSize;
-    CGFloat newStartIndex = (relIndex + _originalWindowStartIndex) - ratio * _windowSize;
-    
-    _windowStartIndex = MAX(0, MIN([_data count] - _windowSize, newStartIndex));
-    
-    if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
-        [self.delegate lineChartView:self didZoomToRange:NSMakeRange(_windowStartIndex, _windowSize)];
+        if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
+            [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
+        }
+    }
+    else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
+        _scale = MAX(1, _originalScale * scale);
+        
+        CGFloat p = (loc.x - _leftInset);
+        CGFloat newOffset = p - (p - _originalOffset) * _scale / _originalScale;
+        
+        _offset = newOffset;
+        
+        if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
+            [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
+        }
     }
 
     [self setNeedsDisplay];
@@ -229,23 +241,39 @@
 - (void)handlePanGesture:(UIPanGestureRecognizer*)gestureRecognizer
 {
     CGPoint translation = [gestureRecognizer translationInView:self];
-    
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        _originalWindowStartIndex = _windowStartIndex;
+        _originalOffset = _offset;
     }
-    
-    CGRect bounds = [self bounds];
-    CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
-    CGFloat xScale = chartWidth / _windowSize;
-    
-    CGFloat indexTranslation = translation.x / xScale;
-    _windowStartIndex = MAX(0, MIN([_data count] - _windowSize, 
-                                   _originalWindowStartIndex - indexTranslation));
-    if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
-        [self.delegate lineChartView:self didZoomToRange:NSMakeRange(_windowStartIndex, _windowSize)];
+    else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        CGRect bounds = [self bounds];
+        CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
+        _offset = MIN(0, _offset);
+        _offset = MAX((-chartWidth) * _scale + chartWidth, _offset);
+
+        if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
+            [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
+        }
+    }
+    else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
+        _offset = _originalOffset + translation.x;
+
+        if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
+            [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
+        }
     }
     
     [self setNeedsDisplay];
+}
+
+- (NSRange)makeRangeForVisibleData
+{
+    CGRect bounds = [self bounds];
+    CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
+    CGFloat xScale = chartWidth / [_data count] * _scale;
+    CGFloat posOffset = _offset * -1;
+    NSUInteger start = MAX(0, ceil(posOffset / xScale));
+    NSUInteger length = MIN([_data count], floor((posOffset + chartWidth) / xScale) - start);
+    return NSMakeRange(start, length);
 }
 
 @end

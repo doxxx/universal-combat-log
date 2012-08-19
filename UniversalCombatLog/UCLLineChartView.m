@@ -10,6 +10,11 @@
 
 #import "UCLLineChartView.h"
 
+#define LINSET 30
+#define RINSET 30
+#define YINSET 30
+#define MARKER_LENGTH 5
+
 @implementation UCLLineChartView
 {
     UIPinchGestureRecognizer* _zoomGestureRecognizer;
@@ -73,6 +78,11 @@
         
         _offset = 0;
         _scale = 1;
+        
+        int numDigits = ceil(log10([_maxValue doubleValue]));
+        NSString* biggestLabel = [NSString stringWithFormat:@"%0*d", numDigits, 0];
+        CGRect labelRect = [self boundsForString:biggestLabel];
+        _leftInset = MAX(LINSET, labelRect.size.width + MARKER_LENGTH + 8);
     }
     else {
         _data = nil;
@@ -80,11 +90,6 @@
     }
     [self setNeedsDisplay];
 }
-
-#define LINSET 30
-#define RINSET 30
-#define YINSET 30
-#define MARKER_LENGTH 5
 
 - (void)drawRect:(CGRect)rect
 {
@@ -100,24 +105,7 @@
     CGContextTranslateCTM(c, 0, bounds.size.height);
     CGContextScaleCTM(c, 1, -1);
     
-    CGFloat leftInset = LINSET;
-    
-    CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
-    CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
-    NSDictionary* axisMarkerAttr = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    (__bridge id)axisMarkerFont, kCTFontAttributeName,
-                                    axisMarkerColor, kCTForegroundColorAttributeName, nil];
-    
-    int numDigits = ceil(log10([_maxValue doubleValue]));
-    NSString* biggestLabel = [NSString stringWithFormat:@"%0*d", numDigits, 0];
-    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:biggestLabel 
-                                                                  attributes:axisMarkerAttr];
-    CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
-    CGRect labelRect = CTLineGetImageBounds(line, c);
-    leftInset = MAX(leftInset, labelRect.size.width + MARKER_LENGTH + 8);
-    _leftInset = leftInset;
-    
-    CGFloat chartWidth = bounds.size.width - (leftInset + RINSET);
+    CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
     CGFloat chartHeight = bounds.size.height - YINSET*2;
 
     CGFloat xScale = chartWidth / [_data count] * _scale;
@@ -130,12 +118,12 @@
     CGContextSetLineJoin(c, kCGLineJoinRound);
     CGContextSetLineCap(c, kCGLineCapRound);
     
-    CGContextClipToRect(c, CGRectMake(leftInset, YINSET, chartWidth, chartHeight));
+    CGContextClipToRect(c, CGRectMake(_leftInset, YINSET, chartWidth, chartHeight));
     
     NSUInteger index = 0;
     while (index < [_data count]) {
         NSNumber* value = [_data objectAtIndex:index];
-        CGFloat x = leftInset + _offset + index * xScale;
+        CGFloat x = _leftInset + _offset + index * xScale;
         CGFloat y = YINSET + [value doubleValue] * yScale;
         if (index == 0) {
             CGContextMoveToPoint(c, x, y);
@@ -156,17 +144,18 @@
     CGContextSetLineJoin(c, kCGLineJoinMiter);
     CGContextSetLineCap(c, kCGLineCapSquare);
     
-    CGContextMoveToPoint(c, leftInset, YINSET + chartHeight);
-    CGContextAddLineToPoint(c, leftInset, YINSET);
-    CGContextAddLineToPoint(c, leftInset + chartWidth, YINSET);
+    CGContextMoveToPoint(c, _leftInset, YINSET + chartHeight);
+    CGContextAddLineToPoint(c, _leftInset, YINSET);
+    CGContextAddLineToPoint(c, _leftInset + chartWidth, YINSET);
     CGContextStrokePath(c);
     
     // Draw markers on axes.
+    NSDictionary* axisMarkerAttr = [self axisMarkerLabelAttributes];
     NSUInteger yMarkerCount = floor([_maxValue doubleValue] / self.yInterval);
     for (NSUInteger i = 1; i <= yMarkerCount; i++) {
         CGFloat y = YINSET + (i * self.yInterval) * yScale;
-        CGContextMoveToPoint(c, leftInset, y);
-        CGContextAddLineToPoint(c, leftInset - MARKER_LENGTH, y);
+        CGContextMoveToPoint(c, _leftInset, y);
+        CGContextAddLineToPoint(c, _leftInset - MARKER_LENGTH, y);
         CGContextStrokePath(c);
 
         NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.yInterval)];
@@ -174,17 +163,17 @@
                                                                       attributes:axisMarkerAttr];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
         CGRect labelRect = CTLineGetImageBounds(line, c);
-        CGContextSetTextPosition(c, leftInset - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
+        CGContextSetTextPosition(c, _leftInset - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
         CTLineDraw(line, c);
         CFRelease(line);
     }
     
     CGContextSaveGState(c);
     
-    CGContextClipToRect(c, CGRectMake(leftInset, 0, chartWidth, bounds.size.height));
+    CGContextClipToRect(c, CGRectMake(_leftInset, 0, chartWidth, bounds.size.height));
 
     for (NSUInteger i = _xInterval; i < [_data count] * _xInterval; i += _xInterval) {
-        CGFloat x = leftInset + _offset + i * xScale;
+        CGFloat x = _leftInset + _offset + i * xScale;
         CGContextMoveToPoint(c, x, YINSET);
         CGContextAddLineToPoint(c, x, YINSET - MARKER_LENGTH);
         CGContextStrokePath(c);
@@ -202,8 +191,6 @@
     }
     
     CGContextRestoreGState(c);
-
-    CFRelease(axisMarkerFont);
 }
 
 - (void)handleZoomGesture:(UIPinchGestureRecognizer*)gestureRecognizer
@@ -274,6 +261,32 @@
     NSUInteger start = MAX(0, ceil(posOffset / xScale));
     NSUInteger length = MIN([_data count], floor((posOffset + chartWidth) / xScale) - start);
     return NSMakeRange(start, length);
+}
+
+- (CGRect)boundsForString:(NSString*)string
+{
+    UIGraphicsBeginImageContext([self bounds].size);
+    
+    NSDictionary* axisMarkerAttr = [self axisMarkerLabelAttributes];
+    NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:string 
+                                                                  attributes:axisMarkerAttr];
+    CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
+    CGRect labelRect = CTLineGetImageBounds(line, UIGraphicsGetCurrentContext());
+    
+    UIGraphicsEndImageContext();
+    
+    return labelRect;
+}
+
+- (NSDictionary*)axisMarkerLabelAttributes
+{
+    CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
+    CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
+    NSDictionary* attr = [NSDictionary dictionaryWithObjectsAndKeys:
+                          (__bridge id)axisMarkerFont, kCTFontAttributeName,
+                          axisMarkerColor, kCTForegroundColorAttributeName, nil];
+    CFRelease(axisMarkerFont);
+    return attr;
 }
 
 @end

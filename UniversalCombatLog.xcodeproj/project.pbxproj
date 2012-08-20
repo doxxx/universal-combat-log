@@ -25,6 +25,7 @@
 		F88649BF15B8C31900073204 /* UCLSpell.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BE15B8C31900073204 /* UCLSpell.m */; };
 		F88649C215B9A06F00073204 /* UCLFight.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C115B9A06F00073204 /* UCLFight.m */; };
 		F88649C515B9A9D900073204 /* UCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C415B9A9D900073204 /* UCLLogFile.m */; };
+		F8DBA40515E068DA00A3A9F8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */; };
 		F8FDE34115BDF8680094FE26 /* UCLLogFileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE34015BDF8680094FE26 /* UCLLogFileLoader.m */; };
 		F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */; };
 		F8FDE37615C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */; };
@@ -67,6 +68,7 @@
 		F88649C115B9A06F00073204 /* UCLFight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFight.m; sourceTree = "<group>"; };
 		F88649C315B9A9D900073204 /* UCLLogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLogFile.h; sourceTree = "<group>"; };
 		F88649C415B9A9D900073204 /* UCLLogFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLogFile.m; sourceTree = "<group>"; };
+		F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F8FDE33F15BDF8680094FE26 /* UCLLogFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLogFileLoader.h; sourceTree = "<group>"; };
 		F8FDE34015BDF8680094FE26 /* UCLLogFileLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLogFileLoader.m; sourceTree = "<group>"; };
 		F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLFightsViewController.h; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 				F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */,
 				F886497715B82E8F00073204 /* CoreData.framework in Frameworks */,
 				F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */,
+				F8DBA40515E068DA00A3A9F8 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +105,7 @@
 		F886496115B82E8F00073204 = {
 			isa = PBXGroup;
 			children = (
+				F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */,
 				F844999615D1C3620090D3EB /* CoreText.framework */,
 				F886497815B82E8F00073204 /* UniversalCombatLog */,
 				F886496F15B82E8F00073204 /* Frameworks */,

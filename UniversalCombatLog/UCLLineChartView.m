@@ -7,6 +7,7 @@
 //
 
 #import <CoreText/CoreText.h>
+#import <QuartzCore/QuartzCore.h>
 
 #import "UCLLineChartView.h"
 
@@ -15,14 +16,100 @@
 #define YINSET 30
 #define MARKER_LENGTH 5
 
+@interface DataLayer : CALayer
+
+@property (weak, nonatomic) NSArray* data;
+@property (nonatomic) double maxValue;
+@property (nonatomic) CGFloat offset;
+@property (nonatomic) CGFloat scale;
+
+@end
+
+@implementation DataLayer
+
+@synthesize data, maxValue;
+@dynamic offset, scale;
+
+- (id)initWithLayer:(id)layer
+{
+    self = [super initWithLayer:layer];
+    if (self != nil) {
+        if ([layer isKindOfClass:[DataLayer class]]) {
+            DataLayer* other = layer;
+            self.data = other.data;
+            self.maxValue = other.maxValue;
+            self.offset = other.offset;
+            self.scale = other.scale;
+        }
+    }
+    return self;
+}
+
+- (void)drawInContext:(CGContextRef)ctx
+{
+    if (data == nil) {
+        return;
+    }
+    
+    CGRect bounds = [self bounds];
+    
+    // Flip co-ordinate system to bottom left going up and right.
+    CGContextTranslateCTM(ctx, 0, bounds.size.height);
+    CGContextScaleCTM(ctx, 1, -1);
+    
+    CGFloat xScale = bounds.size.width / [data count] * self.scale;
+    CGFloat yScale = bounds.size.height / self.maxValue;
+    
+    // Draw data line.
+    CGContextSaveGState(ctx);
+    CGContextSetRGBStrokeColor(ctx, 0, 1, 0, 1);
+    CGContextSetLineWidth(ctx, 2);
+    CGContextSetLineJoin(ctx, kCGLineJoinRound);
+    CGContextSetLineCap(ctx, kCGLineCapRound);
+    
+    CGContextClipToRect(ctx, bounds);
+    
+    NSUInteger index = 0;
+    while (index < [data count]) {
+        NSNumber* value = [data objectAtIndex:index];
+        CGFloat x = self.offset + index * xScale;
+        CGFloat y = [value doubleValue] * yScale;
+        if (index == 0) {
+            CGContextMoveToPoint(ctx, x, y);
+        }
+        else {
+            CGContextAddLineToPoint(ctx, x, y);
+        }
+        index++;
+    }
+    
+    CGContextStrokePath(ctx);
+    
+    CGContextRestoreGState(ctx);
+
+}
+
++ (BOOL)needsDisplayForKey:(NSString *)key
+{
+    if ([key isEqualToString:@"offset"] || [key isEqualToString:@"scale"]) {
+        return YES;
+    }
+    else {
+        return [super needsDisplayForKey:key];
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////
+
 @implementation UCLLineChartView
 {
+    DataLayer* _dataLayer;
     UIPinchGestureRecognizer* _zoomGestureRecognizer;
     UIPanGestureRecognizer* _panGestureRecognizer;
-    NSNumber* _maxValue;
+    double _maxValue;
     CGFloat _leftInset;
-    CGFloat _scale;
-    CGFloat _offset;
     CGFloat _originalScale;
     CGFloat _originalOffset;
 }
@@ -31,6 +118,19 @@
 {
     self = [super initWithCoder:coder];
     if (self) {
+        _dataLayer = [DataLayer layer];
+        [self.layer addSublayer:_dataLayer];
+        _dataLayer.anchorPoint = CGPointMake(0, 0);
+        _dataLayer.actions = [NSDictionary dictionaryWithObjectsAndKeys:
+                               [NSNull null], @"position", 
+                               [NSNull null], @"bounds", 
+                               [NSNull null], @"contents", 
+                               nil];
+
+        _maxValue = 0;
+        
+        [self configureLayers];
+
         _zoomGestureRecognizer = [[UIPinchGestureRecognizer alloc] 
                                   initWithTarget:self action:@selector(handleZoomGesture:)];
         [self addGestureRecognizer:_zoomGestureRecognizer];
@@ -53,15 +153,17 @@
 {
     if (data != nil) {
         _data = [data copy];
-        _maxValue = [_data objectAtIndex:0];
+        
+        _maxValue = [[_data objectAtIndex:0] doubleValue];
         for (NSNumber* value in _data) {
-            if ([value compare:_maxValue] == NSOrderedDescending) {
-                _maxValue = value;
+            double v = [value doubleValue];
+            if (v > _maxValue) {
+                _maxValue = v;
             }
         }
         
-        double yInterval = pow(10, floor(log10([_maxValue doubleValue])));
-        double yIntervalCount = [_maxValue doubleValue] / yInterval;
+        double yInterval = pow(10, floor(log10(_maxValue)));
+        double yIntervalCount = _maxValue / yInterval;
         if (yIntervalCount < 3) {
             yInterval /= 5;
         }
@@ -70,204 +172,244 @@
         }
         self.yInterval = yInterval;
         
-        double xInterval = MAX(1, round(floor([_data count] / 10) / 15) * 15);
-        while ([_data count] / xInterval > 20) {
+        NSUInteger count = [_data count];
+        double xInterval = MAX(1, round(floor(count / 10) / 15) * 15);
+        while (count / xInterval > 20) {
             xInterval *= 2;
         }
         self.xInterval = xInterval;
         
-        _offset = 0;
-        _scale = 1;
-        
-        int numDigits = ceil(log10([_maxValue doubleValue]));
-        NSString* biggestLabel = [NSString stringWithFormat:@"%0*d", numDigits, 0];
-        CGRect labelRect = [self boundsForString:biggestLabel];
-        _leftInset = MAX(LINSET, labelRect.size.width + MARKER_LENGTH + 8);
+        [self configureLayers];
     }
     else {
         _data = nil;
-        _maxValue = nil;
+        _maxValue = 0;
     }
-    [self setNeedsDisplay];
+    [self.layer setNeedsDisplay];
+    [_dataLayer setNeedsDisplay];
 }
 
-- (void)drawRect:(CGRect)rect
+- (void)configureLayers
 {
-    if (self.data == nil) {
-        return;
-    }
-    
-    CGContextRef c = UIGraphicsGetCurrentContext();
-    
     CGRect bounds = [self bounds];
 
-    // Flip co-ordinate system to bottom left going up and right.
-    CGContextTranslateCTM(c, 0, bounds.size.height);
-    CGContextScaleCTM(c, 1, -1);
+    int numDigits = 0;
+    if (_maxValue > 0) {
+        numDigits = ceil(log10(_maxValue));
+    }
+    NSString* biggestLabel = [NSString stringWithFormat:@"%0*d", numDigits, 0];
+    CGRect labelRect = [UCLLineChartView boundsForString:biggestLabel];
+    _leftInset = MAX(LINSET, labelRect.size.width + MARKER_LENGTH + 8);
     
     CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
     CGFloat chartHeight = bounds.size.height - YINSET*2;
+    _dataLayer.bounds = CGRectMake(0, 0, chartWidth, chartHeight);
+    _dataLayer.position = CGPointMake(_leftInset, YINSET);
 
-    CGFloat xScale = chartWidth / [_data count] * _scale;
-    CGFloat yScale = chartHeight / [_maxValue doubleValue];
+    _dataLayer.offset = 0;
+    _dataLayer.scale = 1;
     
-    // Draw data line.
-    CGContextSaveGState(c);
-    CGContextSetRGBStrokeColor(c, 0, 1, 0, 1);
-    CGContextSetLineWidth(c, 2);
-    CGContextSetLineJoin(c, kCGLineJoinRound);
-    CGContextSetLineCap(c, kCGLineCapRound);
-    
-    CGContextClipToRect(c, CGRectMake(_leftInset, YINSET, chartWidth, chartHeight));
-    
-    NSUInteger index = 0;
-    while (index < [_data count]) {
-        NSNumber* value = [_data objectAtIndex:index];
-        CGFloat x = _leftInset + _offset + index * xScale;
-        CGFloat y = YINSET + [value doubleValue] * yScale;
-        if (index == 0) {
-            CGContextMoveToPoint(c, x, y);
-        }
-        else {
-            CGContextAddLineToPoint(c, x, y);
-        }
-        index++;
+    _dataLayer.data = _data;
+    _dataLayer.maxValue = _maxValue;
+}
+
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+    if (_data == nil) {
+        return;
     }
     
-    CGContextStrokePath(c);
+    CGRect bounds = [self bounds];
     
-    CGContextRestoreGState(c);
+    // Flip co-ordinate system to bottom left going up and right.
+    CGContextTranslateCTM(ctx, 0, bounds.size.height);
+    CGContextScaleCTM(ctx, 1, -1);
+    
+    CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
+    CGFloat chartHeight = bounds.size.height - YINSET*2;
+    
+    CGFloat scale = [[_dataLayer valueForKey:@"scale"] floatValue];
+    CGFloat offset = [[_dataLayer valueForKey:@"offset"] floatValue];
+    
+    CGFloat xScale = chartWidth / [_data count] * scale;
+    CGFloat yScale = chartHeight / _maxValue;
     
     // Draw axes.
-    CGContextSetStrokeColorWithColor(c, [UIColor darkGrayColor].CGColor);
-    CGContextSetLineWidth(c, 2);
-    CGContextSetLineJoin(c, kCGLineJoinMiter);
-    CGContextSetLineCap(c, kCGLineCapSquare);
+    CGContextSetStrokeColorWithColor(ctx, [UIColor darkGrayColor].CGColor);
+    CGContextSetLineWidth(ctx, 2);
+    CGContextSetLineJoin(ctx, kCGLineJoinMiter);
+    CGContextSetLineCap(ctx, kCGLineCapSquare);
     
-    CGContextMoveToPoint(c, _leftInset, YINSET + chartHeight);
-    CGContextAddLineToPoint(c, _leftInset, YINSET);
-    CGContextAddLineToPoint(c, _leftInset + chartWidth, YINSET);
-    CGContextStrokePath(c);
+    CGContextMoveToPoint(ctx, _leftInset, YINSET + chartHeight);
+    CGContextAddLineToPoint(ctx, _leftInset, YINSET);
+    CGContextAddLineToPoint(ctx, _leftInset + chartWidth, YINSET);
+    CGContextStrokePath(ctx);
     
     // Draw markers on axes.
-    NSDictionary* axisMarkerAttr = [self axisMarkerLabelAttributes];
-    NSUInteger yMarkerCount = floor([_maxValue doubleValue] / self.yInterval);
+    NSDictionary* axisMarkerAttr = [UCLLineChartView axisMarkerLabelAttributes];
+    NSUInteger yMarkerCount = floor(_maxValue / self.yInterval);
     for (NSUInteger i = 1; i <= yMarkerCount; i++) {
         CGFloat y = YINSET + (i * self.yInterval) * yScale;
-        CGContextMoveToPoint(c, _leftInset, y);
-        CGContextAddLineToPoint(c, _leftInset - MARKER_LENGTH, y);
-        CGContextStrokePath(c);
-
+        CGContextMoveToPoint(ctx, _leftInset, y);
+        CGContextAddLineToPoint(ctx, _leftInset - MARKER_LENGTH, y);
+        CGContextStrokePath(ctx);
+        
         NSString* markerLabel = [NSString stringWithFormat:@"%0.0f", (i * self.yInterval)];
         NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
                                                                       attributes:axisMarkerAttr];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
-        CGRect labelRect = CTLineGetImageBounds(line, c);
-        CGContextSetTextPosition(c, _leftInset - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
-        CTLineDraw(line, c);
+        CGRect labelRect = CTLineGetImageBounds(line, ctx);
+        CGContextSetTextPosition(ctx, _leftInset - MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
+        CTLineDraw(line, ctx);
         CFRelease(line);
     }
     
-    CGContextSaveGState(c);
+    CGContextSaveGState(ctx);
     
-    CGContextClipToRect(c, CGRectMake(_leftInset, 0, chartWidth, bounds.size.height));
-
+    CGContextClipToRect(ctx, CGRectMake(_leftInset, 0, chartWidth, bounds.size.height));
+    
     for (NSUInteger i = _xInterval; i < [_data count] * _xInterval; i += _xInterval) {
-        CGFloat x = _leftInset + _offset + i * xScale;
-        CGContextMoveToPoint(c, x, YINSET);
-        CGContextAddLineToPoint(c, x, YINSET - MARKER_LENGTH);
-        CGContextStrokePath(c);
-
+        CGFloat x = _leftInset + offset + i * xScale;
+        CGContextMoveToPoint(ctx, x, YINSET);
+        CGContextAddLineToPoint(ctx, x, YINSET - MARKER_LENGTH);
+        CGContextStrokePath(ctx);
+        
         double minutes = floor(i / 60.0);
         double seconds = round((i / 60.0 - minutes) * 60);
         NSString* markerLabel = [NSString stringWithFormat:@"%.0f:%02.f", minutes, seconds];
         NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
                                                                       attributes:axisMarkerAttr];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
-        CGRect labelRect = CTLineGetImageBounds(line, c);
-        CGContextSetTextPosition(c, x - labelRect.size.width/2, YINSET - MARKER_LENGTH - labelRect.size.height - 4);
-        CTLineDraw(line, c);
+        CGRect labelRect = CTLineGetImageBounds(line, ctx);
+        CGContextSetTextPosition(ctx, x - labelRect.size.width/2, YINSET - MARKER_LENGTH - labelRect.size.height - 4);
+        CTLineDraw(line, ctx);
         CFRelease(line);
     }
     
-    CGContextRestoreGState(c);
+    CGContextRestoreGState(ctx);
 }
 
 - (void)handleZoomGesture:(UIPinchGestureRecognizer*)gestureRecognizer
 {
-    CGFloat scale = gestureRecognizer.scale;
+    CGFloat gestureScale = gestureRecognizer.scale;
     CGPoint loc = [gestureRecognizer locationInView:self];
     
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        _originalScale = _scale;
-        _originalOffset = _offset;
+        _originalScale = _dataLayer.scale;
+        _originalOffset = _dataLayer.offset;
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        _offset = MIN(0, _offset);
+        CGFloat newOffset = MIN(0, _dataLayer.offset);
+        CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"offset"];
+        anim.removedOnCompletion = YES;
+        anim.duration = 0.5;
+        anim.fromValue = [NSNumber numberWithFloat:_dataLayer.offset];
+        anim.toValue = [NSNumber numberWithFloat:newOffset];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+        [_dataLayer addAnimation:anim forKey:@"animateOffset"];
+        _dataLayer.offset = newOffset;
 
         if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
             [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
         }
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        _scale = MAX(1, _originalScale * scale);
+        CGFloat newScale = MAX(1, _originalScale * gestureScale);
         
         CGFloat p = (loc.x - _leftInset);
-        CGFloat newOffset = p - (p - _originalOffset) * _scale / _originalScale;
+        CGFloat newOffset = p - (p - _originalOffset) * newScale / _originalScale;
         
-        _offset = newOffset;
+        _dataLayer.scale = newScale;
+        _dataLayer.offset = newOffset;
         
         if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
             [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
         }
     }
 
-    [self setNeedsDisplay];
+    [self.layer setNeedsDisplay];
+    [_dataLayer setNeedsDisplay];
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer*)gestureRecognizer
 {
     CGPoint translation = [gestureRecognizer translationInView:self];
+    CGPoint velocity = [gestureRecognizer velocityInView:self];
+    
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        _originalOffset = _offset;
+        _originalOffset = _dataLayer.offset;
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        NSLog(@"end: velocity=%.3f", velocity.x);
         CGRect bounds = [self bounds];
         CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
-        _offset = MIN(0, _offset);
-        _offset = MAX((-chartWidth) * _scale + chartWidth, _offset);
+        CGFloat newOffset = _dataLayer.offset;
+        CGFloat chartScale = _dataLayer.scale;
+        
+        CGFloat min = (-chartWidth) * chartScale + chartWidth;
+        
+        if (newOffset > 0 || newOffset < min) {
+            newOffset = MIN(0, newOffset);
+            newOffset = MAX(min, newOffset);
+            CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"offset"];
+            anim.removedOnCompletion = YES;
+            anim.duration = 0.5;
+            anim.fromValue = [NSNumber numberWithFloat:_dataLayer.offset];
+            anim.toValue = [NSNumber numberWithFloat:newOffset];
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+            [_dataLayer addAnimation:anim forKey:@"animateOffset"];
+        }
+        else if (abs(velocity.x) > 0) {
+            newOffset = newOffset + velocity.x * 0.5;
+            newOffset = MIN(0, newOffset);
+            newOffset = MAX(min, newOffset);
+            CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"offset"];
+            anim.removedOnCompletion = YES;
+            anim.duration = 0.5;
+            anim.fromValue = [NSNumber numberWithFloat:_dataLayer.offset];
+            anim.toValue = [NSNumber numberWithFloat:newOffset];
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+            [_dataLayer addAnimation:anim forKey:@"animateOffset"];
+        }
+        
+        _dataLayer.offset = newOffset;
 
         if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
             [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
         }
     }
     else if (gestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        _offset = _originalOffset + translation.x;
+        NSLog(@"change: velocity=%.3f", velocity.x);
+        CGFloat newOffset = _originalOffset + translation.x;
+        _dataLayer.offset = newOffset;
 
         if ([self.delegate respondsToSelector:@selector(lineChartView:didZoomToRange:)]) {
             [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
         }
     }
     
-    [self setNeedsDisplay];
+    [self.layer setNeedsDisplay];
+    [_dataLayer setNeedsDisplay];
 }
 
 - (NSRange)makeRangeForVisibleData
 {
+    CGFloat scale = _dataLayer.scale;
+    CGFloat offset = _dataLayer.offset;
     CGRect bounds = [self bounds];
     CGFloat chartWidth = bounds.size.width - (_leftInset + RINSET);
-    CGFloat xScale = chartWidth / [_data count] * _scale;
-    CGFloat posOffset = _offset * -1;
+    CGFloat xScale = chartWidth / [_data count] * scale;
+    CGFloat posOffset = offset * -1;
     NSUInteger start = MAX(0, ceil(posOffset / xScale));
     NSUInteger length = MIN([_data count], floor((posOffset + chartWidth) / xScale) - start);
     return NSMakeRange(start, length);
 }
 
-- (CGRect)boundsForString:(NSString*)string
++ (CGRect)boundsForString:(NSString*)string
 {
-    UIGraphicsBeginImageContext([self bounds].size);
+    UIGraphicsBeginImageContext(CGSizeMake(400, 400));
     
-    NSDictionary* axisMarkerAttr = [self axisMarkerLabelAttributes];
+    NSDictionary* axisMarkerAttr = [UCLLineChartView axisMarkerLabelAttributes];
     NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:string 
                                                                   attributes:axisMarkerAttr];
     CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
@@ -278,7 +420,7 @@
     return labelRect;
 }
 
-- (NSDictionary*)axisMarkerLabelAttributes
++ (NSDictionary*)axisMarkerLabelAttributes
 {
     CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
     CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
@@ -290,3 +432,6 @@
 }
 
 @end
+
+
+

@@ -329,7 +329,7 @@
             anim.duration = 0.5;
             anim.fromValue = [NSNumber numberWithFloat:_chartLayer.offset];
             anim.toValue = [NSNumber numberWithFloat:newOffset];
-            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
             [_chartLayer addAnimation:anim forKey:@"animateOffset"];
         }
         else if (abs(velocity.x) > 0) {
@@ -341,7 +341,7 @@
             anim.duration = 0.5;
             anim.fromValue = [NSNumber numberWithFloat:_chartLayer.offset];
             anim.toValue = [NSNumber numberWithFloat:newOffset];
-            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+            anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
             [_chartLayer addAnimation:anim forKey:@"animateOffset"];
         }
         

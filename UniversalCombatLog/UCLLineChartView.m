@@ -32,9 +32,6 @@
 
 @implementation ChartLayer
 
-@synthesize textAttributes, chartOrigin, chartSize, data, xInterval, yInterval, maxValue;
-@dynamic offset, scale;
-
 - (id)initWithLayer:(id)layer
 {
     self = [super initWithLayer:layer];
@@ -53,6 +50,41 @@
         }
     }
     return self;
+}
+
+@synthesize textAttributes, chartOrigin, data=_data, xInterval=_xInterval, yInterval=_yInterval;
+@synthesize maxValue=_maxValue;
+@dynamic chartSize, offset, scale;
+
+- (void)setData:(NSArray *)data
+{
+    _data = data;
+    
+    double maxValue = [[_data objectAtIndex:0] doubleValue];
+    for (NSNumber* value in _data) {
+        double v = [value doubleValue];
+        if (v > maxValue) {
+            maxValue = v;
+        }
+    }
+    self.maxValue = maxValue;
+    
+    double yInterval = pow(10, floor(log10(maxValue)));
+    double yIntervalCount = maxValue / yInterval;
+    if (yIntervalCount < 3) {
+        yInterval /= 5;
+    }
+    else if (yIntervalCount < 8) {
+        yInterval /= 2;
+    }
+    self.yInterval = yInterval;
+
+    NSUInteger count = [_data count];
+    double xInterval = MAX(1, round(floor(count / 10) / 15) * 15);
+    while (count / xInterval > 20) {
+        xInterval *= 2;
+    }
+    self.xInterval = xInterval;
 }
 
 - (void)drawInContext:(CGContextRef)ctx
@@ -178,6 +210,7 @@
 
         _chartLayer = [ChartLayer layer];
         [self.layer addSublayer:_chartLayer];
+        _chartLayer.needsDisplayOnBoundsChange = YES;
         _chartLayer.anchorPoint = CGPointMake(0, 0);
         _chartLayer.position = CGPointMake(0, 0);
         _chartLayer.actions = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -186,12 +219,12 @@
                                [NSNull null], @"contents", 
                                nil];
         _chartLayer.textAttributes = [UCLLineChartView axisMarkerLabelAttributes];
-//        _chartLayer.backgroundColor = [UIColor redColor].CGColor;
         _chartLayer.hidden = YES;
 
         _zoomGestureRecognizer = [[UIPinchGestureRecognizer alloc] 
                                   initWithTarget:self action:@selector(handleZoomGesture:)];
         [self addGestureRecognizer:_zoomGestureRecognizer];
+        
         _panGestureRecognizer = [[UIPanGestureRecognizer alloc]
                                  initWithTarget:self action:@selector(handlePanGesture:)];
         _panGestureRecognizer.maximumNumberOfTouches = 1;
@@ -209,59 +242,79 @@
 {
     if (data != nil) {
         _data = [data copy];
-        
-        double maxValue = [[_data objectAtIndex:0] doubleValue];
-        for (NSNumber* value in _data) {
-            double v = [value doubleValue];
-            if (v > maxValue) {
-                maxValue = v;
-            }
-        }
-        
-        double yInterval = pow(10, floor(log10(maxValue)));
-        double yIntervalCount = maxValue / yInterval;
-        if (yIntervalCount < 3) {
-            yInterval /= 5;
-        }
-        else if (yIntervalCount < 8) {
-            yInterval /= 2;
-        }
-        
-        NSUInteger count = [_data count];
-        double xInterval = MAX(1, round(floor(count / 10) / 15) * 15);
-        while (count / xInterval > 20) {
-            xInterval *= 2;
-        }
-        
-        [self configureLayersWithMaxValue:maxValue xInterval:xInterval yInterval:yInterval];
-        
+        _chartLayer.data = _data;
+        _chartLayer.offset = 0;
+        _chartLayer.scale = 1;
+        [self configureLayersWithAnimation:NO overDuration:0];
         _chartLayer.hidden = NO;
+        [_chartLayer setNeedsDisplay];
     }
     else {
         _data = nil;
         _chartLayer.hidden = YES;
     }
-
-    [_chartLayer setNeedsDisplay];
 }
 
-- (void)configureLayersWithMaxValue:(double)maxValue xInterval:(NSUInteger)xInterval yInterval:(NSUInteger)yInterval
+#pragma mark - View Methods
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self configureLayersWithAnimation:YES overDuration:duration];
+}
+
+#pragma mark - View Configuration
+
+- (void)configureLayersWithAnimation:(BOOL)animate overDuration:(NSTimeInterval)duration
 {
     CGRect bounds = self.bounds;
-    CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:maxValue];
+    CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:_chartLayer.maxValue];
     CGFloat xInset = MAX(LINSET, maxLabelWidth + MARKER_LENGTH + 8);
-    _chartLayer.bounds = CGRectMake(-xInset, -YINSET, 
-                                    bounds.size.width, bounds.size.height);
-    _chartLayer.chartSize = CGSizeMake(bounds.size.width - (xInset + RINSET), 
-                                       bounds.size.height - YINSET*2);
+    CGRect newChartBounds = CGRectMake(-xInset, -YINSET, 
+                                       bounds.size.width, bounds.size.height);
+    CGSize newChartSize = CGSizeMake(bounds.size.width - (xInset + RINSET), 
+                                     bounds.size.height - YINSET*2);
+    if (animate) {
+        [CATransaction begin];
 
-    _chartLayer.data = _data;
-    _chartLayer.maxValue = maxValue;
-    _chartLayer.xInterval = xInterval;
-    _chartLayer.yInterval = yInterval;
-    _chartLayer.offset = 0;
-    _chartLayer.scale = 1;
+        CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"bounds.size.width"];
+        anim.removedOnCompletion = YES;
+        anim.duration = duration;
+        anim.fromValue = [NSNumber numberWithFloat:_chartLayer.bounds.size.width];
+        anim.toValue = [NSNumber numberWithFloat:newChartBounds.size.width];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+        [_chartLayer addAnimation:anim forKey:@"animateBoundsWidth"];
+        
+        anim = [CABasicAnimation animationWithKeyPath:@"bounds.size.height"];
+        anim.removedOnCompletion = YES;
+        anim.duration = duration;
+        anim.fromValue = [NSNumber numberWithFloat:_chartLayer.bounds.size.height];
+        anim.toValue = [NSNumber numberWithFloat:newChartBounds.size.height];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+        [_chartLayer addAnimation:anim forKey:@"animateBoundsHeight"];
+
+        anim = [CABasicAnimation animationWithKeyPath:@"chartSize.width"];
+        anim.removedOnCompletion = YES;
+        anim.duration = duration;
+        anim.fromValue = [NSNumber numberWithFloat:_chartLayer.chartSize.width];
+        anim.toValue = [NSNumber numberWithFloat:newChartSize.width];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+        [_chartLayer addAnimation:anim forKey:@"animateChartSizeWidth"];
+        
+        anim = [CABasicAnimation animationWithKeyPath:@"chartSize.height"];
+        anim.removedOnCompletion = YES;
+        anim.duration = duration;
+        anim.fromValue = [NSNumber numberWithFloat:_chartLayer.chartSize.height];
+        anim.toValue = [NSNumber numberWithFloat:newChartSize.height];
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+        [_chartLayer addAnimation:anim forKey:@"animateChartSizeHeight"];
+
+        [CATransaction commit];
+    }
+    _chartLayer.bounds = newChartBounds;
+    _chartLayer.chartSize = newChartSize;
 }
+
+#pragma mark - Gesture Handlers
 
 - (void)handleZoomGesture:(UIPinchGestureRecognizer*)gestureRecognizer
 {
@@ -364,6 +417,8 @@
     [self.layer setNeedsDisplay];
     [_chartLayer setNeedsDisplay];
 }
+
+#pragma mark - Helper Methods
 
 - (NSRange)makeRangeForVisibleData
 {

@@ -23,4 +23,6 @@
 @property (weak, nonatomic) id <UCLLineChartViewDelegate> delegate;
 @property (copy, nonatomic) NSArray* data;
 
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration;
+
 @end

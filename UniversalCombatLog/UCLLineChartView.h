@@ -21,8 +21,6 @@
 @interface UCLLineChartView : UIView <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) id <UCLLineChartViewDelegate> delegate;
-@property (nonatomic) double xInterval;
-@property (nonatomic) double yInterval;
 @property (copy, nonatomic) NSArray* data;
 
 @end

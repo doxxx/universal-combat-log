@@ -61,7 +61,7 @@
 
 #pragma mark - View Methods
 
-#define INSET 30
+#define INSET 15
 
 - (void)drawRect:(CGRect)rect
 {

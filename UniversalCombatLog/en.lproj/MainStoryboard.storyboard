@@ -36,21 +36,21 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="redraw" id="orE-Di-0Oy" customClass="UCLPieChartView">
-                                <rect key="frame" x="20" y="347" width="332" height="337"/>
+                                <rect key="frame" x="20" y="360" width="324" height="324"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="redraw" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="25" sectionHeaderHeight="22" sectionFooterHeight="22" id="jSM-By-GTO">
-                                <rect key="frame" x="352" y="347" width="331" height="337"/>
+                                <rect key="frame" x="359" y="360" width="324" height="324"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMinY="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="Dlz-rR-pbO" detailTextLabel="UGz-N8-je3" style="IBUITableViewCellStyleValue1" id="1qH-UO-uSD">
-                                        <rect key="frame" x="0.0" y="22" width="331" height="25"/>
+                                        <rect key="frame" x="0.0" y="22" width="324" height="25"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="331" height="24"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="324" height="24"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="Dlz-rR-pbO">
@@ -61,7 +61,7 @@
                                                     <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="UGz-N8-je3">
-                                                    <rect key="frame" x="282" y="3" width="39" height="19"/>
+                                                    <rect key="frame" x="275" y="3" width="39" height="19"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>

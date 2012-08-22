@@ -78,13 +78,6 @@
         yInterval /= 2;
     }
     self.yInterval = yInterval;
-
-    NSUInteger count = [_data count];
-    double xInterval = MAX(1, round(floor(count / 10) / 15) * 15);
-    while (count / xInterval > 20) {
-        xInterval *= 2;
-    }
-    self.xInterval = xInterval;
 }
 
 - (void)drawInContext:(CGContextRef)ctx
@@ -155,9 +148,17 @@
     
     CGContextSaveGState(ctx);
     
-    CGContextClipToRect(ctx, CGRectMake(0, -YINSET, size.width, YINSET));
+    NSUInteger count = size.width / xScale;
+    double xInterval = MAX(1, round(floor(count / 10) / 15) * 15);
+    while (count / xInterval > 20) {
+        xInterval *= 5;
+    }
+
+    double posOffset = (0 - self.offset);
+    NSUInteger markerStart = MAX(0, ceil(posOffset / xScale / xInterval) * xInterval);
+    NSUInteger markerEnd = round((posOffset + size.width) / xScale);
     
-    for (NSUInteger i = self.xInterval; i < [self.data count] * self.xInterval; i += self.xInterval) {
+    for (NSUInteger i = markerStart; i < markerEnd; i += xInterval) {
         CGFloat x = self.offset + i * xScale;
         CGContextMoveToPoint(ctx, x, 0);
         CGContextAddLineToPoint(ctx, x, -MARKER_LENGTH);

@@ -55,6 +55,33 @@
     }
 }
 
+- (BOOL)isMiss
+{
+    switch (self.eventType) {
+        case ETMiss:
+        case ETResist:
+        case ETDodge:
+        case ETParry:
+        case ETImmune:
+            return TRUE;
+            
+        default:
+            return FALSE;
+    }
+}
+
+- (BOOL)isCrit
+{
+    switch (self.eventType) {
+        case ETCritDamage:
+        case ETCritHeal:
+            return TRUE;
+            
+        default:
+            return FALSE;
+    }
+}
+
 + (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
                            actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
                            spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText

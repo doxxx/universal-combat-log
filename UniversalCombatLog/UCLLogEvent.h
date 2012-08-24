@@ -57,6 +57,8 @@ enum EventType {
 
 - (BOOL)isDamage;
 - (BOOL)isHealing;
+- (BOOL)isMiss;
+- (BOOL)isCrit;
 
 + (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
                            actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 

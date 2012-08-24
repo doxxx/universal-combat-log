@@ -22,7 +22,16 @@
 @property (weak, nonatomic) IBOutlet UCLLineChartView *lineChartView;
 @property (weak, nonatomic) IBOutlet UCLPieChartView *pieChartView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIView *detailView;
+@property (weak, nonatomic) IBOutlet UILabel *hitPercentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *critPercentLabel;
+@property (weak, nonatomic) IBOutlet UILabel *minDamageLabel;
+@property (weak, nonatomic) IBOutlet UILabel *maxDamageLabel;
+@property (weak, nonatomic) IBOutlet UILabel *avgDamageLabel;
 
 - (void)setActor:(UCLEntity*)actor fight:(UCLFight*)fight;
+
+- (IBAction)swipeLeft:(UISwipeGestureRecognizer *)sender;
+- (IBAction)swipeRight:(UISwipeGestureRecognizer *)sender;
 
 @end

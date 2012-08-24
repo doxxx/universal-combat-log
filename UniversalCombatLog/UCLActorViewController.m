@@ -33,6 +33,12 @@
     self.lineChartView.delegate = self;
     self.pieChartView.delegate = self;
     
+    CGRect detailFrame = self.detailView.frame;
+    detailFrame.size = self.tableView.frame.size;
+    detailFrame.origin.x = self.view.frame.size.width;
+    detailFrame.origin.y = self.tableView.frame.origin.y;
+    self.detailView.frame = detailFrame;
+
     NSMutableArray* colors = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
     [colors addObjectsFromArray:[NSArray arrayWithObjects:
                                         [UIColor colorWithRed:1 green:0 blue:0 alpha:1], 
@@ -65,6 +71,12 @@
     self.lineChartView = nil;
     self.pieChartView = nil;
     self.tableView = nil;
+    self.detailView = nil;
+    self.hitPercentLabel = nil;
+    self.critPercentLabel = nil;
+    self.minDamageLabel = nil;
+    self.maxDamageLabel = nil;
+    self.avgDamageLabel = nil;
     
     _masterPopoverController = nil;
     _spellBreakdownColors = nil;
@@ -83,6 +95,18 @@
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     [self.lineChartView willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    CGRect detailFrame = self.detailView.frame;
+    detailFrame.size = self.tableView.frame.size;
+    if (self.pieChartView.frame.origin.x < 0) {
+        CGFloat slideDistance = self.view.bounds.size.width / 2;
+        detailFrame.origin.x = self.tableView.frame.origin.x + slideDistance;
+        detailFrame.origin.y = self.tableView.frame.origin.y;
+    }
+    else {
+        detailFrame.origin.x = self.view.frame.size.width;
+        detailFrame.origin.y = self.tableView.frame.origin.y;
+    }
+    self.detailView.frame = detailFrame;
 }
 
 #pragma mark - Properties
@@ -93,6 +117,12 @@
 @synthesize lineChartView = _lineChartView;
 @synthesize pieChartView = _pieChartView;
 @synthesize tableView = _tableView;
+@synthesize detailView = _detailView;
+@synthesize hitPercentLabel = _hitPercentLabel;
+@synthesize critPercentLabel = _critPercentLabel;
+@synthesize minDamageLabel = _minDamageLabel;
+@synthesize maxDamageLabel = _maxDamageLabel;
+@synthesize avgDamageLabel = _avgDamageLabel;
 
 - (void)setActor:(UCLEntity *)actor fight:(UCLFight *)fight
 {
@@ -110,7 +140,7 @@
     
     _range = NSMakeRange(0, ceil(_fight.duration));
     
-    [self configureView];
+    [self configureViewForNewData:YES];
 }
 
 #pragma mark - Split view
@@ -131,15 +161,22 @@
 
 #pragma mark - Helper Methods
 
-- (void)configureView
+- (void)configureViewForNewData:(BOOL)newData
 {
     [self navigationItem].title = self.actor.name;
     self.lineChartView.data = [self calculatePerSecondValues];
-    [self updateSpellBreakdowns];
+    [self updateSpellBreakdownsNewData:newData];
+    self.detailView.hidden = YES;
 }
 
-- (void)updateSpellBreakdowns
+- (void)updateSpellBreakdownsNewData:(BOOL)newData
 {
+    UCLSpell* selectedSpell = nil;
+    NSIndexPath* indexPath = [self.tableView indexPathForSelectedRow];
+    if (indexPath != nil) {
+        selectedSpell = [_sortedSpells objectAtIndex:indexPath.row];
+    }
+    
     _spellBreakdown = [self calculateSpellBreakdown];
     
     _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
@@ -160,6 +197,13 @@
     
     self.pieChartView.data = _sortedSpellValues;
     [self.tableView reloadData];
+    
+    if (!newData && selectedSpell != nil) {
+        NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpell];
+        [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0] 
+                                    animated:NO 
+                              scrollPosition:UITableViewScrollPositionNone];
+    }
 }
 
 - (NSArray *)calculateTotalsOverTime
@@ -233,6 +277,52 @@
     return [NSDictionary dictionaryWithDictionary:spellBreakdown];
 }
 
+- (void)updateDetailView
+{
+    NSIndexPath* indexPath = [_tableView indexPathForSelectedRow];
+    if (indexPath == nil) {
+        self.detailView.hidden = YES;
+        return;
+    }
+    
+    UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
+    
+    NSUInteger attackCount = 0, hitCount = 0, critCount = 0;
+    double min = NSUIntegerMax, max = 0, total = 0, average = 0;
+    
+    NSDate* startTime = _fight.startTime;
+
+    for (UCLLogEvent* event in _events) {
+        NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
+        if (timeDiff < _range.location || timeDiff >= _range.location + _range.length) {
+            continue;
+        }
+        if ([event.actor isEqualToEntity:self.actor] && [event.spell isEqualToSpell:spell]) {
+            attackCount++;
+            if (![event isMiss]) {
+                hitCount++;
+                if ([event isCrit]) {
+                    critCount++;
+                }
+                double amount = [event.amount doubleValue];
+                min = MIN(min, amount);
+                max = MAX(max, amount);
+                total += amount;
+            }
+        }
+    }
+    
+    average = total / hitCount;
+    
+    self.hitPercentLabel.text = [NSString stringWithFormat:@"%.1f%%", (float)hitCount / (float)attackCount * 100.0];
+    self.critPercentLabel.text = [NSString stringWithFormat:@"%.1f%%", (float)critCount / (float)hitCount * 100.0];
+    self.minDamageLabel.text = [NSString stringWithFormat:@"%.0f", min];
+    self.maxDamageLabel.text = [NSString stringWithFormat:@"%.0f", max];
+    self.avgDamageLabel.text = [NSString stringWithFormat:@"%.0f", average];
+
+    self.detailView.hidden = NO;
+}
+
 #pragma mark - TableView DataSource & Delegate Methods
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -240,9 +330,7 @@
     if (_spellBreakdown != nil) {
         return [_spellBreakdown count];
     }
-    else {
-        return 0;
-    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -256,21 +344,38 @@
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f%%", 
                                  ([value doubleValue] / _spellBreakdownSum * 100)];
     cell.detailTextLabel.textColor = [_spellBreakdownColors objectAtIndex:indexPath.row];
+    cell.accessoryType = UITableViewCellAccessoryNone;
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.pieChartView selectSegment:indexPath.row];
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    [self updateDetailView];
+}
+
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+{
+    [self swipeLeft:nil];
 }
 
 #pragma mark - PieChartView Delegate Methods
 
 - (void)pieChartView:(UCLPieChartView *)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex
 {
-    [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:segmentIndex inSection:0]
+    [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].accessoryType = UITableViewCellAccessoryNone;
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:segmentIndex inSection:0];
+    [self.tableView selectRowAtIndexPath:indexPath
                                 animated:TRUE scrollPosition:UITableViewScrollPositionMiddle];
+    [self.tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    [self updateDetailView];
 }
 
 - (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
@@ -286,7 +391,72 @@
 - (void)lineChartView:(UCLLineChartView *)lineChartView didZoomToRange:(NSRange)range
 {
     _range = range;
-    [self updateSpellBreakdowns];
+    [self updateSpellBreakdownsNewData:NO];
+    [self updateDetailView];
+}
+
+#pragma mark - Gesture Methods
+
+- (IBAction)swipeLeft:(UISwipeGestureRecognizer *)sender {
+    if (self.pieChartView.frame.origin.x < 0) {
+        return;
+    }
+    
+    CGFloat slideDistance = self.view.bounds.size.width / 2;
+    
+    [UIView animateWithDuration:0.5 
+                          delay:0 
+                        options:UIViewAnimationCurveEaseOut 
+                     animations:^{
+                         CGRect newPieChartFrame = self.pieChartView.frame;
+                         newPieChartFrame.origin.x -= slideDistance;
+                         
+                         CGRect newTableFrame = self.tableView.frame;
+                         newTableFrame.origin.x -= slideDistance;
+                         
+                         CGRect newDetailFrame = self.detailView.frame;
+                         newDetailFrame.origin.x -= slideDistance;
+                         
+                         self.pieChartView.frame = newPieChartFrame;
+                         self.tableView.frame = newTableFrame;
+                         self.detailView.frame = newDetailFrame;
+                     }
+                     completion:^(BOOL finished) {
+                         NSLog(@"Done!");
+                     }];
+
+    [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].accessoryType = UITableViewCellAccessoryNone;
+}
+
+- (IBAction)swipeRight:(UISwipeGestureRecognizer *)sender {
+    if (self.pieChartView.frame.origin.x > 0) {
+        return;
+    }
+
+    CGFloat slideDistance = self.view.bounds.size.width / 2;
+    
+    [UIView animateWithDuration:0.5 
+                          delay:0 
+                        options:UIViewAnimationCurveEaseOut 
+                     animations:^{
+                         CGRect newPieChartFrame = self.pieChartView.frame;
+                         newPieChartFrame.origin.x += slideDistance;
+                         
+                         CGRect newTableFrame = self.tableView.frame;
+                         newTableFrame.origin.x += slideDistance;
+                         
+                         CGRect newDetailFrame = self.detailView.frame;
+                         newDetailFrame.origin.x += slideDistance;
+
+                         self.pieChartView.frame = newPieChartFrame;
+                         self.tableView.frame = newTableFrame;
+                         self.detailView.frame = newDetailFrame;
+                     }
+                     completion:^(BOOL finished) {
+                         NSLog(@"Done!");
+                     }];
+
+    [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
 }
 
 @end

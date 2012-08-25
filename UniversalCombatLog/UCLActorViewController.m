@@ -15,11 +15,12 @@
 @implementation UCLActorViewController
 {
     UIPopoverController* _masterPopoverController;
+    NSArray* _pieChartColors;
     NSArray* _events;
-    NSArray* _spellBreakdownColors;
     NSDictionary* _spellBreakdown;
     NSArray* _sortedSpells;
     NSArray* _sortedSpellValues;
+    NSDictionary* _spellColors;
     double _spellBreakdownSum;
     NSRange _range;
 }
@@ -63,7 +64,7 @@
                                         [UIColor colorWithRed:61.0/255.0 green:61.0/255.0 blue:1 alpha:1],
                                         nil]];
     
-    _spellBreakdownColors = [NSArray arrayWithArray:colors];
+    _pieChartColors = [NSArray arrayWithArray:colors];
 }
 
 - (void)viewDidUnload
@@ -79,7 +80,7 @@
     self.avgDamageLabel = nil;
     
     _masterPopoverController = nil;
-    _spellBreakdownColors = nil;
+    _pieChartColors = nil;
     _spellBreakdown = nil;
     _sortedSpells = nil;
     _sortedSpellValues = nil;
@@ -140,7 +141,10 @@
     
     _range = NSMakeRange(0, ceil(_fight.duration));
     
-    [self configureViewForNewData:YES];
+    [self navigationItem].title = self.actor.name;
+    self.lineChartView.data = [self calculatePerSecondValues];
+    [self updateSpellBreakdownsNewData:YES];
+    self.detailView.hidden = YES;
 }
 
 #pragma mark - Split view
@@ -161,14 +165,6 @@
 
 #pragma mark - Helper Methods
 
-- (void)configureViewForNewData:(BOOL)newData
-{
-    [self navigationItem].title = self.actor.name;
-    self.lineChartView.data = [self calculatePerSecondValues];
-    [self updateSpellBreakdownsNewData:newData];
-    self.detailView.hidden = YES;
-}
-
 - (void)updateSpellBreakdownsNewData:(BOOL)newData
 {
     UCLSpell* selectedSpell = nil;
@@ -182,6 +178,20 @@
     _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
         return [amount2 compare:amount1];
     }];
+    
+    if (newData) {
+        NSMutableDictionary* spellColors = [NSMutableDictionary dictionaryWithCapacity:[_sortedSpells count]];
+        NSUInteger colorIndex = 0;
+        for (UCLSpell* spell in _sortedSpells) {
+            UIColor* color = [UIColor whiteColor];
+            if (colorIndex < [_pieChartColors count]) {
+                color = [_pieChartColors objectAtIndex:colorIndex];
+            }
+            [spellColors setObject:color forKey:spell];
+            colorIndex++;
+        }
+        _spellColors = [NSDictionary dictionaryWithDictionary:spellColors];
+    }
     
     NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
     for (UCLSpell* spell in _sortedSpells) {
@@ -340,10 +350,10 @@
     UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
     NSNumber* value = [_spellBreakdown objectForKey:spell];
     cell.textLabel.text = spell.name;
-    cell.textLabel.textColor = [_spellBreakdownColors objectAtIndex:indexPath.row];
+    cell.textLabel.textColor = [_spellColors objectForKey:spell];
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f%%", 
                                  ([value doubleValue] / _spellBreakdownSum * 100)];
-    cell.detailTextLabel.textColor = [_spellBreakdownColors objectAtIndex:indexPath.row];
+    cell.detailTextLabel.textColor = [_pieChartColors objectAtIndex:indexPath.row];
     cell.accessoryType = UITableViewCellAccessoryNone;
     
     return cell;
@@ -380,10 +390,8 @@
 
 - (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
 {
-    if (segmentIndex >= [_spellBreakdownColors count]) {
-        return [UIColor whiteColor];
-    }
-    return [_spellBreakdownColors objectAtIndex:segmentIndex];
+    UCLSpell* spell = [_sortedSpells objectAtIndex:segmentIndex];
+    return [_spellColors objectForKey:spell];
 }
 
 #pragma mark - LineChartView Delegate Methods

@@ -415,7 +415,7 @@
     
     [UIView animateWithDuration:0.5 
                           delay:0 
-                        options:UIViewAnimationCurveEaseOut 
+                        options:UIViewAnimationOptionCurveEaseOut 
                      animations:^{
                          CGRect newPieChartFrame = self.pieChartView.frame;
                          newPieChartFrame.origin.x -= slideDistance;
@@ -431,7 +431,7 @@
                          self.detailView.frame = newDetailFrame;
                      }
                      completion:^(BOOL finished) {
-                         NSLog(@"Done!");
+                         // nothing
                      }];
 
     [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].accessoryType = UITableViewCellAccessoryNone;

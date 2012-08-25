@@ -210,6 +210,7 @@
     
     if (!newData && selectedSpell != nil) {
         NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpell];
+        [self.pieChartView selectSegment:selectedRow];
         [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0] 
                                     animated:NO 
                               scrollPosition:UITableViewScrollPositionNone];

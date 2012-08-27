@@ -30,7 +30,7 @@
 - (BOOL)isEqual:(id)object
 {
     if ([object class] != [self class]) {
-        return FALSE;
+        return NO;
     }
     return [self isEqualToEntity:object];
 }

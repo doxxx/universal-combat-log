@@ -384,7 +384,7 @@
     [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].accessoryType = UITableViewCellAccessoryNone;
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:segmentIndex inSection:0];
     [self.tableView selectRowAtIndexPath:indexPath
-                                animated:TRUE scrollPosition:UITableViewScrollPositionMiddle];
+                                animated:YES scrollPosition:UITableViewScrollPositionMiddle];
     [self.tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     [self updateDetailView];
 }

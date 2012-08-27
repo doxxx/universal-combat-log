@@ -36,10 +36,10 @@
         case ETDamageOverTime:
         case ETCritDamage:
         case ETEnvDamage:
-            return TRUE;
+            return YES;
             
         default:
-            return FALSE;
+            return NO;
     }
 }
 
@@ -48,10 +48,10 @@
     switch (self.eventType) {
         case ETHeal:
         case ETCritHeal:
-            return TRUE;
+            return YES;
             
         default:
-            return FALSE;
+            return NO;
     }
 }
 
@@ -63,10 +63,10 @@
         case ETDodge:
         case ETParry:
         case ETImmune:
-            return TRUE;
+            return YES;
             
         default:
-            return FALSE;
+            return NO;
     }
 }
 
@@ -75,10 +75,10 @@
     switch (self.eventType) {
         case ETCritDamage:
         case ETCritHeal:
-            return TRUE;
+            return YES;
             
         default:
-            return FALSE;
+            return NO;
     }
 }
 

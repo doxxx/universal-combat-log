@@ -137,7 +137,7 @@
     
     for (uint16_t i = 0; i < [self.data count]; i++) {
         CGPathRef path = (__bridge CGPathRef)[_segmentPaths objectAtIndex:i];
-        if (CGPathContainsPoint(path, &xform, loc, FALSE)) {
+        if (CGPathContainsPoint(path, &xform, loc, NO)) {
             _selectedSegmentIndex = i;
             [self.delegate pieChartView:self didSelectSegmentAtIndex:i];
             [self setNeedsDisplay];

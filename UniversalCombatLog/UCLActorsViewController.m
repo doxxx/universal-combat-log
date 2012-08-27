@@ -32,7 +32,7 @@
 - (void)setSummaryType:(NSString *)summaryType
 {
     if (_popoverController) {
-        [_popoverController dismissPopoverAnimated:TRUE];
+        [_popoverController dismissPopoverAnimated:YES];
     }
     _summaryType = summaryType;
     self.summaryTypeButton.title = summaryType;
@@ -63,7 +63,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     if (_popoverController) {
-        [_popoverController dismissPopoverAnimated:TRUE];
+        [_popoverController dismissPopoverAnimated:YES];
     }
 }
 
@@ -184,7 +184,7 @@
 
 - (IBAction)showSummaryTypes:(id)sender {
     if (_popoverController) {
-        [_popoverController dismissPopoverAnimated:TRUE];
+        [_popoverController dismissPopoverAnimated:YES];
     }
     else {
         [self performSegueWithIdentifier:@"SummaryTypes" sender:sender];

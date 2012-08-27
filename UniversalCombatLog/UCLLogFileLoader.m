@@ -19,6 +19,11 @@
     }
 
 @implementation UCLLogFileLoader
+{
+    const void* _data;
+    NSUInteger _length;
+    const void* _cursor;
+}
 
 - (id)initWithURL:(NSURL *)url
 {

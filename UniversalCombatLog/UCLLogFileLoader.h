@@ -10,11 +10,6 @@
 #import "UCLLogFile.h"
 
 @interface UCLLogFileLoader : NSObject
-{
-    const void* _data;
-    NSUInteger _length;
-    const void* _cursor;
-}
 
 - (id)initWithURL:(NSURL*)url;
 

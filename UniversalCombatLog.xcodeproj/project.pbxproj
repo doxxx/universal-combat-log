@@ -18,7 +18,6 @@
 		F886497F15B82E8F00073204 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F886497E15B82E8F00073204 /* main.m */; };
 		F886498315B82E8F00073204 /* UCLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F886498215B82E8F00073204 /* UCLAppDelegate.m */; };
 		F886498615B82E8F00073204 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F886498415B82E8F00073204 /* MainStoryboard.storyboard */; };
-		F886498915B82E8F00073204 /* UniversalCombatLog.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F886498715B82E8F00073204 /* UniversalCombatLog.xcdatamodeld */; };
 		F886498C15B82E8F00073204 /* UCLLogsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F886498B15B82E8F00073204 /* UCLLogsViewController.m */; };
 		F88649B915B8BEF000073204 /* UCLLogEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649B815B8BEF000073204 /* UCLLogEvent.m */; };
 		F88649BC15B8C2D600073204 /* UCLEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BB15B8C2D600073204 /* UCLEntity.m */; };
@@ -54,7 +53,6 @@
 		F886498115B82E8F00073204 /* UCLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UCLAppDelegate.h; sourceTree = "<group>"; };
 		F886498215B82E8F00073204 /* UCLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UCLAppDelegate.m; sourceTree = "<group>"; };
 		F886498515B82E8F00073204 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		F886498815B82E8F00073204 /* UniversalCombatLog.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UniversalCombatLog.xcdatamodel; sourceTree = "<group>"; };
 		F886498A15B82E8F00073204 /* UCLLogsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UCLLogsViewController.h; sourceTree = "<group>"; };
 		F886498B15B82E8F00073204 /* UCLLogsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UCLLogsViewController.m; sourceTree = "<group>"; };
 		F886499615B82E8F00073204 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -140,23 +138,22 @@
 				F8FDE33D15BDF8210094FE26 /* Data Storage */,
 				F88649B615B8BEA800073204 /* Model */,
 				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
-				F82F334015CC827600E9BA79 /* UCLLineChartView.h */,
-				F82F334115CC827600E9BA79 /* UCLLineChartView.m */,
 				F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */,
 				F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */,
 				F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */,
 				F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */,
-				F844999915D28D8B0090D3EB /* UCLPieChartView.h */,
-				F844999A15D28D8B0090D3EB /* UCLPieChartView.m */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
 				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F8FDE35F15C03ADA0094FE26 /* UCLFightsViewController.h */,
 				F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */,
+				F82F334015CC827600E9BA79 /* UCLLineChartView.h */,
+				F82F334115CC827600E9BA79 /* UCLLineChartView.m */,
 				F886498A15B82E8F00073204 /* UCLLogsViewController.h */,
 				F886498B15B82E8F00073204 /* UCLLogsViewController.m */,
+				F844999915D28D8B0090D3EB /* UCLPieChartView.h */,
+				F844999A15D28D8B0090D3EB /* UCLPieChartView.m */,
 				F8FDE38815CAB0D50094FE26 /* UCLSummaryTypesViewController.h */,
 				F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */,
-				F886498715B82E8F00073204 /* UniversalCombatLog.xcdatamodeld */,
 			);
 			path = UniversalCombatLog;
 			sourceTree = "<group>";
@@ -269,7 +266,6 @@
 			files = (
 				F886497F15B82E8F00073204 /* main.m in Sources */,
 				F886498315B82E8F00073204 /* UCLAppDelegate.m in Sources */,
-				F886498915B82E8F00073204 /* UniversalCombatLog.xcdatamodeld in Sources */,
 				F886498C15B82E8F00073204 /* UCLLogsViewController.m in Sources */,
 				F88649B915B8BEF000073204 /* UCLLogEvent.m in Sources */,
 				F88649BC15B8C2D600073204 /* UCLEntity.m in Sources */,
@@ -400,19 +396,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		F886498715B82E8F00073204 /* UniversalCombatLog.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				F886498815B82E8F00073204 /* UniversalCombatLog.xcdatamodel */,
-			);
-			currentVersion = F886498815B82E8F00073204 /* UniversalCombatLog.xcdatamodel */;
-			path = UniversalCombatLog.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = F886496315B82E8F00073204 /* Project object */;
 }

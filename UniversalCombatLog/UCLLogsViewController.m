@@ -64,7 +64,14 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LogCell"];
     
     NSURL* url = [_logFileURLs objectAtIndex:indexPath.row];
-    cell.textLabel.text = [[NSFileManager defaultManager] displayNameAtPath:[url path]];
+    NSFileManager* fm = [NSFileManager defaultManager];
+    cell.textLabel.text = [fm displayNameAtPath:[url path]];
+    NSError* error;
+    NSDictionary* attr = [fm attributesOfItemAtPath:[url path] error:&error];
+    NSDateFormatter* df = [[NSDateFormatter alloc] init];
+    [df setDateStyle:NSDateFormatterShortStyle];
+    [df setTimeStyle:NSDateFormatterShortStyle];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [df stringFromDate:[attr objectForKey:NSFileModificationDate]]];
     cell.tag = indexPath.row;
     
     return cell;

@@ -9,6 +9,7 @@
 #import "UCLAppDelegate.h"
 
 #import "UCLLogsViewController.h"
+#import "UCLProtocol.h"
 
 @implementation UCLAppDelegate
 
@@ -25,6 +26,9 @@
     UINavigationController *logsNavigationController = [splitViewController.viewControllers objectAtIndex:0];
     UCLLogsViewController *logsViewController = (UCLLogsViewController *)logsNavigationController.topViewController;
     logsViewController.documentsDirectory = [self applicationDocumentsDirectory];
+    
+    [NSURLProtocol registerClass:[UCLProtocol class]];
+    
     return YES;
 }
 							
@@ -54,6 +58,8 @@
 {
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
+
+    [NSURLProtocol unregisterClass:[UCLProtocol class]];
 }
 
 - (void)saveContext

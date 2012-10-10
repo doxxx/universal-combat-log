@@ -17,4 +17,6 @@
 @property (strong, nonatomic) UCLActorViewController* actorViewController;
 @property (strong, nonatomic) NSURL* documentsDirectory;
 
+- (IBAction)refresh:(id)sender;
+
 @end

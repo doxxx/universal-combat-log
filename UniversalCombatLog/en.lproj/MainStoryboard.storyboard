@@ -254,7 +254,13 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Logs" id="40"/>
+                    <navigationItem key="navigationItem" title="Logs" id="40">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="5J4-ac-W9p">
+                            <connections>
+                                <action selector="refresh:" destination="19" id="o2U-f3-sfH"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
             </objects>
@@ -292,13 +298,37 @@
                                     <segue destination="qFk-Za-qsy" kind="push" identifier="FightToActors" id="KVs-Ok-95I"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell userInteractionEnabled="NO" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="LoadingCell" textLabel="0rh-yg-lIK" style="IBUITableViewCellStyleDefault" id="BY0-SB-b2O">
+                                <rect key="frame" x="0.0" y="66" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Loading..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0rh-yg-lIK">
+                                            <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="VQW-v0-MMG" id="8fq-vv-MJQ"/>
                             <outlet property="delegate" destination="VQW-v0-MMG" id="G8h-c8-45l"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Fights" id="xKR-5n-xma"/>
+                    <navigationItem key="navigationItem" title="Fights" id="xKR-5n-xma">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="LoJ-Ea-nH0">
+                            <connections>
+                                <action selector="refresh:" destination="VQW-v0-MMG" id="78L-l5-iTj"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="1599" y="-1087"/>
@@ -467,12 +497,18 @@
         </class>
         <class className="UCLFightsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLFightsViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="refresh:"/>
+            </relationships>
         </class>
         <class className="UCLLineChartView" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLLineChartView.h"/>
         </class>
         <class className="UCLLogsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLLogsViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="refresh:"/>
+            </relationships>
         </class>
         <class className="UCLPieChartView" superclassName="UIView">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLPieChartView.h"/>

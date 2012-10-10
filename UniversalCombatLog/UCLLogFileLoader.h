@@ -11,10 +11,10 @@
 
 @interface UCLLogFileLoader : NSObject
 
-- (id)initWithURL:(NSURL*)url;
+- (id)initWithData:(NSData*)data;
 
 - (UCLLogFile*)load;
 
-+ (UCLLogFile*)loadFromURL:(NSURL*)url;
++ (UCLLogFile*)loadFromData:(NSData*)data;
 
 @end

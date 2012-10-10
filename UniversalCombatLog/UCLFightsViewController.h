@@ -12,7 +12,10 @@
 
 @interface UCLFightsViewController : UITableViewController
 
+@property (readwrite, strong, nonatomic) NSURL* url;
 @property (readwrite, strong, nonatomic) NSArray* fights;
 @property (readwrite, weak, nonatomic) UCLActorViewController* actorViewController;
+
+- (IBAction)refresh:(id)sender;
 
 @end

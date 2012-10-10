@@ -25,15 +25,13 @@
     const void* _cursor;
 }
 
-- (id)initWithURL:(NSURL *)url
+- (id)initWithData:(NSData*)data
 {
     self = [super init];
     if (self) {
-        NSData* data = [NSData dataWithContentsOfURL:url];
         _data = [data bytes];
         _length = [data length];
         _cursor = _data;
-        NSLog(@"Loaded data; length=%u", _length);
     }
     return self;
 }
@@ -212,11 +210,9 @@
     return string;
 }
 
-#pragma mark - Factory methods
-
-+ (UCLLogFile*)loadFromURL:(NSURL*)url
++ (UCLLogFile *)loadFromData:(NSData *)data
 {
-    return [[[UCLLogFileLoader alloc] initWithURL:url] load];
+    return [[[UCLLogFileLoader alloc] initWithData:data] load];
 }
 
 @end

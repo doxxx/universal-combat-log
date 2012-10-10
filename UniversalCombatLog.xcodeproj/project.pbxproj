@@ -10,6 +10,9 @@
 		F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F82F334115CC827600E9BA79 /* UCLLineChartView.m */; };
 		F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F844999615D1C3620090D3EB /* CoreText.framework */; };
 		F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F844999A15D28D8B0090D3EB /* UCLPieChartView.m */; };
+		F85BA605161259F30020653D /* UCLNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F85BA604161259F30020653D /* UCLNetworkClient.m */; };
+		F85BA6071613FB3A0020653D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85BA6061613FB3A0020653D /* CFNetwork.framework */; };
+		F85BA60A1618F4B40020653D /* UCLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = F85BA6091618F4B40020653D /* UCLProtocol.m */; };
 		F886497115B82E8F00073204 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497015B82E8F00073204 /* UIKit.framework */; };
 		F886497315B82E8F00073204 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497215B82E8F00073204 /* Foundation.framework */; };
 		F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497415B82E8F00073204 /* CoreGraphics.framework */; };
@@ -41,7 +44,12 @@
 		F844999615D1C3620090D3EB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		F844999915D28D8B0090D3EB /* UCLPieChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLPieChartView.h; sourceTree = "<group>"; };
 		F844999A15D28D8B0090D3EB /* UCLPieChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLPieChartView.m; sourceTree = "<group>"; };
-		F886496C15B82E8F00073204 /* UniversalCombatLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniversalCombatLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F85BA603161259F30020653D /* UCLNetworkClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLNetworkClient.h; sourceTree = "<group>"; };
+		F85BA604161259F30020653D /* UCLNetworkClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLNetworkClient.m; sourceTree = "<group>"; };
+		F85BA6061613FB3A0020653D /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		F85BA6081618F4B40020653D /* UCLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLProtocol.h; sourceTree = "<group>"; };
+		F85BA6091618F4B40020653D /* UCLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLProtocol.m; sourceTree = "<group>"; };
+		F886496C15B82E8F00073204 /* UCL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UCL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886497015B82E8F00073204 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F886497215B82E8F00073204 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F886497415B82E8F00073204 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -88,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F85BA6071613FB3A0020653D /* CFNetwork.framework in Frameworks */,
 				F886497115B82E8F00073204 /* UIKit.framework in Frameworks */,
 				F886497315B82E8F00073204 /* Foundation.framework in Frameworks */,
 				F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */,
@@ -100,11 +109,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F85BA6011612599D0020653D /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				F85BA603161259F30020653D /* UCLNetworkClient.h */,
+				F85BA604161259F30020653D /* UCLNetworkClient.m */,
+				F85BA6081618F4B40020653D /* UCLProtocol.h */,
+				F85BA6091618F4B40020653D /* UCLProtocol.m */,
+			);
+			name = Network;
+			sourceTree = "<group>";
+		};
 		F886496115B82E8F00073204 = {
 			isa = PBXGroup;
 			children = (
-				F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */,
-				F844999615D1C3620090D3EB /* CoreText.framework */,
 				F886497815B82E8F00073204 /* UniversalCombatLog */,
 				F886496F15B82E8F00073204 /* Frameworks */,
 				F886496D15B82E8F00073204 /* Products */,
@@ -114,7 +132,7 @@
 		F886496D15B82E8F00073204 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F886496C15B82E8F00073204 /* UniversalCombatLog.app */,
+				F886496C15B82E8F00073204 /* UCL.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,11 +140,14 @@
 		F886496F15B82E8F00073204 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F886497015B82E8F00073204 /* UIKit.framework */,
-				F886497215B82E8F00073204 /* Foundation.framework */,
-				F886497415B82E8F00073204 /* CoreGraphics.framework */,
+				F85BA6061613FB3A0020653D /* CFNetwork.framework */,
 				F886497615B82E8F00073204 /* CoreData.framework */,
+				F886497415B82E8F00073204 /* CoreGraphics.framework */,
+				F844999615D1C3620090D3EB /* CoreText.framework */,
+				F886497215B82E8F00073204 /* Foundation.framework */,
+				F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */,
 				F886499615B82E8F00073204 /* SenTestingKit.framework */,
+				F886497015B82E8F00073204 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -137,6 +158,7 @@
 				F886497915B82E8F00073204 /* Supporting Files */,
 				F8FDE33D15BDF8210094FE26 /* Data Storage */,
 				F88649B615B8BEA800073204 /* Model */,
+				F85BA6011612599D0020653D /* Network */,
 				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
 				F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */,
 				F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */,
@@ -202,9 +224,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F886496B15B82E8F00073204 /* UniversalCombatLog */ = {
+		F886496B15B82E8F00073204 /* UCL */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "UniversalCombatLog" */;
+			buildConfigurationList = F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "UCL" */;
 			buildPhases = (
 				F886496815B82E8F00073204 /* Sources */,
 				F886496915B82E8F00073204 /* Frameworks */,
@@ -214,9 +236,9 @@
 			);
 			dependencies = (
 			);
-			name = UniversalCombatLog;
+			name = UCL;
 			productName = UniversalCombatLog;
-			productReference = F886496C15B82E8F00073204 /* UniversalCombatLog.app */;
+			productReference = F886496C15B82E8F00073204 /* UCL.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -240,7 +262,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F886496B15B82E8F00073204 /* UniversalCombatLog */,
+				F886496B15B82E8F00073204 /* UCL */,
 			);
 		};
 /* End PBXProject section */
@@ -280,6 +302,8 @@
 				F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */,
 				F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */,
 				F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */,
+				F85BA605161259F30020653D /* UCLNetworkClient.m in Sources */,
+				F85BA60A1618F4B40020653D /* UCLProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,7 +410,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "UniversalCombatLog" */ = {
+		F88649A815B82E8F00073204 /* Build configuration list for PBXNativeTarget "UCL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F88649A915B82E8F00073204 /* Debug */,

@@ -10,7 +10,6 @@
 
 @implementation UCLLogFile
 
-@synthesize title=_title;
 @synthesize fights=_fights;
 
 - (id)initWithFights:(NSArray*)theFights
@@ -18,7 +17,6 @@
     self = [super init];
     if (self) {
         _fights = theFights;
-        _title = [[theFights objectAtIndex:0] title];
     }
     return self;
 }

@@ -80,11 +80,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LogCell"];
     
     NSURL* url = [_logFileURLs objectAtIndex:indexPath.row];
-    if ([[url scheme] isEqualToString:@"ucl"]) {
-        cell.textLabel.text = [url host];
-        cell.detailTextLabel.text = @"Network Server";
-    }
-    else {
+    if ([[url scheme] isEqualToString:@"file"]) {
         NSFileManager* fm = [NSFileManager defaultManager];
         cell.textLabel.text = [fm displayNameAtPath:[url path]];
         NSError* error;
@@ -93,6 +89,10 @@
         [df setDateStyle:NSDateFormatterShortStyle];
         [df setTimeStyle:NSDateFormatterShortStyle];
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [df stringFromDate:[attr objectForKey:NSFileModificationDate]]];
+    }
+    else {
+        cell.textLabel.text = [url host];
+        cell.detailTextLabel.text = @"Network Server";
     }
     cell.tag = indexPath.row;
     

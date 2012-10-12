@@ -13,6 +13,7 @@
 		F85BA605161259F30020653D /* UCLNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F85BA604161259F30020653D /* UCLNetworkClient.m */; };
 		F85BA6071613FB3A0020653D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85BA6061613FB3A0020653D /* CFNetwork.framework */; };
 		F85BA60A1618F4B40020653D /* UCLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = F85BA6091618F4B40020653D /* UCLProtocol.m */; };
+		F87B730F1627B2C000FD1269 /* libsbjson-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F87B72FC1627B27600FD1269 /* libsbjson-ios.a */; };
 		F886497115B82E8F00073204 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497015B82E8F00073204 /* UIKit.framework */; };
 		F886497315B82E8F00073204 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497215B82E8F00073204 /* Foundation.framework */; };
 		F886497515B82E8F00073204 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F886497415B82E8F00073204 /* CoreGraphics.framework */; };
@@ -38,6 +39,44 @@
 		F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F87B72F71627B27600FD1269 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F87B72F01627B27500FD1269 /* SBJson.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BC12323D1391D5CC00131607;
+			remoteInfo = SBJson;
+		};
+		F87B72F91627B27600FD1269 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F87B72F01627B27500FD1269 /* SBJson.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BC1232521391D5CC00131607;
+			remoteInfo = SBJsonTests;
+		};
+		F87B72FB1627B27600FD1269 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F87B72F01627B27500FD1269 /* SBJson.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCC2626913920FC7003D9994;
+			remoteInfo = "sbjson-ios";
+		};
+		F87B72FD1627B27600FD1269 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F87B72F01627B27500FD1269 /* SBJson.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BCC2627313920FC7003D9994;
+			remoteInfo = "sbjson-iosTests";
+		};
+		F87B730D1627B2B200FD1269 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F87B72F01627B27500FD1269 /* SBJson.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BCC2626813920FC7003D9994;
+			remoteInfo = "sbjson-ios";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		F82F334015CC827600E9BA79 /* UCLLineChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLineChartView.h; sourceTree = "<group>"; };
 		F82F334115CC827600E9BA79 /* UCLLineChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLineChartView.m; sourceTree = "<group>"; };
@@ -49,6 +88,7 @@
 		F85BA6061613FB3A0020653D /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		F85BA6081618F4B40020653D /* UCLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLProtocol.h; sourceTree = "<group>"; };
 		F85BA6091618F4B40020653D /* UCLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLProtocol.m; sourceTree = "<group>"; };
+		F87B72F01627B27500FD1269 /* SBJson.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SBJson.xcodeproj; path = ../SBJson_3.1.1/SBJson.xcodeproj; sourceTree = "<group>"; };
 		F886496C15B82E8F00073204 /* UCL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UCL.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F886497015B82E8F00073204 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F886497215B82E8F00073204 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -103,6 +143,7 @@
 				F886497715B82E8F00073204 /* CoreData.framework in Frameworks */,
 				F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */,
 				F8DBA40515E068DA00A3A9F8 /* QuartzCore.framework in Frameworks */,
+				F87B730F1627B2C000FD1269 /* libsbjson-ios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,9 +161,21 @@
 			name = Network;
 			sourceTree = "<group>";
 		};
+		F87B72F11627B27500FD1269 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F87B72F81627B27600FD1269 /* SBJson.framework */,
+				F87B72FA1627B27600FD1269 /* SBJsonTests.octest */,
+				F87B72FC1627B27600FD1269 /* libsbjson-ios.a */,
+				F87B72FE1627B27600FD1269 /* sbjson-iosTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F886496115B82E8F00073204 = {
 			isa = PBXGroup;
 			children = (
+				F87B72F01627B27500FD1269 /* SBJson.xcodeproj */,
 				F886497815B82E8F00073204 /* UniversalCombatLog */,
 				F886496F15B82E8F00073204 /* Frameworks */,
 				F886496D15B82E8F00073204 /* Products */,
@@ -235,6 +288,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F87B730E1627B2B200FD1269 /* PBXTargetDependency */,
 			);
 			name = UCL;
 			productName = UniversalCombatLog;
@@ -260,12 +314,49 @@
 			mainGroup = F886496115B82E8F00073204;
 			productRefGroup = F886496D15B82E8F00073204 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F87B72F11627B27500FD1269 /* Products */;
+					ProjectRef = F87B72F01627B27500FD1269 /* SBJson.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F886496B15B82E8F00073204 /* UCL */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F87B72F81627B27600FD1269 /* SBJson.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SBJson.framework;
+			remoteRef = F87B72F71627B27600FD1269 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F87B72FA1627B27600FD1269 /* SBJsonTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SBJsonTests.octest;
+			remoteRef = F87B72F91627B27600FD1269 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F87B72FC1627B27600FD1269 /* libsbjson-ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libsbjson-ios.a";
+			remoteRef = F87B72FB1627B27600FD1269 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F87B72FE1627B27600FD1269 /* sbjson-iosTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "sbjson-iosTests.octest";
+			remoteRef = F87B72FD1627B27600FD1269 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F886496A15B82E8F00073204 /* Resources */ = {
@@ -308,6 +399,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F87B730E1627B2B200FD1269 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "sbjson-ios";
+			targetProxy = F87B730D1627B2B200FD1269 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		F886497B15B82E8F00073204 /* InfoPlist.strings */ = {
@@ -382,6 +481,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UniversalCombatLog/UniversalCombatLog-Prefix.pch";
 				INFOPLIST_FILE = "UniversalCombatLog/UniversalCombatLog-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -393,6 +496,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UniversalCombatLog/UniversalCombatLog-Prefix.pch";
 				INFOPLIST_FILE = "UniversalCombatLog/UniversalCombatLog-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

@@ -13,6 +13,7 @@
 
 #import "UCLNetworkClient.h"
 #import "UCLLogFileLoader.h"
+#import "SBJson/SBJson.h"
 
 @implementation UCLNetworkClient
 {
@@ -77,7 +78,7 @@
             data[bytes] = 0; // ensure null-terminated
             NSString* discoveryReply = [NSString stringWithCString:data encoding:NSUTF8StringEncoding];
             NSLog(@"Received discovery reply: %@", discoveryReply);
-            self.discoveryCallback([NSURL URLWithString:discoveryReply]);
+            discoveryCallback([NSURL URLWithString:discoveryReply]);
         }
     });
 
@@ -100,6 +101,40 @@
         NSLog(@"Error sending discovery packet: %s", strerror(errno));
         return;
     }
+}
+
+- (void)listLogFilesAtURL:(NSURL *)url withCallback:(LogFileListCallack)callback
+{
+    void (^handler)(NSURLResponse* response, NSData* data, NSError* error) = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        if (data == nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[[UIAlertView alloc] initWithTitle:@"UCL" 
+                                            message:[error localizedDescription] 
+                                           delegate:nil 
+                                  cancelButtonTitle:@"OK" 
+                                  otherButtonTitles:nil] show];
+            });
+        }
+        else {
+            NSString* json = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
+            NSLog(@"Received JSON: %@", json);
+            NSArray* jsonArray = [json JSONValue];
+            NSMutableArray* entries = [NSMutableArray arrayWithCapacity:[jsonArray count]];
+            for (NSDictionary* jsonEntry in jsonArray) {
+                NSDictionary* entry = [NSDictionary dictionaryWithObjectsAndKeys:
+                                       [jsonEntry objectForKey:@"title"], @"title", 
+                                       [NSURL URLWithString:[jsonEntry objectForKey:@"url"]], @"url", 
+                                       nil];
+                [entries addObject:entry];
+            }
+            callback(entries);
+        }
+    };
+    NSURL* logFilesURL = [NSURL URLWithString:@"logfiles" relativeToURL:url];
+    NSLog(@"log files URL = %@", [logFilesURL absoluteString]);
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:logFilesURL] 
+                                       queue:[NSOperationQueue mainQueue] 
+                           completionHandler:handler];
 }
 
 @end

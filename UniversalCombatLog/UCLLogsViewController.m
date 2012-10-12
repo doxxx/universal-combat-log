@@ -15,7 +15,7 @@
 
 @implementation UCLLogsViewController
 {
-    NSMutableArray* _logFileURLs;
+    NSMutableArray* _logFileEntries;
     UCLNetworkClient* _networkClient;
 }
 
@@ -28,7 +28,7 @@
 
 - (void)awakeFromNib
 {
-    _logFileURLs = [NSMutableArray array];
+    _logFileEntries = [NSMutableArray array];
     _networkClient = [[UCLNetworkClient alloc] init];
     
     self.clearsSelectionOnViewWillAppear = NO;
@@ -46,10 +46,15 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    __weak NSMutableArray* urls = _logFileURLs;
+    __weak NSMutableArray* logFileEntries = _logFileEntries;
+    __weak UCLNetworkClient* networkClient = _networkClient;
     _networkClient.discoveryCallback = ^(NSURL* url) {
-        [urls addObject:url];
-        [self.tableView reloadData];
+        [networkClient listLogFilesAtURL:url withCallback:^(NSArray* entries) {
+            [logFileEntries addObjectsFromArray:entries];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }];
     };
 
     [self refresh:nil];
@@ -72,14 +77,16 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_logFileURLs count];
+    return [_logFileEntries count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LogCell"];
     
-    NSURL* url = [_logFileURLs objectAtIndex:indexPath.row];
+    NSDictionary* entry = [_logFileEntries objectAtIndex:indexPath.row];
+    NSString* title = [entry objectForKey:@"title"];
+    NSURL* url = [entry objectForKey:@"url"];
     if ([[url scheme] isEqualToString:@"file"]) {
         NSFileManager* fm = [NSFileManager defaultManager];
         cell.textLabel.text = [fm displayNameAtPath:[url path]];
@@ -91,8 +98,8 @@
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [df stringFromDate:[attr objectForKey:NSFileModificationDate]]];
     }
     else {
-        cell.textLabel.text = [url host];
-        cell.detailTextLabel.text = @"Network Server";
+        cell.textLabel.text = title;
+        cell.detailTextLabel.text = [url host];
     }
     cell.tag = indexPath.row;
     
@@ -106,7 +113,9 @@
         vc.actorViewController = self.actorViewController;
         if ([sender isKindOfClass:[UITableViewCell class]]) {
             UITableViewCell* cell = sender;
-            vc.url = [_logFileURLs objectAtIndex:cell.tag];
+            NSDictionary* entry = [_logFileEntries objectAtIndex:cell.tag];
+            NSURL* url = [entry objectForKey:@"url"];
+            vc.url = url;
         }
     }
 }
@@ -129,15 +138,19 @@
         return;
     }
     
-    [_logFileURLs addObjectsFromArray:[contents filteredArrayUsingPredicate:
-                                       [NSPredicate predicateWithFormat:@"path endswith '.ucl'"]]];
+    NSArray* files = [contents filteredArrayUsingPredicate:
+                      [NSPredicate predicateWithFormat:@"path endswith '.ucl'"]];
+    for (NSURL* url in files) {
+        NSDictionary* entry = [NSDictionary dictionaryWithObjectsAndKeys:@"", @"title", url, @"url", nil];
+        [_logFileEntries addObject:entry];
+    }
     
-    NSLog(@"Found %d UCL files", [_logFileURLs count]);
+    NSLog(@"Found %d UCL files", [files count]);
     
 }
 
 - (IBAction)refresh:(id)sender {
-    [_logFileURLs removeAllObjects];
+    [_logFileEntries removeAllObjects];
     [self scanDocumentsDirectory];
     [_networkClient discoverServers];
     [self.tableView reloadData];

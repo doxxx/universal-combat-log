@@ -259,6 +259,11 @@
 
 #pragma mark - View Methods
 
+- (void)layoutSubviews
+{
+    [self configureLayersWithAnimation:NO overDuration:0];
+}
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     [self configureLayersWithAnimation:YES overDuration:duration];

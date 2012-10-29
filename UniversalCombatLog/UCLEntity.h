@@ -36,6 +36,8 @@ enum EntityRelationship {
 
 - (BOOL)isEqualToEntity:(UCLEntity*)entity;
 
+- (BOOL)isPlayerOrPet;
+
 + (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
                  relationship:(enum EntityRelationship)theRelationship 
                         owner:(UCLEntity*)theOwner name:(NSString*)theName;

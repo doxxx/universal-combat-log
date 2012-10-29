@@ -8,6 +8,7 @@
 
 #import "UCLFightsViewController.h"
 #import "UCLActorsViewController.h"
+#import "UCLFIghtViewController.h"
 
 #import "UCLFight.h"
 #import "UCLNetworkClient.h"
@@ -19,7 +20,13 @@
 
 @synthesize url=_url;
 @synthesize fights=_fights;
-@synthesize actorViewController=_actorViewController;
+//@synthesize actorViewController=_actorViewController;
+@synthesize tableView = _tableView;
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [_tableView deselectRowAtIndexPath:[_tableView indexPathForSelectedRow] animated:NO];
+}
 
 - (void)setUrl:(NSURL *)url
 {
@@ -72,12 +79,6 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
@@ -116,12 +117,17 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"FightToActors"]) {
-        UCLActorsViewController* vc = [segue destinationViewController];
+    if ([[segue identifier] isEqualToString:@"Fight"]) {
+//        UCLActorsViewController* vc = [segue destinationViewController];
+        UCLFightViewController* vc = [segue destinationViewController];
         NSIndexPath* indexPath = [self.tableView indexPathForCell:sender];
-        vc.actorViewController = self.actorViewController;
+//        vc.actorViewController = self.actorViewController;
         vc.fight = [self.fights objectAtIndex:indexPath.row];
     }
 }
 
+- (void)viewDidUnload {
+    [self setTableView:nil];
+    [super viewDidUnload];
+}
 @end

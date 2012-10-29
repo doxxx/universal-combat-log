@@ -10,11 +10,12 @@
 
 #import "UCLActorViewController.h"
 
-@interface UCLFightsViewController : UITableViewController
+@interface UCLFightsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate>
 
 @property (readwrite, strong, nonatomic) NSURL* url;
 @property (readwrite, strong, nonatomic) NSArray* fights;
-@property (readwrite, weak, nonatomic) UCLActorViewController* actorViewController;
+//@property (readwrite, weak, nonatomic) UCLActorViewController* actorViewController;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 - (IBAction)refresh:(id)sender;
 

@@ -40,6 +40,11 @@
     return self.idNum == entity.idNum;
 }
 
+- (BOOL)isPlayerOrPet
+{
+    return _type == Player || (_type == NonPlayer && _owner != nil && _owner.type == Player);
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
     // Immutable class, can return original instead of copying.

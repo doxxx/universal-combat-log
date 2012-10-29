@@ -16,6 +16,7 @@
 @implementation UCLLogsViewController
 {
     NSMutableArray* _logFileEntries;
+    NSMutableArray* _networkServerEntries;
     UCLNetworkClient* _networkClient;
 }
 
@@ -23,16 +24,16 @@
 
 @synthesize actorViewController = _actorViewController;
 @synthesize documentsDirectory = _applicationDocumentsDirectory;
+@synthesize localFilesTableView = _localFilesTableView;
+@synthesize networkServersTableView = _networkServersTableView;
 
 #pragma mark - View methods
 
 - (void)awakeFromNib
 {
     _logFileEntries = [NSMutableArray array];
+    _networkServerEntries = [NSMutableArray array];
     _networkClient = [[UCLNetworkClient alloc] init];
-    
-    self.clearsSelectionOnViewWillAppear = NO;
-    self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
     
     [super awakeFromNib];
 }
@@ -41,18 +42,24 @@
 {
     [super viewDidLoad];
 
-    self.actorViewController = (UCLActorViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+//    self.actorViewController = (UCLActorViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+}
+
+- (void)viewDidUnload {
+    _localFilesTableView = nil;
+    _networkServersTableView = nil;
+    [super viewDidUnload];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    __weak NSMutableArray* logFileEntries = _logFileEntries;
+    __weak NSMutableArray* networkServerEntries = _networkServerEntries;
     __weak UCLNetworkClient* networkClient = _networkClient;
     _networkClient.discoveryCallback = ^(NSURL* url) {
         [networkClient listLogFilesAtURL:url withCallback:^(NSArray* entries) {
-            [logFileEntries addObjectsFromArray:entries];
+            [networkServerEntries addObjectsFromArray:entries];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tableView reloadData];
+                [self.networkServersTableView reloadData];
             });
         }];
     };
@@ -77,17 +84,24 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_logFileEntries count];
+    if (tableView == _localFilesTableView) {
+        return [_logFileEntries count];
+    }
+    else if (tableView == _networkServersTableView) {
+        return [_networkServerEntries count];
+    }
+
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"LogCell"];
-    
-    NSDictionary* entry = [_logFileEntries objectAtIndex:indexPath.row];
-    NSString* title = [entry objectForKey:@"title"];
-    NSURL* url = [entry objectForKey:@"url"];
-    if ([[url scheme] isEqualToString:@"file"]) {
+    if (tableView == _localFilesTableView) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        
+        NSDictionary* entry = [_logFileEntries objectAtIndex:indexPath.row];
+//        NSString* title = [entry objectForKey:@"title"];
+        NSURL* url = [entry objectForKey:@"url"];
         NSFileManager* fm = [NSFileManager defaultManager];
         cell.textLabel.text = [fm displayNameAtPath:[url path]];
         NSError* error;
@@ -96,24 +110,44 @@
         [df setDateStyle:NSDateFormatterShortStyle];
         [df setTimeStyle:NSDateFormatterShortStyle];
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@", [df stringFromDate:[attr objectForKey:NSFileModificationDate]]];
+        cell.tag = indexPath.row;
+        
+        return cell;
     }
-    else {
+    else if (tableView == _networkServersTableView) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        
+        NSDictionary* entry = [_networkServerEntries objectAtIndex:indexPath.row];
+        NSString* title = [entry objectForKey:@"title"];
+        NSURL* url = [entry objectForKey:@"url"];
         cell.textLabel.text = title;
         cell.detailTextLabel.text = [url host];
+        cell.tag = indexPath.row;
+        
+        return cell;
     }
-    cell.tag = indexPath.row;
     
-    return cell;
+    return nil;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"LogToFights"]) {
+    if ([[segue identifier] isEqualToString:@"LocalFile"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
-        vc.actorViewController = self.actorViewController;
+//        vc.actorViewController = self.actorViewController;
         if ([sender isKindOfClass:[UITableViewCell class]]) {
             UITableViewCell* cell = sender;
             NSDictionary* entry = [_logFileEntries objectAtIndex:cell.tag];
+            NSURL* url = [entry objectForKey:@"url"];
+            vc.url = url;
+        }
+    }
+    else if ([[segue identifier] isEqualToString:@"NetworkServer"]) {
+        UCLFightsViewController* vc = [segue destinationViewController];
+//        vc.actorViewController = self.actorViewController;
+        if ([sender isKindOfClass:[UITableViewCell class]]) {
+            UITableViewCell* cell = sender;
+            NSDictionary* entry = [_networkServerEntries objectAtIndex:cell.tag];
             NSURL* url = [entry objectForKey:@"url"];
             vc.url = url;
         }
@@ -151,8 +185,12 @@
 
 - (IBAction)refresh:(id)sender {
     [_logFileEntries removeAllObjects];
+    
     [self scanDocumentsDirectory];
     [_networkClient discoverServers];
-    [self.tableView reloadData];
+    
+    [_localFilesTableView reloadData];
+    [_networkServersTableView reloadData];
 }
+
 @end

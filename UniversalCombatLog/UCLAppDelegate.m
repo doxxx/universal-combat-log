@@ -18,14 +18,18 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
-    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
-    splitViewController.delegate = (id)navigationController.topViewController;
-    splitViewController.presentsWithGesture = NO;
+//    UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+//    UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
+//    splitViewController.delegate = (id)navigationController.topViewController;
+//    splitViewController.presentsWithGesture = NO;
 
-    UINavigationController *logsNavigationController = [splitViewController.viewControllers objectAtIndex:0];
-    UCLLogsViewController *logsViewController = (UCLLogsViewController *)logsNavigationController.topViewController;
-    logsViewController.documentsDirectory = [self applicationDocumentsDirectory];
+//    UINavigationController *logsNavigationController = [splitViewController.viewControllers objectAtIndex:0];
+//    UCLLogsViewController *logsViewController = (UCLLogsViewController *)logsNavigationController.topViewController;
+//    logsViewController.documentsDirectory = [self applicationDocumentsDirectory];
+    
+    UINavigationController* navController = (UINavigationController*)self.window.rootViewController;
+    UCLLogsViewController* logsViewController = (UCLLogsViewController*)navController.topViewController;
+    logsViewController.documentsDirectory = self.applicationDocumentsDirectory;
     
     [NSURLProtocol registerClass:[UCLProtocol class]];
     

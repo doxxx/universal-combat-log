@@ -32,6 +32,23 @@
 
 @implementation ChartLayer
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.needsDisplayOnBoundsChange = YES;
+        self.contentsScale = [UIScreen mainScreen].scale;
+        self.anchorPoint = CGPointMake(0, 0);
+        self.position = CGPointMake(0, 0);
+        self.actions = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [NSNull null], @"position", 
+                        [NSNull null], @"bounds", 
+                        [NSNull null], @"contents", 
+                        nil];
+    }
+    return self;
+}
+
 - (id)initWithLayer:(id)layer
 {
     self = [super initWithLayer:layer];
@@ -210,18 +227,9 @@
         self.layer.sublayerTransform = CATransform3DMakeScale(1, -1, 1);
 
         _chartLayer = [ChartLayer layer];
-        [self.layer addSublayer:_chartLayer];
-        _chartLayer.needsDisplayOnBoundsChange = YES;
-        _chartLayer.contentsScale = [UIScreen mainScreen].scale;
-        _chartLayer.anchorPoint = CGPointMake(0, 0);
-        _chartLayer.position = CGPointMake(0, 0);
-        _chartLayer.actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                               [NSNull null], @"position", 
-                               [NSNull null], @"bounds", 
-                               [NSNull null], @"contents", 
-                               nil];
         _chartLayer.textAttributes = [UCLLineChartView axisMarkerLabelAttributes];
         _chartLayer.hidden = YES;
+        [self.layer addSublayer:_chartLayer];
 
         _zoomGestureRecognizer = [[UIPinchGestureRecognizer alloc] 
                                   initWithTarget:self action:@selector(handleZoomGesture:)];

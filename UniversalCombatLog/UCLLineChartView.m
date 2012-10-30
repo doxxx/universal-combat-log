@@ -16,26 +16,34 @@
 #define YINSET 30
 #define MARKER_LENGTH 5
 
+#pragma mark - ChartLayer
+
 @interface ChartLayer : CALayer
 
 @property (strong, nonatomic) NSDictionary* textAttributes;
 @property (nonatomic) CGPoint chartOrigin;
 @property (nonatomic) CGSize chartSize;
-@property (weak, nonatomic) NSArray* data;
 @property (nonatomic) NSUInteger xInterval;
 @property (nonatomic) NSUInteger yInterval;
 @property (nonatomic) double maxValue;
+@property (nonatomic) int maxDataCount;
 @property (nonatomic) CGFloat offset;
 @property (nonatomic) CGFloat scale;
+
+- (NSMutableDictionary*)datas;
 
 @end
 
 @implementation ChartLayer
+{
+    NSMutableDictionary* _datas;
+}
 
 - (id)init
 {
     self = [super init];
     if (self) {
+        _datas = [NSMutableDictionary dictionary];
         self.needsDisplayOnBoundsChange = YES;
         self.contentsScale = [UIScreen mainScreen].scale;
         self.anchorPoint = CGPointMake(0, 0);
@@ -45,6 +53,8 @@
                         [NSNull null], @"bounds", 
                         [NSNull null], @"contents", 
                         nil];
+        self.scale = 1;
+        self.offset = 0;
     }
     return self;
 }
@@ -55,13 +65,14 @@
     if (self != nil) {
         if ([layer isKindOfClass:[ChartLayer class]]) {
             ChartLayer* other = layer;
+            _datas = other.datas;
             self.textAttributes = other.textAttributes;
             self.chartOrigin = other.chartOrigin;
             self.chartSize = other.chartSize;
-            self.data = other.data;
             self.xInterval = other.xInterval;
             self.yInterval = other.yInterval;
             self.maxValue = other.maxValue;
+            self.maxDataCount = other.maxDataCount;
             self.offset = other.offset;
             self.scale = other.scale;
         }
@@ -69,22 +80,51 @@
     return self;
 }
 
-@synthesize textAttributes, chartOrigin, data=_data, xInterval=_xInterval, yInterval=_yInterval;
-@synthesize maxValue=_maxValue;
+@synthesize textAttributes, chartOrigin, xInterval=_xInterval, yInterval=_yInterval;
+@synthesize maxValue=_maxValue, maxDataCount=_maxDataCount;
 @dynamic chartSize, offset, scale;
 
-- (void)setData:(NSArray *)data
+- (NSMutableDictionary *)datas
 {
-    _data = data;
+    return _datas;
+}
+
+- (void)addData:(NSArray*)data forKey:(NSString*)key
+{
+    [_datas setObject:data forKey:key];
+    [self recalculateForNewData];
+}
+
+- (void)removeDataForKey:(NSString*)key
+{
+    [_datas removeObjectForKey:key];
+}
+
+- (void)removeAllData
+{
+    [_datas removeAllObjects];
+}
+
+- (void)recalculateForNewData
+{
+    double maxValue = 0;
+    int maxDataCount = 0;
     
-    double maxValue = [[_data objectAtIndex:0] doubleValue];
-    for (NSNumber* value in _data) {
-        double v = [value doubleValue];
-        if (v > maxValue) {
-            maxValue = v;
+    for (NSString* key in _datas) {
+        NSArray* data = [_datas objectForKey:key];
+        for (NSNumber* value in data) {
+            double v = [value doubleValue];
+            if (v > maxValue) {
+                maxValue = v;
+            }
+        }
+        if (data.count > maxDataCount) {
+            maxDataCount = data.count;
         }
     }
+
     self.maxValue = maxValue;
+    self.maxDataCount = maxDataCount;
     
     double yInterval = pow(10, floor(log10(maxValue)));
     double yIntervalCount = maxValue / yInterval;
@@ -99,12 +139,12 @@
 
 - (void)drawInContext:(CGContextRef)ctx
 {
-    if (self.data == nil) {
+    if (_datas.count == 0) {
         return;
     }
     
     CGSize size = self.chartSize;
-    CGFloat xScale = size.width / [self.data count] * self.scale;
+    CGFloat xScale = size.width / self.maxDataCount * self.scale;
     CGFloat yScale = size.height / self.maxValue;
     
     // Draw data line.
@@ -116,18 +156,23 @@
     
     CGContextClipToRect(ctx, CGRectMake(0, 0, size.width, size.height));
     
-    NSUInteger index = 0;
-    while (index < [self.data count]) {
-        NSNumber* value = [self.data objectAtIndex:index];
-        CGFloat x = self.offset + index * xScale;
-        CGFloat y = [value doubleValue] * yScale;
-        if (index == 0) {
-            CGContextMoveToPoint(ctx, x, y);
+    NSLog(@"drawInContext: offset=%.1f", self.offset);
+    
+    for (NSString* key in _datas) {
+        NSArray* data = [_datas objectForKey:key];
+        NSUInteger index = 0;
+        while (index < [data count]) {
+            NSNumber* value = [data objectAtIndex:index];
+            CGFloat x = self.offset + index * xScale;
+            CGFloat y = [value doubleValue] * yScale;
+            if (index == 0) {
+                CGContextMoveToPoint(ctx, x, y);
+            }
+            else {
+                CGContextAddLineToPoint(ctx, x, y);
+            }
+            index++;
         }
-        else {
-            CGContextAddLineToPoint(ctx, x, y);
-        }
-        index++;
     }
     
     CGContextStrokePath(ctx);
@@ -209,6 +254,7 @@
 @end
 
 ////////////////////////////////////////////////////////////////////////////
+#pragma mark - UCLLineChartView
 
 @implementation UCLLineChartView
 {
@@ -246,23 +292,33 @@
 #pragma mark - Properties
 
 @synthesize delegate = _delegate;
-@synthesize data = _data;
 
-- (void)setData:(NSArray *)data
+- (void)addData:(NSArray*)data forKey:(NSString*)key
 {
-    if (data != nil) {
-        _data = [data copy];
-        _chartLayer.data = _data;
-        _chartLayer.offset = 0;
-        _chartLayer.scale = 1;
-        [self configureLayersWithAnimation:NO overDuration:0];
-        _chartLayer.hidden = NO;
-        [_chartLayer setNeedsDisplay];
+    [_chartLayer addData:data forKey:key];
+    _chartLayer.hidden = NO;
+    [_chartLayer setNeedsDisplay];
+}
+
+- (void)removeDataForKey:(NSString*)key
+{
+    [_chartLayer removeDataForKey:key];
+    if (_chartLayer.datas.count == 0) {
+        _chartLayer.hidden = 0;
     }
-    else {
-        _data = nil;
-        _chartLayer.hidden = YES;
-    }
+}
+
+- (void)removeAllData
+{
+    [_chartLayer removeAllData];
+    _chartLayer.hidden = YES;
+}
+
+- (void)resetView
+{
+    _chartLayer.offset = 0;
+    _chartLayer.scale = 1;
+    [_chartLayer setNeedsDisplay];
 }
 
 #pragma mark - View Methods
@@ -440,10 +496,10 @@
     CGFloat scale = _chartLayer.scale;
     CGFloat offset = _chartLayer.offset;
     CGFloat chartWidth = _chartLayer.chartSize.width;
-    CGFloat xScale = chartWidth / [_data count] * scale;
+    CGFloat xScale = chartWidth / _chartLayer.maxDataCount * scale;
     CGFloat posOffset = offset * -1;
     NSUInteger start = MAX(0, ceil(posOffset / xScale));
-    NSUInteger length = MIN([_data count], floor((posOffset + chartWidth) / xScale) - start);
+    NSUInteger length = MIN(_chartLayer.maxDataCount, floor((posOffset + chartWidth) / xScale) - start);
     return NSMakeRange(start, length);
 }
 

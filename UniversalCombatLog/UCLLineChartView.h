@@ -21,8 +21,13 @@
 @interface UCLLineChartView : UIView <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) id <UCLLineChartViewDelegate> delegate;
-@property (copy, nonatomic) NSArray* data;
+
+- (void)addData:(NSArray*)data forKey:(NSString*)key;
+- (void)removeDataForKey:(NSString*)key;
+- (void)removeAllData;
+- (void)resetView;
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration;
+
 
 @end

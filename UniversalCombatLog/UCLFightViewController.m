@@ -120,7 +120,8 @@
         [chartData addObject:[NSNumber numberWithDouble:(value / windowSize)]];
     }
 
-    _lineChartView.data = chartData;
+    [_lineChartView removeDataForKey:@"Total"];
+    [_lineChartView addData:chartData forKey:@"Total"];
 
     free(totals);
 }
@@ -146,6 +147,59 @@
     }
     
     return nil;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView == _playersTableView) {
+        UCLEntity* player = [_players objectAtIndex:indexPath.row];
+        NSArray* data = [self chartDataForEntity:player];
+        [_lineChartView addData:data forKey:player.name];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView == _playersTableView) {
+        UCLEntity* player = [_players objectAtIndex:indexPath.row];
+        [_lineChartView removeDataForKey:player.name];
+    }
+}
+
+- (NSArray*)chartDataForEntity:(UCLEntity*)entity
+{
+    NSUInteger duration = ceil(_fight.duration);
+    NSDate* start = _fight.startTime;
+    double* totals = malloc(sizeof(double)*duration);
+    
+    for (NSUInteger i = 0; i < duration; i++) {
+        totals[i] = 0;
+    }
+    
+    for (UCLLogEvent* event in _fight.events) {
+        if ([event.actor isEqualToEntity:entity]) {
+            uint32_t index = floor([event.time timeIntervalSinceDate:start]);
+            if ((_playerTableMode == 0 && [event isDamage]) ||
+                (_playerTableMode == 1 && [event isHealing])) {
+                totals[index] = totals[index] + [event.amount doubleValue];
+            }
+        }
+    }
+    
+    NSMutableArray* chartData = [NSMutableArray arrayWithCapacity:duration];
+    
+    for (NSUInteger i = 0; i < duration; i++) {
+        double value = 0;
+        NSUInteger windowSize = MIN(PER_SECOND_WINDOW_SIZE, i + 1);
+        for (NSInteger j = i - windowSize + 1; j <= i; j++) {
+            value += totals[j];
+        }
+        [chartData addObject:[NSNumber numberWithDouble:(value / windowSize)]];
+    }
+    
+    free(totals);
+    
+    return chartData;
 }
 
 - (IBAction)playerTableModeToggled:(UISegmentedControl *)sender {

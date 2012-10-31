@@ -13,7 +13,7 @@
 @interface UCLFightViewController : UIViewController<UITableViewDelegate,UITableViewDataSource>
 
 @property (strong, nonatomic) UCLFight* fight;
-@property (weak, nonatomic) IBOutlet UCLLineChartView *lineChartView;
+@property (weak, nonatomic) IBOutlet UCLLineChartView *fightLineChartView;
 @property (weak, nonatomic) IBOutlet UITableView *playersTableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *playersTableModeToggleControl;
 

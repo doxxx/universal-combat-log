@@ -22,10 +22,10 @@
 
 #pragma mark - Properties
 
-@synthesize actorViewController = _actorViewController;
-@synthesize documentsDirectory = _applicationDocumentsDirectory;
-@synthesize localFilesTableView = _localFilesTableView;
-@synthesize networkServersTableView = _networkServersTableView;
+@synthesize actorViewController;
+@synthesize documentsDirectory;
+@synthesize localFilesTableView;
+@synthesize networkServersTableView;
 
 #pragma mark - View methods
 
@@ -38,16 +38,9 @@
     [super awakeFromNib];
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-//    self.actorViewController = (UCLActorViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
-}
-
 - (void)viewDidUnload {
-    _localFilesTableView = nil;
-    _networkServersTableView = nil;
+    self.localFilesTableView = nil;
+    self.networkServersTableView = nil;
     [super viewDidUnload];
 }
 
@@ -84,10 +77,10 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView == _localFilesTableView) {
+    if (tableView == self.localFilesTableView) {
         return [_logFileEntries count];
     }
-    else if (tableView == _networkServersTableView) {
+    else if (tableView == self.networkServersTableView) {
         return [_networkServerEntries count];
     }
 
@@ -96,7 +89,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _localFilesTableView) {
+    if (tableView == self.localFilesTableView) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
         
         NSDictionary* entry = [_logFileEntries objectAtIndex:indexPath.row];
@@ -114,7 +107,7 @@
         
         return cell;
     }
-    else if (tableView == _networkServersTableView) {
+    else if (tableView == self.networkServersTableView) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
         
         NSDictionary* entry = [_networkServerEntries objectAtIndex:indexPath.row];
@@ -180,7 +173,6 @@
     }
     
     NSLog(@"Found %d UCL files", [files count]);
-    
 }
 
 - (IBAction)refresh:(id)sender {
@@ -189,8 +181,8 @@
     [self scanDocumentsDirectory];
     [_networkClient discoverServers];
     
-    [_localFilesTableView reloadData];
-    [_networkServersTableView reloadData];
+    [self.localFilesTableView reloadData];
+    [self.networkServersTableView reloadData];
 }
 
 @end

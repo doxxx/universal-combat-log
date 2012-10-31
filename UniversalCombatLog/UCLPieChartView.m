@@ -31,25 +31,29 @@
 
 #pragma mark - Properties
 
-@synthesize delegate = _delegate;
-@synthesize data = _data;
+@synthesize delegate;
+@synthesize data;
 
-- (void)setData:(NSArray *)data
+- (void)setData:(NSArray *)newData
 {
-    if (data != nil) {
-        _data = data;
+    if (newData != nil) {
+        data = newData;
+
         double sum = 0;
-        for (NSNumber* value in data) {
+        for (NSNumber* value in newData) {
             sum += [value doubleValue];
         }
-        _sum = sum;
         
-        _selectedSegmentIndex = -1;
+        _sum = sum;
     }
     else {
-        _data = nil;
-        _segmentPaths = nil;
+        data = nil;
+        _sum = 0;
     }
+
+    _selectedSegmentIndex = -1;
+    _segmentPaths = nil;
+
     [self setNeedsDisplay];
 }
 

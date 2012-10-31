@@ -18,27 +18,25 @@
 
 #pragma mark - Properties
 
-@synthesize url=_url;
-@synthesize fights=_fights;
-//@synthesize actorViewController=_actorViewController;
-@synthesize tableView = _tableView;
+@synthesize url;
+@synthesize fights;
+@synthesize fightsTableView;
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [_tableView deselectRowAtIndexPath:[_tableView indexPathForSelectedRow] animated:NO];
+    [self.fightsTableView deselectRowAtIndexPath:[self.fightsTableView indexPathForSelectedRow] animated:NO];
 }
 
-- (void)setUrl:(NSURL *)url
+- (void)setUrl:(NSURL *)newURL
 {
-    _url = url;
-    
+    url = newURL;
     [self refresh:nil];
 }
 
-- (void)setFights:(NSArray *)fights
+- (void)setFights:(NSArray *)newFights
 {
-    _fights = fights;
-    [self.tableView reloadData];
+    fights = newFights;
+    [self.fightsTableView reloadData];
 }
 
 - (IBAction)refresh:(id)sender {
@@ -66,8 +64,8 @@
                                        queue:[NSOperationQueue mainQueue] 
                            completionHandler:handler];
     
-    _fights = nil;
-    [self.tableView reloadData];
+    self.fights = nil;
+    [self.fightsTableView reloadData];
 }
 
 #pragma mark - View methods
@@ -120,14 +118,14 @@
     if ([[segue identifier] isEqualToString:@"Fight"]) {
 //        UCLActorsViewController* vc = [segue destinationViewController];
         UCLFightViewController* vc = [segue destinationViewController];
-        NSIndexPath* indexPath = [self.tableView indexPathForCell:sender];
+        NSIndexPath* indexPath = [self.fightsTableView indexPathForCell:sender];
 //        vc.actorViewController = self.actorViewController;
         vc.fight = [self.fights objectAtIndex:indexPath.row];
     }
 }
 
 - (void)viewDidUnload {
-    [self setTableView:nil];
+    [self setFightsTableView:nil];
     [super viewDidUnload];
 }
 @end

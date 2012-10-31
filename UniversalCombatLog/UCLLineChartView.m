@@ -21,29 +21,31 @@
 @interface ChartLayer : CALayer
 
 @property (strong, nonatomic) NSDictionary* textAttributes;
-@property (nonatomic) CGPoint chartOrigin;
-@property (nonatomic) CGSize chartSize;
-@property (nonatomic) NSUInteger xInterval;
+@property (strong, nonatomic) NSMutableDictionary* datas;
 @property (nonatomic) NSUInteger yInterval;
 @property (nonatomic) double maxValue;
 @property (nonatomic) int maxDataCount;
+@property (nonatomic) CGSize chartSize;
 @property (nonatomic) CGFloat offset;
 @property (nonatomic) CGFloat scale;
-
-- (NSMutableDictionary*)datas;
 
 @end
 
 @implementation ChartLayer
-{
-    NSMutableDictionary* _datas;
-}
+
+@synthesize textAttributes;
+@synthesize datas;
+@synthesize yInterval;
+@synthesize maxValue;
+@synthesize maxDataCount;
+@synthesize chartSize;
+@synthesize offset;
+@synthesize scale;
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        _datas = [NSMutableDictionary dictionary];
         self.needsDisplayOnBoundsChange = YES;
         self.contentsScale = [UIScreen mainScreen].scale;
         self.anchorPoint = CGPointMake(0, 0);
@@ -53,8 +55,9 @@
                         [NSNull null], @"bounds", 
                         [NSNull null], @"contents", 
                         nil];
-        self.scale = 1;
-        self.offset = 0;
+        datas = [NSMutableDictionary dictionary];
+        scale = 1;
+        offset = 0;
     }
     return self;
 }
@@ -65,81 +68,71 @@
     if (self != nil) {
         if ([layer isKindOfClass:[ChartLayer class]]) {
             ChartLayer* other = layer;
-            _datas = other.datas;
-            self.textAttributes = other.textAttributes;
-            self.chartOrigin = other.chartOrigin;
-            self.chartSize = other.chartSize;
-            self.xInterval = other.xInterval;
-            self.yInterval = other.yInterval;
-            self.maxValue = other.maxValue;
-            self.maxDataCount = other.maxDataCount;
-            self.offset = other.offset;
-            self.scale = other.scale;
+            
+            datas = other.datas;
+            textAttributes = other.textAttributes;
+            yInterval = other.yInterval;
+            maxValue = other.maxValue;
+            maxDataCount = other.maxDataCount;
+            chartSize = other.chartSize;
+            offset = other.offset;
+            scale = other.scale;
         }
     }
     return self;
 }
 
-@synthesize textAttributes, chartOrigin, xInterval=_xInterval, yInterval=_yInterval;
-@synthesize maxValue=_maxValue, maxDataCount=_maxDataCount;
-@dynamic chartSize, offset, scale;
-
-- (NSMutableDictionary *)datas
-{
-    return _datas;
-}
-
 - (void)addData:(NSArray*)data forKey:(NSString*)key
 {
-    [_datas setObject:data forKey:key];
+    [self.datas setObject:data forKey:key];
     [self recalculateForNewData];
 }
 
 - (void)removeDataForKey:(NSString*)key
 {
-    [_datas removeObjectForKey:key];
+    [self.datas removeObjectForKey:key];
 }
 
 - (void)removeAllData
 {
-    [_datas removeAllObjects];
+    [self.datas removeAllObjects];
 }
 
 - (void)recalculateForNewData
 {
-    double maxValue = 0;
-    int maxDataCount = 0;
+    double newMaxValue = 0;
+    double newMaxDataCount = 0;
     
-    for (NSString* key in _datas) {
-        NSArray* data = [_datas objectForKey:key];
+    for (NSString* key in self.datas) {
+        NSArray* data = [self.datas objectForKey:key];
         for (NSNumber* value in data) {
             double v = [value doubleValue];
-            if (v > maxValue) {
-                maxValue = v;
+            if (v > newMaxValue) {
+                newMaxValue = v;
             }
         }
-        if (data.count > maxDataCount) {
-            maxDataCount = data.count;
+        if (data.count > newMaxDataCount) {
+            newMaxDataCount = data.count;
         }
     }
-
-    self.maxValue = maxValue;
-    self.maxDataCount = maxDataCount;
     
-    double yInterval = pow(10, floor(log10(maxValue)));
-    double yIntervalCount = maxValue / yInterval;
+    self.maxValue = newMaxValue;
+    self.maxDataCount = newMaxDataCount;
+
+    double newYInterval = pow(10, floor(log10(newMaxValue)));
+    double yIntervalCount = newMaxValue / newYInterval;
     if (yIntervalCount < 3) {
-        yInterval /= 5;
+        newYInterval /= 5;
     }
     else if (yIntervalCount < 8) {
-        yInterval /= 2;
+        newYInterval /= 2;
     }
-    self.yInterval = yInterval;
+    self.yInterval = newYInterval;
 }
 
 - (void)drawInContext:(CGContextRef)ctx
 {
-    if (_datas.count == 0) {
+    if (self.datas.count == 0) {
         return;
     }
     
@@ -156,10 +149,10 @@
     
     CGContextClipToRect(ctx, CGRectMake(0, 0, size.width, size.height));
     
-    NSLog(@"drawInContext: offset=%.1f", self.offset);
+    NSLog(@"drawInContext: offset=%.1f, scale=%.1f", self.offset, self.scale);
     
-    for (NSString* key in _datas) {
-        NSArray* data = [_datas objectForKey:key];
+    for (NSString* key in self.datas) {
+        NSArray* data = [self.datas objectForKey:key];
         NSUInteger index = 0;
         while (index < [data count]) {
             NSNumber* value = [data objectAtIndex:index];
@@ -200,7 +193,7 @@
         
         NSString* markerLabel = [NSString stringWithFormat:@"%u", (i * self.yInterval)];
         NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
-                                                                      attributes:textAttributes];
+                                                                      attributes:self.textAttributes];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
         CGRect labelRect = CTLineGetImageBounds(line, ctx);
         CGContextSetTextPosition(ctx, -MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
@@ -230,7 +223,7 @@
         double seconds = round((i / 60.0 - minutes) * 60);
         NSString* markerLabel = [NSString stringWithFormat:@"%.0f:%02.f", minutes, seconds];
         NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
-                                                                      attributes:textAttributes];
+                                                                      attributes:self.textAttributes];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
         CGRect labelRect = CTLineGetImageBounds(line, ctx);
         CGContextSetTextPosition(ctx, x - labelRect.size.width/2, -MARKER_LENGTH - labelRect.size.height - 4);

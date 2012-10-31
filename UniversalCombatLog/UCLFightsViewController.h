@@ -14,8 +14,7 @@
 
 @property (readwrite, strong, nonatomic) NSURL* url;
 @property (readwrite, strong, nonatomic) NSArray* fights;
-//@property (readwrite, weak, nonatomic) UCLActorViewController* actorViewController;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UITableView *fightsTableView;
 
 - (IBAction)refresh:(id)sender;
 

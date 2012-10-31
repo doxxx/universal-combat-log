@@ -542,7 +542,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Fights" id="aow-eV-Wv7"/>
                     <connections>
-                        <outlet property="tableView" destination="5br-ZG-COj" id="7JY-Ij-F0B"/>
+                        <outlet property="fightsTableView" destination="5br-ZG-COj" id="eR8-7Y-Req"/>
                     </connections>
                 </viewController>
             </objects>
@@ -622,7 +622,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Fight" id="Dis-gJ-Ekm"/>
                     <connections>
-                        <outlet property="lineChartView" destination="6n9-DN-kUe" id="aMz-8s-uKp"/>
+                        <outlet property="fightLineChartView" destination="6n9-DN-kUe" id="fEH-IM-p6O"/>
                         <outlet property="playersTableModeToggleControl" destination="2Dh-3b-V55" id="GRe-YX-J4i"/>
                         <outlet property="playersTableView" destination="Uve-a9-gqI" id="Ie4-2M-iXX"/>
                     </connections>

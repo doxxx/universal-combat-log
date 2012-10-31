@@ -19,14 +19,16 @@
     NSDictionary* _playerDetails;
 }
 
-@synthesize fight = _fight;
-@synthesize lineChartView = _lineChartView;
-@synthesize playersTableView = _playersTableView;
-@synthesize playersTableModeToggleControl = _playersTableModeToggleControl;
+@synthesize fight;
+@synthesize fightLineChartView;
+@synthesize playersTableView;
+@synthesize playersTableModeToggleControl;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _playerTableMode = 0;
 
     [self processEvents];
 }
@@ -35,7 +37,7 @@
 {
     _players = nil;
     
-    self.lineChartView = nil;
+    self.fightLineChartView = nil;
     self.playersTableView = nil;
     self.playersTableModeToggleControl = nil;
     
@@ -49,7 +51,7 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    [_lineChartView willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    [self.fightLineChartView willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
     [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
 }
 
@@ -66,8 +68,8 @@
 
 - (void)processEvents
 {
-    NSUInteger duration = ceil(_fight.duration);
-    NSDate* start = _fight.startTime;
+    NSUInteger duration = ceil(self.fight.duration);
+    NSDate* start = self.fight.startTime;
     double* totals = malloc(sizeof(double)*duration);
     
     for (NSUInteger i = 0; i < duration; i++) {
@@ -76,7 +78,7 @@
     
     NSMutableDictionary* players = [NSMutableDictionary dictionaryWithCapacity:25];
     
-    for (UCLLogEvent* event in _fight.events) {
+    for (UCLLogEvent* event in self.fight.events) {
         if ([event.actor isPlayerOrPet]) {
             uint32_t index = floor([event.time timeIntervalSinceDate:start]);
             NSNumber* playerTotal = [players objectForKey:event.actor];
@@ -120,15 +122,15 @@
         [chartData addObject:[NSNumber numberWithDouble:(value / windowSize)]];
     }
 
-    [_lineChartView removeDataForKey:@"Total"];
-    [_lineChartView addData:chartData forKey:@"Total"];
+    [self.fightLineChartView removeDataForKey:@"Total"];
+    [self.fightLineChartView addData:chartData forKey:@"Total"];
 
     free(totals);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView == _playersTableView) {
+    if (tableView == self.playersTableView) {
         return [_players count];
     }
     
@@ -137,8 +139,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _playersTableView) {
-        UITableViewCell* cell = [_playersTableView dequeueReusableCellWithIdentifier:@"Cell"];
+    if (tableView == self.playersTableView) {
+        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
         UCLEntity* player = [_players objectAtIndex:indexPath.row];
         NSNumber* playerValue = [_playerDetails objectForKey:player];
         cell.textLabel.text = player.name;
@@ -151,32 +153,32 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _playersTableView) {
+    if (tableView == self.playersTableView) {
         UCLEntity* player = [_players objectAtIndex:indexPath.row];
         NSArray* data = [self chartDataForEntity:player];
-        [_lineChartView addData:data forKey:player.name];
+        [self.fightLineChartView addData:data forKey:player.name];
     }
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == _playersTableView) {
+    if (tableView == playersTableView) {
         UCLEntity* player = [_players objectAtIndex:indexPath.row];
-        [_lineChartView removeDataForKey:player.name];
+        [self.fightLineChartView removeDataForKey:player.name];
     }
 }
 
 - (NSArray*)chartDataForEntity:(UCLEntity*)entity
 {
-    NSUInteger duration = ceil(_fight.duration);
-    NSDate* start = _fight.startTime;
+    NSUInteger duration = ceil(self.fight.duration);
+    NSDate* start = self.fight.startTime;
     double* totals = malloc(sizeof(double)*duration);
     
     for (NSUInteger i = 0; i < duration; i++) {
         totals[i] = 0;
     }
     
-    for (UCLLogEvent* event in _fight.events) {
+    for (UCLLogEvent* event in self.fight.events) {
         if ([event.actor isEqualToEntity:entity]) {
             uint32_t index = floor([event.time timeIntervalSinceDate:start]);
             if ((_playerTableMode == 0 && [event isDamage]) ||
@@ -205,7 +207,7 @@
 - (IBAction)playerTableModeToggled:(UISegmentedControl *)sender {
     _playerTableMode = sender.selectedSegmentIndex;
     [self processEvents];
-    [_playersTableView reloadData];
+    [self.playersTableView reloadData];
 }
 
 @end

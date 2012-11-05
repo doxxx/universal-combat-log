@@ -8,10 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-#import "UCLActorsViewController.h"
+@protocol UCLSummaryTypesViewDelegate <NSObject>
+
+- (void)setSummaryType:(NSInteger)summaryType;
+
+@end
 
 @interface UCLSummaryTypesViewController : UITableViewController
 
-@property (weak, nonatomic) UCLActorsViewController* actorsViewController;
+@property (weak, nonatomic) id<UCLSummaryTypesViewDelegate> delegate;
 
 @end

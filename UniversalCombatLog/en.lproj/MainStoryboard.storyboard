@@ -620,7 +620,15 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Fight" id="Dis-gJ-Ekm"/>
+                    <navigationItem key="navigationItem" title="Fight" id="Dis-gJ-Ekm">
+                        <barButtonItem key="rightBarButtonItem" title="DPS" id="jnf-vX-vvA">
+                            <connections>
+                                <segue destination="UP3-aA-MWw" kind="popover" identifier="SummaryTypes" popoverAnchorBarButtonItem="jnf-vX-vvA" id="HOI-0b-8Av">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="fightLineChartView" destination="6n9-DN-kUe" id="fEH-IM-p6O"/>
                         <outlet property="playersTableModeToggleControl" destination="2Dh-3b-V55" id="GRe-YX-J4i"/>
@@ -681,9 +689,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="summaryTypeButton" destination="lH7-Y9-IQl" id="2O0-0d-UXC"/>
-                        <segue destination="UP3-aA-MWw" kind="popover" identifier="SummaryTypes" popoverAnchorBarButtonItem="lH7-Y9-IQl" id="fuV-oE-cKr">
-                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                        </segue>
                     </connections>
                 </tableViewController>
             </objects>
@@ -695,10 +700,9 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="df3-QP-ed8" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="SummaryTypes" modalPresentationStyle="pageSheet" id="UP3-aA-MWw" customClass="UCLSummaryTypesViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="0ZB-ce-9GV">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="768"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                         <sections>
                             <tableViewSection id="EF0-BX-DAA">
                                 <cells>
@@ -720,7 +724,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="72Z-b8-YFe" style="IBUITableViewCellStyleDefault" id="6bi-7L-2D3">
+                                    <tableViewCell tag="1" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="72Z-b8-YFe" style="IBUITableViewCellStyleDefault" id="6bi-7L-2D3">
                                         <rect key="frame" x="0.0" y="44" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -746,11 +750,11 @@
                             <outlet property="delegate" destination="UP3-aA-MWw" id="TNk-eh-lI0"/>
                         </connections>
                     </tableView>
-                    <value key="contentSizeForViewInPopover" type="size" width="100" height="100"/>
+                    <value key="contentSizeForViewInPopover" type="size" width="100" height="90"/>
                     <splitViewMasterSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="2573" y="-1082"/>
+            <point key="canvasLocation" x="2977" y="208"/>
         </scene>
     </scenes>
     <classes>
@@ -768,13 +772,6 @@
                 <relationship kind="outlet" name="minDamageLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="pieChartView" candidateClass="UCLPieChartView"/>
                 <relationship kind="outlet" name="tableView" candidateClass="UITableView"/>
-            </relationships>
-        </class>
-        <class className="UCLActorsViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLActorsViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showSummaryTypes:"/>
-                <relationship kind="outlet" name="summaryTypeButton" candidateClass="UIBarButtonItem"/>
             </relationships>
         </class>
         <class className="UCLFightViewController" superclassName="UIViewController">

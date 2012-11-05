@@ -17,6 +17,8 @@
     NSInteger _playerTableMode;
     NSArray* _players;
     NSDictionary* _playerDetails;
+    
+    UIPopoverController* _summaryTypesPopoverController;
 }
 
 @synthesize fight;
@@ -225,6 +227,42 @@
     _playerTableMode = sender.selectedSegmentIndex;
     [self processEvents];
     [self.playersTableView reloadData];
+}
+
+- (void)setSummaryType:(NSInteger)summaryType
+{
+    [_summaryTypesPopoverController dismissPopoverAnimated:YES];
+    _summaryTypesPopoverController = nil;
+    
+    _playerTableMode = summaryType;
+    switch (summaryType) {
+        case 0:
+            self.navigationItem.rightBarButtonItem.title = @"DPS";
+            break;
+            
+        case 1:
+            self.navigationItem.rightBarButtonItem.title = @"HPS";
+            break;
+            
+        default:
+            break;
+    }
+    [self processEvents];
+    [self.playersTableView reloadData];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"SummaryTypes"]) {
+        if (_summaryTypesPopoverController) {
+            [_summaryTypesPopoverController dismissPopoverAnimated:NO];
+        }
+        UIStoryboardPopoverSegue* popSegue = (UIStoryboardPopoverSegue*)segue;
+        _summaryTypesPopoverController = popSegue.popoverController;
+        UCLSummaryTypesViewController* summaryTypesController = 
+            (UCLSummaryTypesViewController*)popSegue.destinationViewController;
+        summaryTypesController.delegate = self;
+    }
 }
 
 @end

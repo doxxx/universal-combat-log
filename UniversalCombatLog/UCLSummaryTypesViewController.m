@@ -10,7 +10,7 @@
 
 @implementation UCLSummaryTypesViewController
 
-@synthesize actorsViewController;
+@synthesize delegate;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -21,7 +21,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.actorsViewController.summaryType = [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    [self.delegate setSummaryType:[self.tableView cellForRowAtIndexPath:indexPath].tag];
 }
 
 @end

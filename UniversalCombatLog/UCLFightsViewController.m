@@ -7,7 +7,6 @@
 //
 
 #import "UCLFightsViewController.h"
-#import "UCLActorsViewController.h"
 #import "UCLFIghtViewController.h"
 
 #import "UCLFight.h"

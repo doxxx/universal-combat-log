@@ -285,6 +285,7 @@
 #pragma mark - Properties
 
 @synthesize delegate = _delegate;
+@synthesize rotating;
 
 - (void)addData:(NSArray*)data forKey:(NSString*)key
 {
@@ -318,7 +319,9 @@
 
 - (void)layoutSubviews
 {
-    [self configureLayersWithAnimation:NO overDuration:0];
+    if (!self.rotating) {
+        [self configureLayersWithAnimation:NO overDuration:0];
+    }
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration

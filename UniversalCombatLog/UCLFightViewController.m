@@ -49,14 +49,31 @@
     return YES;
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    self.fightLineChartView.rotating = YES;
+}
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
     [self.fightLineChartView willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
     [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    self.fightLineChartView.rotating = NO;
+}
+
 - (void)viewDidLayoutSubviews
 {
+    // resize fight line chart view
+    CGRect frame = self.fightLineChartView.frame;
+    CGSize viewSize = self.view.bounds.size;
+    CGFloat newHeight = MIN(viewSize.height, viewSize.width / 1.45);
+    frame.size.height = newHeight;
+    self.fightLineChartView.frame = frame;
+
     // reposition players table mode toggle control
     CGRect tableFrame = self.playersTableView.frame;
     CGRect controlFrame = self.playersTableModeToggleControl.frame;

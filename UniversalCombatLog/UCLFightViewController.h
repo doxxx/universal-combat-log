@@ -10,8 +10,9 @@
 #import "UCLLineChartView.h"
 #import "UCLFight.h"
 #import "UCLSummaryTypesViewController.h"
+#import "UCLActorsViewController.h"
 
-@interface UCLFightViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,UCLSummaryTypesViewDelegate>
+@interface UCLFightViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,UCLSummaryTypesViewDelegate,UCLActorsViewDelegate>
 
 @property (strong, nonatomic) UCLFight* fight;
 @property (weak, nonatomic) IBOutlet UCLLineChartView *fightLineChartView;

@@ -12,14 +12,21 @@
 
 #import "UCLFight.h"
 
+@class UCLActorsViewController;
+
+@protocol UCLActorsViewDelegate <NSObject>
+
+- (void)actorsView:(UCLActorsViewController*)actorsView didSelectActor:(UCLEntity*)actor;
+
+@end
+
 @interface UCLActorsViewController : UITableViewController<UINavigationControllerDelegate>
 
-@property (weak, nonatomic) UCLActorViewController* actorViewController;
 @property (strong, nonatomic) UCLFight* fight;
 @property (strong, nonatomic) NSString* summaryType;
+@property (weak, nonatomic) id<UCLActorsViewDelegate> delegate;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *summaryTypeButton;
-
-- (IBAction)showSummaryTypes:(id)sender;
+- (UCLEntity*)selectedActor;
+- (void)setSelectedActor:(UCLEntity*)actor;
 
 @end

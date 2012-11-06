@@ -7,6 +7,7 @@
 //
 
 #import "UCLFightViewController.h"
+#import "UCLActorsViewController.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -17,8 +18,10 @@
     NSInteger _playerTableMode;
     NSArray* _players;
     NSDictionary* _playerDetails;
+    UCLEntity* _selectedActor;
     
     UIPopoverController* _summaryTypesPopoverController;
+    UIPopoverController* _playersPopoverController;
 }
 
 @synthesize fight;
@@ -259,10 +262,32 @@
         }
         UIStoryboardPopoverSegue* popSegue = (UIStoryboardPopoverSegue*)segue;
         _summaryTypesPopoverController = popSegue.popoverController;
-        UCLSummaryTypesViewController* summaryTypesController = 
-            (UCLSummaryTypesViewController*)popSegue.destinationViewController;
+        UCLSummaryTypesViewController* summaryTypesController = popSegue.destinationViewController;
         summaryTypesController.delegate = self;
     }
+    else if ([segue.identifier isEqualToString:@"Players"]) {
+        if (_playersPopoverController) {
+            [_playersPopoverController dismissPopoverAnimated:NO];
+        }
+        UIStoryboardPopoverSegue* popSegue = (UIStoryboardPopoverSegue*)segue;
+        _playersPopoverController = popSegue.popoverController;
+        UCLActorsViewController* actorsViewController = popSegue.destinationViewController;
+        actorsViewController.fight = self.fight;
+        if (_selectedActor) {
+            actorsViewController.selectedActor = _selectedActor;
+        }
+        actorsViewController.delegate = self;
+    }
+}
+
+- (void)actorsView:(UCLActorsViewController *)actorsView didSelectActor:(UCLEntity *)actor
+{
+    if (_selectedActor) {
+        [self.fightLineChartView removeDataForKey:_selectedActor.name];
+    }
+    _selectedActor = actor;
+    NSArray* data = [self chartDataForEntity:actor];
+    [self.fightLineChartView addData:data forKey:actor.name];
 }
 
 @end

@@ -10,6 +10,7 @@
 		F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F82F334115CC827600E9BA79 /* UCLLineChartView.m */; };
 		F844999715D1C3620090D3EB /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F844999615D1C3620090D3EB /* CoreText.framework */; };
 		F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = F844999A15D28D8B0090D3EB /* UCLPieChartView.m */; };
+		F85AFDDD16487CA8001024D5 /* UCLActorsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F85AFDDC16487CA8001024D5 /* UCLActorsViewController.m */; };
 		F85BA605161259F30020653D /* UCLNetworkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F85BA604161259F30020653D /* UCLNetworkClient.m */; };
 		F85BA6071613FB3A0020653D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F85BA6061613FB3A0020653D /* CFNetwork.framework */; };
 		F85BA60A1618F4B40020653D /* UCLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = F85BA6091618F4B40020653D /* UCLProtocol.m */; };
@@ -35,7 +36,6 @@
 		F8FDE37615C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */; };
 		F8FDE37815C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */; };
 		F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */; };
-		F8FDE38715C9572B0094FE26 /* UCLActorsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */; };
 		F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */; };
 		F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */; };
 /* End PBXBuildFile section */
@@ -84,6 +84,8 @@
 		F844999615D1C3620090D3EB /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		F844999915D28D8B0090D3EB /* UCLPieChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLPieChartView.h; sourceTree = "<group>"; };
 		F844999A15D28D8B0090D3EB /* UCLPieChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLPieChartView.m; sourceTree = "<group>"; };
+		F85AFDDB16487CA8001024D5 /* UCLActorsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorsViewController.h; sourceTree = "<group>"; };
+		F85AFDDC16487CA8001024D5 /* UCLActorsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLActorsViewController.m; sourceTree = "<group>"; };
 		F85BA603161259F30020653D /* UCLNetworkClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLNetworkClient.h; sourceTree = "<group>"; };
 		F85BA604161259F30020653D /* UCLNetworkClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLNetworkClient.m; sourceTree = "<group>"; };
 		F85BA6061613FB3A0020653D /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -126,8 +128,6 @@
 		F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "72px-Sword_battleaxe_shield.png"; path = "../72px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
 		F8FDE37F15C5D4C60094FE26 /* UCLSummaryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryEntry.h; sourceTree = "<group>"; };
 		F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryEntry.m; sourceTree = "<group>"; };
-		F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorsViewController.h; sourceTree = "<group>"; };
-		F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UCLActorsViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		F8FDE38815CAB0D50094FE26 /* UCLSummaryTypesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryTypesViewController.h; sourceTree = "<group>"; };
 		F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryTypesViewController.m; sourceTree = "<group>"; };
 		F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorViewController.h; sourceTree = "<group>"; };
@@ -216,10 +216,10 @@
 				F88649B615B8BEA800073204 /* Model */,
 				F85BA6011612599D0020653D /* Network */,
 				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
-				F8FDE38515C9572B0094FE26 /* UCLActorsViewController.h */,
-				F8FDE38615C9572B0094FE26 /* UCLActorsViewController.m */,
 				F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */,
 				F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */,
+				F85AFDDB16487CA8001024D5 /* UCLActorsViewController.h */,
+				F85AFDDC16487CA8001024D5 /* UCLActorsViewController.m */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
 				F886498215B82E8F00073204 /* UCLAppDelegate.m */,
 				F87C58A01637852900267520 /* UCLFightViewController.h */,
@@ -393,7 +393,6 @@
 				F8FDE34115BDF8680094FE26 /* UCLLogFileLoader.m in Sources */,
 				F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */,
 				F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */,
-				F8FDE38715C9572B0094FE26 /* UCLActorsViewController.m in Sources */,
 				F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */,
 				F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */,
 				F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */,
@@ -401,6 +400,7 @@
 				F85BA605161259F30020653D /* UCLNetworkClient.m in Sources */,
 				F85BA60A1618F4B40020653D /* UCLProtocol.m in Sources */,
 				F87C58A21637852900267520 /* UCLFightViewController.m in Sources */,
+				F85AFDDD16487CA8001024D5 /* UCLActorsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

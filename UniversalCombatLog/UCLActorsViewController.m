@@ -12,58 +12,78 @@
 
 @implementation UCLActorsViewController
 {
-    __weak UIPopoverController* _popoverController;
     __strong NSArray* _summary;
+    __weak UCLEntity* _selectedActor;
 }
 
 #pragma mark - Properties
 
-@synthesize actorViewController = _actorViewController;
 @synthesize fight = _fight;
 @synthesize summaryType = _summaryType;
-@synthesize summaryTypeButton = _summaryTypeButton;
+@synthesize delegate;
 
 -(void)setFight:(UCLFight *)fight
 {
+    NSLog(@"UCLActorsViewController:setFight");
     _fight = fight;
     [self configureView];
 }
 
 - (void)setSummaryType:(NSString *)summaryType
 {
-    if (_popoverController) {
-        [_popoverController dismissPopoverAnimated:YES];
-    }
+    NSLog(@"UCLActorsViewController:setSummaryType");
     _summaryType = summaryType;
-    self.summaryTypeButton.title = summaryType;
     [self configureView];
+}
+
+- (UCLEntity *)selectedActor
+{
+    return _selectedActor;
+}
+
+- (void)setSelectedActor:(UCLEntity *)actor
+{
+    NSLog(@"UCLActorsViewController:setSelectedActor");
+    _selectedActor = actor;
 }
 
 #pragma mark - View methods
 
 - (void)viewDidLoad
 {
+    NSLog(@"UCLActorsViewController:viewDidLoad");
     [super viewDidLoad];
 
-    // Set default summary type, which then configures the view.
+    self.clearsSelectionOnViewWillAppear = NO;
     self.summaryType = @"DPS";
 }
 
 - (void)viewDidUnload
 {
+    NSLog(@"UCLActorsViewController:viewDidUnload");
     [super viewDidUnload];
     
-    self.summaryTypeButton = nil;
     self.fight = nil;
 
     _summary = nil;
-    _popoverController = nil;
+    _selectedActor = nil;
 }
 
-- (void)viewWillDisappear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    if (_popoverController) {
-        [_popoverController dismissPopoverAnimated:YES];
+    [super viewDidAppear:animated];
+    
+    if (_selectedActor) {
+        NSUInteger index = [_summary indexOfObjectPassingTest:^(id obj, NSUInteger idx, BOOL* stop) {
+            return [[obj item] isEqualToEntity:_selectedActor];
+        }];
+        if (index == NSNotFound) {
+            return;
+        }
+        NSLog(@"Selecting actor: %d", index);
+        [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] 
+                                    animated:YES 
+                              scrollPosition:UITableViewScrollPositionMiddle];
     }
 }
 
@@ -76,6 +96,7 @@
 
 -(void)configureView
 {
+    NSLog(@"UCLActorsViewController:configureView");
     if (self.fight != nil) {
         UCLLogEventPredicate predicate = NULL;
         if ([self.summaryType isEqualToString:@"DPS"]) {
@@ -99,27 +120,27 @@
 
 - (NSArray*)summarizeActorsUsingPredicate:(UCLLogEventPredicate)predicate
 {
-    NSMutableDictionary* temp = [NSMutableDictionary dictionary];
+    NSMutableDictionary* amounts = [NSMutableDictionary dictionary];
     
     for (UCLLogEvent* event in _fight.events) {
         if (predicate != NULL && predicate(event)) {
-            NSNumber* amount = [temp objectForKey:event.actor];
+            NSNumber* amount = [amounts objectForKey:event.actor];
             if (amount == nil) {
                 amount = event.amount;
             }
             else {
                 amount = [NSNumber numberWithLong:([amount longValue] + [event.amount longValue])];
             }
-            [temp setObject:amount forKey:event.actor];
+            [amounts setObject:amount forKey:event.actor];
         }
     }
     
-    for (id item in [temp allKeys]) {
-        double value = ([[temp objectForKey:item] doubleValue] / self.fight.duration);
-        [temp setObject:[NSNumber numberWithLong:value] forKey:item];
+    for (UCLEntity* actor in [amounts allKeys]) {
+        double value = ([[amounts objectForKey:actor] doubleValue] / self.fight.duration);
+        [amounts setObject:[NSNumber numberWithLong:value] forKey:actor];
     }
     
-    NSArray* sortedItems = [temp keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
+    NSArray* sortedActors = [amounts keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
         if ([val1 longValue] > [val2 longValue]) {
             return NSOrderedAscending;
         }
@@ -129,9 +150,9 @@
         return NSOrderedSame;
     }];
     
-    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[temp count]];
-    for (id item in sortedItems) {
-        [result addObject:[[UCLSummaryEntry alloc] initWithItem:item amount:[temp objectForKey:item]]];
+    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amounts count]];
+    for (UCLEntity* actor in sortedActors) {
+        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:[amounts objectForKey:actor]]];
     }
     
     return [NSArray arrayWithArray:result];
@@ -165,31 +186,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
-    UCLEntity* actor = summaryEntry.item;
-    [self.actorViewController setActor:actor fight:self.fight];
+    _selectedActor = summaryEntry.item;
+    [self.delegate actorsView:self didSelectActor:_selectedActor];
 }
-
-#pragma mark - Segue
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"SummaryTypes"]) {
-        _popoverController = [(UIStoryboardPopoverSegue*)segue popoverController];
-        UCLSummaryTypesViewController* vc = [segue destinationViewController];
-        vc.actorsViewController = self;
-    }
-}
-
-#pragma mark - Actions
-
-- (IBAction)showSummaryTypes:(id)sender {
-    if (_popoverController) {
-        [_popoverController dismissPopoverAnimated:YES];
-    }
-    else {
-        [self performSegueWithIdentifier:@"SummaryTypes" sender:sender];
-    }
-}
-
 
 @end

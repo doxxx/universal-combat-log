@@ -185,4 +185,21 @@
     [self.networkServersTableView reloadData];
 }
 
+- (IBAction)sourceChanged:(UISegmentedControl *)sender {
+    switch (sender.selectedSegmentIndex) {
+        case 0:
+            self.localFilesTableView.hidden = NO;
+            self.networkServersTableView.hidden = YES;
+            break;
+            
+        case 1:
+            self.localFilesTableView.hidden = YES;
+            self.networkServersTableView.hidden = NO;
+            break;
+            
+        default:
+            break;
+    }
+}
+
 @end

@@ -20,5 +20,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *networkServersTableView;
 
 - (IBAction)refresh:(id)sender;
+- (IBAction)sourceChanged:(UISegmentedControl *)sender;
 
 @end

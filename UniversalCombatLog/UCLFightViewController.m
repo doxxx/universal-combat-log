@@ -272,8 +272,7 @@
         UIStoryboardPopoverSegue* popSegue = (UIStoryboardPopoverSegue*)segue;
         _playersPopoverController = popSegue.popoverController;
         UCLActorsViewController* actorsViewController = popSegue.destinationViewController;
-        actorsViewController.fight = self.fight;
-        actorsViewController.summaryType = _summaryType;
+        [actorsViewController setFight:self.fight summaryType:_summaryType];
         if (_selectedActor) {
             actorsViewController.selectedActor = _selectedActor;
         }

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UCLActorViewController.h"
+#import "UCLSummaryTypesViewController.h"
 
 #import "UCLFight.h"
 
@@ -22,11 +23,11 @@
 
 @interface UCLActorsViewController : UITableViewController<UINavigationControllerDelegate>
 
-@property (strong, nonatomic) UCLFight* fight;
-@property (nonatomic) NSUInteger summaryType;
 @property (weak, nonatomic) id<UCLActorsViewDelegate> delegate;
+@property (strong, nonatomic) UCLFight* fight;
+@property (nonatomic) UCLSummaryType summaryType;
+@property (strong, nonatomic) UCLEntity* selectedActor;
 
-- (UCLEntity*)selectedActor;
-- (void)setSelectedActor:(UCLEntity*)actor;
+- (void)setFight:(UCLFight *)fight summaryType:(UCLSummaryType)summaryType;
 
 @end

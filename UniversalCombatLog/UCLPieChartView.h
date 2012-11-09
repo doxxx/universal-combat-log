@@ -12,7 +12,7 @@
 
 @interface UCLPieChartView : UIView
 
-@property (weak, nonatomic) id <UCLPieChartViewDelegate> delegate;
+@property (weak, nonatomic) IBOutlet id <UCLPieChartViewDelegate> delegate;
 @property (copy, nonatomic) NSArray* data;
 
 - (void)selectSegment:(NSUInteger)segmentIndex;

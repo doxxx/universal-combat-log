@@ -16,6 +16,7 @@
 
 @property (strong, nonatomic) UCLActorViewController* actorViewController;
 @property (strong, nonatomic) NSURL* documentsDirectory;
+
 @property (weak, nonatomic) IBOutlet UITableView *localFilesTableView;
 @property (weak, nonatomic) IBOutlet UITableView *networkServersTableView;
 

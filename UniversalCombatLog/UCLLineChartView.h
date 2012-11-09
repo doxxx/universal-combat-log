@@ -20,8 +20,8 @@
 
 @interface UCLLineChartView : UIView <UIGestureRecognizerDelegate>
 
-@property (weak, nonatomic) id <UCLLineChartViewDelegate> delegate;
-@property (nonatomic,getter = isRotating) BOOL rotating;
+@property (weak, nonatomic) IBOutlet id <UCLLineChartViewDelegate> delegate;
+@property (nonatomic, getter = isRotating) BOOL rotating;
 
 - (void)addData:(NSArray*)data forKey:(NSString*)key;
 - (void)removeDataForKey:(NSString*)key;

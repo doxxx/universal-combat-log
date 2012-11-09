@@ -12,8 +12,9 @@
 
 @interface UCLFightsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate>
 
-@property (readwrite, strong, nonatomic) NSURL* url;
-@property (readwrite, strong, nonatomic) NSArray* fights;
+@property (strong, nonatomic) NSURL* url;
+@property (strong, nonatomic) NSArray* fights;
+
 @property (weak, nonatomic) IBOutlet UITableView *fightsTableView;
 
 - (IBAction)refresh:(id)sender;

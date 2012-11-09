@@ -21,11 +21,6 @@
 @synthesize fights;
 @synthesize fightsTableView;
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [self.fightsTableView deselectRowAtIndexPath:[self.fightsTableView indexPathForSelectedRow] animated:NO];
-}
-
 - (void)setUrl:(NSURL *)newURL
 {
     url = newURL;
@@ -37,6 +32,8 @@
     fights = newFights;
     [self.fightsTableView reloadData];
 }
+
+#pragma mark - Instance Methods
 
 - (IBAction)refresh:(id)sender {
     void (^handler)(NSURLResponse* response, NSData* data, NSError* error) = ^(NSURLResponse* response, NSData* data, NSError* error) {
@@ -69,6 +66,16 @@
 
 #pragma mark - View methods
 
+- (void)viewDidUnload {
+    [self setFightsTableView:nil];
+    [super viewDidUnload];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.fightsTableView deselectRowAtIndexPath:[self.fightsTableView indexPathForSelectedRow] animated:NO];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
 	return YES;
@@ -78,7 +85,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
     if (section == 0) {
         if (self.url != nil && self.fights == nil) {
             return 1;
@@ -117,7 +123,7 @@ NSString* formatDuration(NSTimeInterval duration) {
             cell = [tableView dequeueReusableCellWithIdentifier:loadingCellID];
         }
         else {
-            UCLFight* fight = [self.fights objectAtIndex:[indexPath row]];
+            UCLFight* fight = [self.fights objectAtIndex:indexPath.row];
             cell = [tableView dequeueReusableCellWithIdentifier:fightCellID];
             cell.textLabel.text = fight.title;
             cell.detailTextLabel.text = formatDuration(fight.duration);
@@ -133,16 +139,10 @@ NSString* formatDuration(NSTimeInterval duration) {
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([[segue identifier] isEqualToString:@"Fight"]) {
-//        UCLActorsViewController* vc = [segue destinationViewController];
         UCLFightViewController* vc = [segue destinationViewController];
         NSIndexPath* indexPath = [self.fightsTableView indexPathForCell:sender];
-//        vc.actorViewController = self.actorViewController;
         vc.fight = [self.fights objectAtIndex:indexPath.row];
     }
 }
 
-- (void)viewDidUnload {
-    [self setFightsTableView:nil];
-    [super viewDidUnload];
-}
 @end

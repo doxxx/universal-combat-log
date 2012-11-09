@@ -12,8 +12,7 @@
 
 @implementation UCLActorsViewController
 {
-    __strong NSArray* _summary;
-    __weak UCLEntity* _selectedActor;
+    NSArray* _summary;
 }
 
 #pragma mark - Properties
@@ -21,37 +20,33 @@
 @synthesize fight = _fight;
 @synthesize summaryType = _summaryType;
 @synthesize delegate;
+@synthesize selectedActor;
 
 -(void)setFight:(UCLFight *)fight
 {
-    NSLog(@"UCLActorsViewController:setFight");
     _fight = fight;
+    self.selectedActor = nil;
     [self configureView];
 }
 
-- (void)setSummaryType:(NSUInteger)summaryType
+- (void)setSummaryType:(UCLSummaryType)summaryType
 {
-    NSLog(@"UCLActorsViewController:setSummaryType");
     _summaryType = summaryType;
     [self configureView];
 }
 
-- (UCLEntity *)selectedActor
+- (void)setFight:(UCLFight *)fight summaryType:(UCLSummaryType)summaryType
 {
-    return _selectedActor;
-}
-
-- (void)setSelectedActor:(UCLEntity *)actor
-{
-    NSLog(@"UCLActorsViewController:setSelectedActor");
-    _selectedActor = actor;
+    _fight = fight;
+    _summaryType = _summaryType;
+    self.selectedActor = nil;
+    [self configureView];
 }
 
 #pragma mark - View methods
 
 - (void)viewDidLoad
 {
-    NSLog(@"UCLActorsViewController:viewDidLoad");
     [super viewDidLoad];
 
     self.clearsSelectionOnViewWillAppear = NO;
@@ -60,27 +55,25 @@
 
 - (void)viewDidUnload
 {
-    NSLog(@"UCLActorsViewController:viewDidUnload");
     [super viewDidUnload];
     
     self.fight = nil;
+    self.selectedActor = nil;
 
     _summary = nil;
-    _selectedActor = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    if (_selectedActor) {
+    if (self.selectedActor) {
         NSUInteger index = [_summary indexOfObjectPassingTest:^(id obj, NSUInteger idx, BOOL* stop) {
-            return [[obj item] isEqualToEntity:_selectedActor];
+            return [[obj item] isEqualToEntity:self.selectedActor];
         }];
         if (index == NSNotFound) {
             return;
         }
-        NSLog(@"Selecting actor: %d", index);
         [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] 
                                     animated:YES 
                               scrollPosition:UITableViewScrollPositionMiddle];
@@ -96,7 +89,6 @@
 
 -(void)configureView
 {
-    NSLog(@"UCLActorsViewController:configureView");
     if (self.fight != nil) {
         UCLLogEventPredicate predicate = NULL;
         if (self.summaryType == 0) {
@@ -163,16 +155,14 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
     return [_summary count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"ActorCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    static NSString *cellID = @"ActorCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
     
-    // Configure the cell...
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
     UCLEntity* actor = summaryEntry.item;
     cell.textLabel.text = actor.name;
@@ -186,8 +176,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
-    _selectedActor = summaryEntry.item;
-    [self.delegate actorsView:self didSelectActor:_selectedActor];
+    self.selectedActor = summaryEntry.item;
+    [self.delegate actorsView:self didSelectActor:self.selectedActor];
 }
 
 @end

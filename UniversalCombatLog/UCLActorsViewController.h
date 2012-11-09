@@ -23,7 +23,7 @@
 @interface UCLActorsViewController : UITableViewController<UINavigationControllerDelegate>
 
 @property (strong, nonatomic) UCLFight* fight;
-@property (strong, nonatomic) NSString* summaryType;
+@property (nonatomic) NSUInteger summaryType;
 @property (weak, nonatomic) id<UCLActorsViewDelegate> delegate;
 
 - (UCLEntity*)selectedActor;

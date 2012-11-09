@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    UCLSummaryDPS,
+    UCLSummaryHPS
+} UCLSummaryType;
+
 @protocol UCLSummaryTypesViewDelegate <NSObject>
 
-- (void)setSummaryType:(NSInteger)summaryType;
+- (void)setSummaryType:(UCLSummaryType)summaryType;
 
 @end
 

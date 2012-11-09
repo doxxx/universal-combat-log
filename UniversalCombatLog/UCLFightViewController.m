@@ -15,7 +15,7 @@
 
 @implementation UCLFightViewController
 {
-    NSInteger _playerTableMode;
+    UCLSummaryType _summaryType;
     NSArray* _players;
     NSDictionary* _playerDetails;
     UCLEntity* _selectedActor;
@@ -33,7 +33,7 @@
 {
     [super viewDidLoad];
     
-    _playerTableMode = 0;
+    _summaryType = UCLSummaryDPS;
 
     [self processEvents];
 }
@@ -104,8 +104,8 @@
         if ([event.actor isPlayerOrPet]) {
             uint32_t index = floor([event.time timeIntervalSinceDate:start]);
             NSNumber* playerTotal = [players objectForKey:event.actor];
-            if ((_playerTableMode == 0 && [event isDamage]) ||
-                (_playerTableMode == 1 && [event isHealing])) {
+            if ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+                (_summaryType == UCLSummaryHPS && [event isHealing])) {
                 if (playerTotal == nil) {
                     playerTotal = event.amount;
                 }
@@ -203,8 +203,8 @@
     for (UCLLogEvent* event in self.fight.events) {
         if ([event.actor isEqualToEntity:entity]) {
             uint32_t index = floor([event.time timeIntervalSinceDate:start]);
-            if ((_playerTableMode == 0 && [event isDamage]) ||
-                (_playerTableMode == 1 && [event isHealing])) {
+            if ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+                (_summaryType == UCLSummaryHPS && [event isHealing])) {
                 totals[index] = totals[index] + [event.amount doubleValue];
             }
         }
@@ -227,23 +227,23 @@
 }
 
 - (IBAction)playerTableModeToggled:(UISegmentedControl *)sender {
-    _playerTableMode = sender.selectedSegmentIndex;
+    _summaryType = sender.selectedSegmentIndex;
     [self processEvents];
     [self.playersTableView reloadData];
 }
 
-- (void)setSummaryType:(NSInteger)summaryType
+- (void)setSummaryType:(UCLSummaryType)summaryType
 {
     [_summaryTypesPopoverController dismissPopoverAnimated:YES];
     _summaryTypesPopoverController = nil;
     
-    _playerTableMode = summaryType;
+    _summaryType = summaryType;
     switch (summaryType) {
-        case 0:
+        case UCLSummaryDPS:
             self.navigationItem.rightBarButtonItem.title = @"DPS";
             break;
             
-        case 1:
+        case UCLSummaryHPS:
             self.navigationItem.rightBarButtonItem.title = @"HPS";
             break;
             
@@ -273,6 +273,7 @@
         _playersPopoverController = popSegue.popoverController;
         UCLActorsViewController* actorsViewController = popSegue.destinationViewController;
         actorsViewController.fight = self.fight;
+        actorsViewController.summaryType = _summaryType;
         if (_selectedActor) {
             actorsViewController.selectedActor = _selectedActor;
         }

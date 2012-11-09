@@ -29,7 +29,7 @@
     [self configureView];
 }
 
-- (void)setSummaryType:(NSString *)summaryType
+- (void)setSummaryType:(NSUInteger)summaryType
 {
     NSLog(@"UCLActorsViewController:setSummaryType");
     _summaryType = summaryType;
@@ -55,7 +55,7 @@
     [super viewDidLoad];
 
     self.clearsSelectionOnViewWillAppear = NO;
-    self.summaryType = @"DPS";
+    self.summaryType = 0;
 }
 
 - (void)viewDidUnload
@@ -99,12 +99,12 @@
     NSLog(@"UCLActorsViewController:configureView");
     if (self.fight != nil) {
         UCLLogEventPredicate predicate = NULL;
-        if ([self.summaryType isEqualToString:@"DPS"]) {
+        if (self.summaryType == 0) {
             predicate = ^BOOL(UCLLogEvent* event) {
                 return event.actor != nil && event.actor.type == Player && [event isDamage];
             };
         }
-        else if ([self.summaryType isEqualToString:@"HPS"]) {
+        else if (self.summaryType == 1) {
             predicate = ^BOOL(UCLLogEvent* event) {
                 return event.actor != nil && event.actor.type == Player && [event isHealing];
             };

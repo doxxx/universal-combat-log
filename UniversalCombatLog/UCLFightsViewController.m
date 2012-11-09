@@ -89,6 +89,23 @@
     return 0;
 }
 
+NSString* formatDuration(NSTimeInterval duration) {
+    if (duration >= 60*60) {
+        int seconds = fmod(duration, 60);
+        int minutes = fmod((duration - seconds) / 60, 60);
+        int hours = (((duration - seconds) / 60) - minutes) / 60;
+        return [NSString stringWithFormat:@"%dh %dm %ds", hours, minutes, seconds];
+    }
+    else if (duration >= 60) {
+        int seconds = fmod(duration, 60);
+        int minutes = (duration - seconds) / 60;
+        return [NSString stringWithFormat:@"%dm %ds", minutes, seconds];
+    }
+    else {
+        return [NSString stringWithFormat:@"%ds", duration];
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString* fightCellID = @"FightCell";
@@ -103,6 +120,7 @@
             UCLFight* fight = [self.fights objectAtIndex:[indexPath row]];
             cell = [tableView dequeueReusableCellWithIdentifier:fightCellID];
             cell.textLabel.text = fight.title;
+            cell.detailTextLabel.text = formatDuration(fight.duration);
         }
         return cell;
     }

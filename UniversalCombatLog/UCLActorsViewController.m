@@ -126,7 +126,7 @@
         if ([val1 longValue] < [val2 longValue]) {
             return NSOrderedDescending;
         }
-        return (NSComparisonResult)NSOrderedSame;
+        return NSOrderedSame;
     }];
     
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:[temp count]];

@@ -212,6 +212,7 @@
         _chartLayer = [ChartLayer layer];
         [self.layer addSublayer:_chartLayer];
         _chartLayer.needsDisplayOnBoundsChange = YES;
+		_chartLayer.contentsScale = [UIScreen mainScreen].scale;
         _chartLayer.anchorPoint = CGPointMake(0, 0);
         _chartLayer.position = CGPointMake(0, 0);
         _chartLayer.actions = [NSDictionary dictionaryWithObjectsAndKeys:

@@ -18,14 +18,14 @@
 
 @end
 
-@interface UCLLineChartView : UIView <UIGestureRecognizerDelegate>
+@interface UCLLineChartView : UIView <UIScrollViewDelegate>
 
 @property (weak, nonatomic) IBOutlet id <UCLLineChartViewDelegate> delegate;
 @property (nonatomic, getter = isRotating) BOOL rotating;
 
-- (void)addData:(NSArray*)data forKey:(NSString*)key;
-- (void)removeDataForKey:(NSString*)key;
-- (void)removeAllData;
+- (void)addLineWithValues:(NSArray*)values forKey:(NSString*)key;
+- (void)removeLineForKey:(NSString*)key;
+- (void)removeAllLines;
 - (void)resetView;
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration;

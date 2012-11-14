@@ -41,6 +41,8 @@
 - (void)viewDidUnload
 {
     _players = nil;
+    _playerDetails = nil;
+    _selectedActor = nil;
     
     self.fightLineChartView = nil;
     self.playersTableView = nil;
@@ -80,12 +82,12 @@
     self.fightLineChartView.frame = frame;
 
     // reposition players table mode toggle control
-    CGRect tableFrame = self.playersTableView.frame;
-    CGRect controlFrame = self.playersTableModeToggleControl.frame;
-    CGFloat controlX = tableFrame.origin.x + tableFrame.size.width - controlFrame.size.width;
-    CGFloat controlY = tableFrame.origin.y - controlFrame.size.height - 3;
-    CGRect newFrame = CGRectMake(controlX, controlY, controlFrame.size.width, controlFrame.size.height);
-    self.playersTableModeToggleControl.frame = newFrame;
+//    CGRect tableFrame = self.playersTableView.frame;
+//    CGRect controlFrame = self.playersTableModeToggleControl.frame;
+//    CGFloat controlX = tableFrame.origin.x + tableFrame.size.width - controlFrame.size.width;
+//    CGFloat controlY = tableFrame.origin.y - controlFrame.size.height - 3;
+//    CGRect newFrame = CGRectMake(controlX, controlY, controlFrame.size.width, controlFrame.size.height);
+//    self.playersTableModeToggleControl.frame = newFrame;
 }
 
 - (void)processEvents
@@ -144,8 +146,8 @@
         [chartData addObject:[NSNumber numberWithDouble:(value / windowSize)]];
     }
 
-    [self.fightLineChartView removeDataForKey:@"Total"];
-    [self.fightLineChartView addData:chartData forKey:@"Total"];
+    [self.fightLineChartView removeLineForKey:@"Total"];
+    [self.fightLineChartView addLineWithValues:chartData forKey:@"Total"];
 
     free(totals);
 }
@@ -178,7 +180,7 @@
     if (tableView == self.playersTableView) {
         UCLEntity* player = [_players objectAtIndex:indexPath.row];
         NSArray* data = [self chartDataForEntity:player];
-        [self.fightLineChartView addData:data forKey:player.name];
+        [self.fightLineChartView addLineWithValues:data forKey:player.name];
     }
 }
 
@@ -186,7 +188,7 @@
 {
     if (tableView == playersTableView) {
         UCLEntity* player = [_players objectAtIndex:indexPath.row];
-        [self.fightLineChartView removeDataForKey:player.name];
+        [self.fightLineChartView removeLineForKey:player.name];
     }
 }
 
@@ -283,11 +285,11 @@
 - (void)actorsView:(UCLActorsViewController *)actorsView didSelectActor:(UCLEntity *)actor
 {
     if (_selectedActor) {
-        [self.fightLineChartView removeDataForKey:_selectedActor.name];
+        [self.fightLineChartView removeLineForKey:_selectedActor.name];
     }
     _selectedActor = actor;
     NSArray* data = [self chartDataForEntity:actor];
-    [self.fightLineChartView addData:data forKey:actor.name];
+    [self.fightLineChartView addLineWithValues:data forKey:actor.name];
 }
 
 @end

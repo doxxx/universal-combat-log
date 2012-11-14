@@ -128,7 +128,7 @@
 - (void)setActor:(UCLEntity *)actor fight:(UCLFight *)fight
 {
     if (_actor != nil) {
-        [self.lineChartView removeDataForKey:_actor.name];
+        [self.lineChartView removeLineForKey:_actor.name];
     }
     
     if (_masterPopoverController != nil) {
@@ -146,7 +146,7 @@
     _range = NSMakeRange(0, ceil(_fight.duration));
     
     [self navigationItem].title = actor.name;
-    [self.lineChartView addData:[self calculatePerSecondValues] forKey:actor.name];
+    [self.lineChartView addLineWithValues:[self calculatePerSecondValues] forKey:actor.name];
     [self updateSpellBreakdownsNewData:YES];
     self.detailView.hidden = YES;
 }

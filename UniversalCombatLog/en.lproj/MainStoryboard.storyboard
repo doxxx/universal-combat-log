@@ -401,9 +401,6 @@
                                 <rect key="frame" x="0.0" y="0.0" width="768" height="476"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="delegate" destination="dAn-qi-ufu" id="ltT-mb-00g"/>
-                                </connections>
                             </view>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Players" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="F8O-up-ypQ">
                                 <rect key="frame" x="0.0" y="488" width="300" height="21"/>

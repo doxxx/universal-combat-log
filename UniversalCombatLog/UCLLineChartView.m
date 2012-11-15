@@ -11,10 +11,9 @@
 
 #import "UCLLineChartView.h"
 
-#define LINSET 30
-#define RINSET 30
-#define YINSET 30
-#define MARKER_LENGTH 5
+#define kChartInset 30
+#define kAxisMarkerLength 5
+#define kAxisLineWidth 2
 
 ////////////////////////////////////////////////////////////////////////////
 #pragma mark - ChartLine
@@ -129,6 +128,7 @@
         
         self.contentMode = UIViewContentModeRedraw;
         self.layer.geometryFlipped = YES;
+        self.opaque = YES;
     }
     return self;
 }
@@ -324,7 +324,7 @@
     if (self) {
         _textAttributes = [UCLLineChartView axisMarkerLabelAttributes];
         
-        CGRect scrollViewRect = CGRectMake(LINSET, 0, self.bounds.size.width - LINSET, self.bounds.size.height - YINSET);
+        CGRect scrollViewRect = CGRectMake(kChartInset, 0, self.bounds.size.width - kChartInset, self.bounds.size.height - kChartInset);
 
         _scrollView = [[UIScrollView alloc] initWithFrame:scrollViewRect];
         _scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -333,7 +333,7 @@
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.alwaysBounceHorizontal = YES;
         _scrollView.scrollsToTop = NO;
-        //self.contentInset = UIEdgeInsetsMake(0, LINSET, YINSET, 0);
+        _scrollView.opaque = YES;
         [self addSubview:_scrollView];
         
         CGRect chartRect = CGRectMake(0, 0, scrollViewRect.size.width, scrollViewRect.size.height);
@@ -430,19 +430,22 @@
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
-    CGPoint origin = _scrollView.frame.origin;
     CGSize size = _scrollView.frame.size;
     
     CGFloat xScale = size.width / _chartView.maxDataCount * _scrollView.zoomScale;
     CGFloat yScale = size.height / _chartView.maxValue;
 
-    // Draw axes.
+    // Flip geometry
     CGContextScaleCTM(ctx, 1, -1);
     CGContextTranslateCTM(ctx, 0, -self.bounds.size.height);
-    CGContextTranslateCTM(ctx, origin.x, origin.y);
     
+    // Do all drawing relative to the 0,0 point on the axes
+    CGPoint origin = _scrollView.frame.origin; // even though this is actually top-left, it works because it's symmetrical
+    CGContextTranslateCTM(ctx, origin.x - kAxisLineWidth, origin.y - kAxisLineWidth);
+    
+    // Draw axes.
     CGContextSetStrokeColorWithColor(ctx, [UIColor darkGrayColor].CGColor);
-    CGContextSetLineWidth(ctx, 2);
+    CGContextSetLineWidth(ctx, kAxisLineWidth);
     CGContextSetLineJoin(ctx, kCGLineJoinMiter);
     CGContextSetLineCap(ctx, kCGLineCapSquare);
     
@@ -456,7 +459,7 @@
     for (NSUInteger i = 1; i <= yMarkerCount; i++) {
         CGFloat y = (i * _chartView.yInterval) * yScale;
         CGContextMoveToPoint(ctx, 0, y);
-        CGContextAddLineToPoint(ctx, -MARKER_LENGTH, y);
+        CGContextAddLineToPoint(ctx, -kAxisMarkerLength, y);
         CGContextStrokePath(ctx);
         
         NSString* markerLabel = [NSString stringWithFormat:@"%.0f", (i * _chartView.yInterval)];
@@ -464,7 +467,7 @@
                                                                       attributes:_textAttributes];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
         CGRect labelRect = CTLineGetImageBounds(line, ctx);
-        CGContextSetTextPosition(ctx, -MARKER_LENGTH - labelRect.size.width - 4, y - labelRect.size.height/2);
+        CGContextSetTextPosition(ctx, -kAxisMarkerLength - labelRect.size.width - 4, y - labelRect.size.height/2);
         CTLineDraw(line, ctx);
         CFRelease(line);
     }
@@ -482,7 +485,7 @@
     for (NSUInteger i = markerStart; i < markerEnd; i += xInterval) {
         CGFloat x = i * xScale - _scrollView.contentOffset.x;
         CGContextMoveToPoint(ctx, x, 0);
-        CGContextAddLineToPoint(ctx, x, -MARKER_LENGTH);
+        CGContextAddLineToPoint(ctx, x, -kAxisMarkerLength);
         CGContextStrokePath(ctx);
         
         double minutes = floor(i / 60.0);
@@ -492,7 +495,7 @@
                                                                       attributes:_textAttributes];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
         CGRect labelRect = CTLineGetImageBounds(line, ctx);
-        CGContextSetTextPosition(ctx, x - labelRect.size.width/2, -MARKER_LENGTH - labelRect.size.height - 4);
+        CGContextSetTextPosition(ctx, x - labelRect.size.width/2, -kAxisMarkerLength - labelRect.size.height - 4);
         CTLineDraw(line, ctx);
         CFRelease(line);
     }
@@ -505,14 +508,13 @@
     if (!self.rotating) {
         CGSize viewSize = self.bounds.size;
         CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:_chartView.maxValue];
-        CGFloat xInset = MAX(LINSET, maxLabelWidth + MARKER_LENGTH + 8);
-        CGRect newChartFrame = CGRectMake(xInset, YINSET, 
-                                          viewSize.width - (xInset + RINSET), 
-                                          viewSize.height - YINSET*2);
-        _scrollView.frame = newChartFrame;
-        _scrollView.contentSize = newChartFrame.size;
+        CGFloat xInset = MAX(kChartInset, maxLabelWidth + kAxisMarkerLength + 8);
+        CGSize chartSize = CGSizeMake(viewSize.width - (xInset + kChartInset), viewSize.height - kChartInset*2);
+        CGRect newScrollFrame = CGRectMake(xInset, kChartInset, chartSize.width, chartSize.height);
+        _scrollView.frame = newScrollFrame;
+        _scrollView.contentSize = chartSize;
 
-        _chartView.frame = CGRectMake(0, 0, newChartFrame.size.width, newChartFrame.size.height);
+        _chartView.frame = CGRectMake(0, 0, chartSize.width, chartSize.height);
         
         [_chartView recalculate];
     }

@@ -49,7 +49,7 @@
         else {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                 UCLLogFile* logFile = [UCLLogFileLoader loadFromData:data];
-                NSLog(@"Loaded %d fights from network server", [logFile.fights count]);
+                NSLog(@"Loaded %d fight(s) from %@", [logFile.fights count], self.url);
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.fights = logFile.fights;
                 });

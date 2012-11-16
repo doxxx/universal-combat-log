@@ -76,6 +76,12 @@
     CGContextStrokePath(ctx);
 }
 
+- (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event
+{
+    // prevent animation of the individual layers so that zooming doesn't cause weird jitter
+    return (id<CAAction>)[NSNull null];
+}
+
 @end
 
 
@@ -102,10 +108,8 @@
 @implementation ChartView
 {
     NSMutableDictionary* _lines;
-    double _originalScale;
-    CGRect _bounds;
-    CGRect _frame;
-    CGPoint _center;
+    CGSize _sizeAtZoomStart;
+    double _scaleAtZoomStart;
 }
 
 @synthesize scale = _scale;
@@ -122,9 +126,6 @@
         _maxDataCount = 0;
         _maxValue = 0;
         _yInterval = 0;
-        _bounds = self.bounds;
-        _frame = self.frame;
-        _center = self.center;
         
         self.contentMode = UIViewContentModeRedraw;
         self.layer.geometryFlipped = YES;
@@ -133,76 +134,17 @@
     return self;
 }
 
-- (void)setScale:(double)scale
-{
-    [super setTransform:CGAffineTransformIdentity];
-    _scale = scale;
-    
-    [self recalculate];
-    [self setNeedsDisplay];
-}
-
-- (void)setFrame:(CGRect)frame
-{
-    NSLog(@"setFrame");
-    [super setFrame:frame];
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    NSLog(@"setBounds");
-    [super setBounds:bounds];
-}
-
-- (void)setCenter:(CGPoint)center
-{
-    NSLog(@"setCenter");
-    [super setCenter:center];
-}
-
 - (void)setTransform:(CGAffineTransform)transform
 {
-//    NSLog(@"chartview frame: %.3f, %.3f, %.3f, %.3f", self.frame.origin.x, self.frame.origin.y, 
-//          self.frame.size.width, self.frame.size.height);
-    NSLog(@"chartview bounds: %.3f, %.3f, %.3f, %.3f", self.bounds.origin.x, self.bounds.origin.y, 
-          self.bounds.size.width, self.bounds.size.height);
-    NSLog(@"chartview center: %.3f, %.3f", self.center.x, self.center.y);
+    CGFloat newScale = _scaleAtZoomStart * transform.a;
+    CGRect newFrame = CGRectMake(0, 0, _sizeAtZoomStart.width * newScale, _sizeAtZoomStart.height);
+
+    self.frame = newFrame;
+
+    [self recalculate];
+    [self setNeedsDisplay];
     
-    CGAffineTransform constrained = CGAffineTransformIdentity;
-    constrained.a = transform.a;
-
-//    [super setTransform:transform];
-    [super setTransform:constrained];
-
-    NSLog(@"----------------");
-//    NSLog(@"chartview frame: %.3f, %.3f, %.3f, %.3f", self.frame.origin.x, self.frame.origin.y, 
-//          self.frame.size.width, self.frame.size.height);
-    NSLog(@"chartview bounds: %.3f, %.3f, %.3f, %.3f", self.bounds.origin.x, self.bounds.origin.y, 
-          self.bounds.size.width, self.bounds.size.height);
-    NSLog(@"chartview center: %.3f, %.3f", self.center.x, self.center.y);
-    
-//    self.frame = CGRectApplyAffineTransform(_frame, constrained);
-////    self.bounds = CGRectApplyAffineTransform(_bounds, constrained);
-//    self.center = CGPointApplyAffineTransform(_center, constrained);
-    
-//    
-//    for (NSString* key in _lines) {
-//        ChartLine* line = [_lines objectForKey:key];
-//        [line.layer setNeedsDisplay];
-//    }
-
-//    self.scale = transform.a;
-//    self.frame = CGRectMake(self.center.x - self.bounds.size.width * self.scale/2, self.center.y,
-//                            self.bounds.size.width * self.scale, self.bounds.size.height);
-
-//    NSLog(@"chart center: %.3f, %.3f, bounds: %.3f, %.3f, %.3f, %.3f", self.center.x, self.center.y, 
-//          self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-//    _scale = _originalScale * transform.a;
-//    [self recalculate];
-//    for (NSString* key in _lines) {
-//        ChartLine* line = [_lines objectForKey:key];
-//        [line.layer setNeedsDisplay];
-//    }
+    self.scale = newScale;
 }
 
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
@@ -269,8 +211,8 @@
         }
         _yInterval = newYInterval;
         
-        CGSize size = self.bounds.size;
-        CGFloat xScale = size.width / _maxDataCount * _scale;
+        CGSize size = self.frame.size;
+        CGFloat xScale = size.width / _maxDataCount; // * _scale;
         CGFloat yScale = size.height / _maxValue;
         
         for (NSString* key in _lines) {
@@ -283,15 +225,16 @@
 
 - (void)beginZoom
 {
-    _originalScale = _scale;
+    _sizeAtZoomStart = CGSizeApplyAffineTransform(self.frame.size, CGAffineTransformMakeScale(1/self.scale, 1));
+    _scaleAtZoomStart = self.scale;
 }
 
 - (void)layoutSubviews
 {
-    NSLog(@"chartview layout subviews");
+    CGSize size = self.frame.size;
     for (NSString* key in _lines) {
         ChartLine* line = [_lines objectForKey:key];
-        line.layer.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
+        line.layer.frame = CGRectMake(0, 0, size.width, size.height);
     }
 }
 
@@ -316,6 +259,7 @@
     NSDictionary* _textAttributes;
     UIScrollView* _scrollView;
     ChartView* _chartView;
+    CGSize _origChartSize;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -386,37 +330,45 @@
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
+    _origChartSize = _chartView.frame.size;
     [_chartView beginZoom];
 }
 
+#define kMinZoomScale 1.0
+#define kMaxZoomScale 10.0
+
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
 {
-    NSLog(@"scrollViewDidEndZooming: scale=%.3f, contentOffset=%.3f,%.3f", scale, scrollView.contentOffset.x, scrollView.contentOffset.y);
-    NSLog(@"scrollViewDidEndZooming: contentSize=%.3f,%.3f", scrollView.contentSize.width, scrollView.contentSize.height);
-    NSLog(@"scrollViewDidEndZooming: chart center: %.3f, %.3f", _chartView.center.x, _chartView.center.y);
-    NSLog(@"scrollViewDidEndZooming: chart bounds size: %.3f, %.3f", _chartView.bounds.size.width, _chartView.bounds.size.height);
-    NSLog(@"scrollViewDidEndZooming: scroll bounds: %.3f, %.3f, %.3f, %.3f", _scrollView.bounds.origin.x, _scrollView.bounds.origin.y, _scrollView.bounds.size.width, _scrollView.bounds.size.height);
-//    _chartView.scale = scale;
-//    _scrollView.zoomScale = 1.0;
-//    [_chartView recalculate];
-//    [_chartView setNeedsDisplay];
-//    NSLog(@"-------------------------");
-//    NSLog(@"scrollViewDidEndZooming: scale=%.3f, contentOffset=%.3f,%.3f", _scrollView.zoomScale, scrollView.contentOffset.x, scrollView.contentOffset.y);
-//    NSLog(@"scrollViewDidEndZooming: contentSize=%.3f,%.3f", scrollView.contentSize.width, scrollView.contentSize.height);
-//    NSLog(@"scrollViewDidEndZooming: chart frame: %.3f, %.3f, %.3f, %.3f", _chartView.frame.origin.x, _chartView.frame.origin.y, _chartView.frame.size.width, _chartView.frame.size.height);
-//    NSLog(@"scrollViewDidEndZooming: scroll bounds: %.3f, %.3f, %.3f, %.3f", _scrollView.bounds.origin.x, _scrollView.bounds.origin.y, _scrollView.bounds.size.width, _scrollView.bounds.size.height);
-}
-
-- (void)scrollViewDidZoom:(UIScrollView *)scrollView
-{
-    NSLog(@"scrollViewDidZoom: scale=%.3f, contentOffset=%.3f,%.3f", scrollView.zoomScale, scrollView.contentOffset.x, scrollView.contentOffset.y);
+    CGSize size = scrollView.bounds.size;
+    CGPoint contentOffset = _scrollView.contentOffset;
+    
+    CGFloat newScale = _chartView.scale;
+    newScale = MAX(newScale, kMinZoomScale);
+    newScale = MIN(newScale, kMaxZoomScale);
+    
+    [_scrollView setZoomScale:1.0 animated:NO];
+    _scrollView.minimumZoomScale = kMinZoomScale / newScale;
+    _scrollView.maximumZoomScale = kMaxZoomScale / newScale;
+    
+    _chartView.scale = newScale;
+    
+    CGSize newContentSize = CGSizeMake(size.width * newScale, size.height);
+    
+    _chartView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
+    _scrollView.contentSize = newContentSize;
+    
+    [_scrollView setContentOffset:contentOffset animated:NO];
+    
+    [_chartView recalculate];
+    [_chartView setNeedsDisplay];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [self setNeedsDisplay];
     if (self.delegate) {
-        [self.delegate lineChartView:self didZoomToRange:[self makeRangeForVisibleData]];
+        NSRange range = [self makeRangeForVisibleData];
+        [self.delegate lineChartView:self didZoomToRange:range];
     }
 }
 
@@ -432,7 +384,7 @@
     
     CGSize size = _scrollView.frame.size;
     
-    CGFloat xScale = size.width / _chartView.maxDataCount * _scrollView.zoomScale;
+    CGFloat xScale = size.width / _chartView.maxDataCount * _chartView.scale;
     CGFloat yScale = size.height / _chartView.maxValue;
 
     // Flip geometry
@@ -529,12 +481,12 @@
 
 - (NSRange)makeRangeForVisibleData
 {
-    CGFloat scale = _scrollView.zoomScale;
-    CGFloat chartWidth = _chartView.bounds.size.width;
-    CGFloat xScale = chartWidth / _chartView.maxDataCount * scale;
+    CGFloat chartWidth = _scrollView.contentSize.width;
+    CGFloat visibleWidth = _scrollView.bounds.size.width;
+    CGFloat xScale = chartWidth / _chartView.maxDataCount;
     CGFloat posOffset = _scrollView.contentOffset.x;
     NSUInteger start = MAX(0, ceil(posOffset / xScale));
-    NSUInteger length = MIN(_chartView.maxDataCount, floor((posOffset + chartWidth) / xScale) - start);
+    NSUInteger length = MIN(_chartView.maxDataCount, floor((posOffset + visibleWidth) / xScale) - start);
     return NSMakeRange(start, length);
 }
 

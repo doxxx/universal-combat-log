@@ -11,4 +11,4 @@ Log files can be made available to the UCL app in various ways:
 
 ## Building
 
-Building the app requires XCode 4.3 and [SBJson 3.1.1](http://github.com/stig/json-framework). The SBJson zip should be unpacked into the parent folder of the UCL project folder such that the `SBJson_3.1.1` folder is a sibling of the UCL project folder.
+Building the app requires XCode 4.3 and [SBJson 3.1.1](http://github.com/stig/json-framework). The SBJson 3.1.1 distribution is already included in the repo and linked into the XCode project as a dependency.

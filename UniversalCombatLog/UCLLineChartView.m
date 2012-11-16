@@ -136,15 +136,11 @@
 
 - (void)setTransform:(CGAffineTransform)transform
 {
-    CGFloat newScale = _scaleAtZoomStart * transform.a;
-    CGRect newFrame = CGRectMake(0, 0, _sizeAtZoomStart.width * newScale, _sizeAtZoomStart.height);
-
-    self.frame = newFrame;
+    self.scale = _scaleAtZoomStart * transform.a;
+    self.frame = CGRectMake(0, 0, _sizeAtZoomStart.width * self.scale, _sizeAtZoomStart.height);
 
     [self recalculate];
     [self setNeedsDisplay];
-    
-    self.scale = newScale;
 }
 
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key

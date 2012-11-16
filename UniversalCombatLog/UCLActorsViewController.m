@@ -68,7 +68,7 @@
     [super viewDidAppear:animated];
     
     if (self.selectedActor) {
-        NSUInteger index = [_summary indexOfObjectPassingTest:^(id obj, NSUInteger idx, BOOL* stop) {
+        NSUInteger index = [_summary indexOfObjectPassingTest:^(UCLSummaryEntry* obj, NSUInteger idx, BOOL* stop) {
             return [[obj item] isEqualToEntity:self.selectedActor];
         }];
         if (index == NSNotFound) {

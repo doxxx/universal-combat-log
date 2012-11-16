@@ -259,7 +259,6 @@
     NSDictionary* _textAttributes;
     UIScrollView* _scrollView;
     ChartView* _chartView;
-    CGSize _origChartSize;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -331,7 +330,6 @@
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
-    _origChartSize = _chartView.frame.size;
     [_chartView beginZoom];
 }
 

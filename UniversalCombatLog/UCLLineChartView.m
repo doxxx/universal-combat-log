@@ -275,7 +275,7 @@
         _scrollView.minimumZoomScale = 1.0;
         _scrollView.maximumZoomScale = 10.0;
         _scrollView.showsVerticalScrollIndicator = NO;
-        _scrollView.showsHorizontalScrollIndicator = NO;
+        _scrollView.indicatorStyle = UIScrollViewIndicatorStyleWhite;
         _scrollView.alwaysBounceHorizontal = YES;
         _scrollView.scrollsToTop = NO;
         _scrollView.opaque = YES;

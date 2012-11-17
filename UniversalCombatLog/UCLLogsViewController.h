@@ -10,15 +10,13 @@
 
 #import "UCLFightViewController.h"
 
-@interface UCLLogsViewController : UIViewController
+@interface UCLLogsViewController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
 @property (strong, nonatomic) UCLFightViewController* fightViewController;
 @property (strong, nonatomic) NSURL* documentsDirectory;
 
-@property (weak, nonatomic) IBOutlet UITableView *localFilesTableView;
-@property (weak, nonatomic) IBOutlet UITableView *networkServersTableView;
+@property (weak, nonatomic) IBOutlet UITableView *logsTableView;
 
 - (IBAction)refresh:(id)sender;
-- (IBAction)sourceChanged:(UISegmentedControl *)sender;
 
 @end

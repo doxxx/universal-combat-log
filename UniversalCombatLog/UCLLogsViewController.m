@@ -15,6 +15,7 @@
 
 @implementation UCLLogsViewController
 {
+    NSArray* _tableViewSectionTitles;
     NSMutableArray* _logFileEntries;
     NSMutableArray* _networkServerEntries;
     UCLNetworkClient* _networkClient;
@@ -24,14 +25,14 @@
 
 @synthesize fightViewController;
 @synthesize documentsDirectory;
-@synthesize localFilesTableView;
-@synthesize networkServersTableView;
+@synthesize logsTableView;
 
 #pragma mark - View methods
 
 - (void)awakeFromNib
 {
     self.documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    _tableViewSectionTitles = [NSArray arrayWithObjects:@"Local Files", @"Network Servers", nil];
     _logFileEntries = [NSMutableArray array];
     _networkServerEntries = [NSMutableArray array];
     _networkClient = [[UCLNetworkClient alloc] init];
@@ -40,8 +41,7 @@
 }
 
 - (void)viewDidUnload {
-    self.localFilesTableView = nil;
-    self.networkServersTableView = nil;
+    self.logsTableView = nil;
     [super viewDidUnload];
 }
 
@@ -53,7 +53,7 @@
         [networkClient listLogFilesAtURL:url withCallback:^(NSArray* entries) {
             [networkServerEntries addObjectsFromArray:entries];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.networkServersTableView reloadData];
+                [self.logsTableView reloadData];
             });
         }];
     };
@@ -76,12 +76,22 @@
 
 #pragma mark - Table View Data Source
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
+}
+
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [_tableViewSectionTitles objectAtIndex:section];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView == self.localFilesTableView) {
+    if (section == 0) {
         return [_logFileEntries count];
     }
-    else if (tableView == self.networkServersTableView) {
+    else if (section == 1) {
         return [_networkServerEntries count];
     }
 
@@ -90,7 +100,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == self.localFilesTableView) {
+    if (indexPath.section == 0) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
         
         NSDictionary* entry = [_logFileEntries objectAtIndex:indexPath.row];
@@ -108,7 +118,7 @@
         
         return cell;
     }
-    else if (tableView == self.networkServersTableView) {
+    else if (indexPath.section == 1) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
         
         NSDictionary* entry = [_networkServerEntries objectAtIndex:indexPath.row];
@@ -126,25 +136,19 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([[segue identifier] isEqualToString:@"LocalFile"]) {
+    if ([[segue identifier] isEqualToString:@"Fights"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
         vc.fightViewController = self.fightViewController;
-        if ([sender isKindOfClass:[UITableViewCell class]]) {
-            UITableViewCell* cell = sender;
-            NSDictionary* entry = [_logFileEntries objectAtIndex:cell.tag];
-            NSURL* url = [entry objectForKey:@"url"];
-            vc.url = url;
+        NSIndexPath* indexPath = [self.logsTableView indexPathForCell:sender];
+        NSDictionary* entry;
+        if (indexPath.section == 0) {
+            entry = [_logFileEntries objectAtIndex:indexPath.row];
         }
-    }
-    else if ([[segue identifier] isEqualToString:@"NetworkServer"]) {
-        UCLFightsViewController* vc = [segue destinationViewController];
-        vc.fightViewController = self.fightViewController;
-        if ([sender isKindOfClass:[UITableViewCell class]]) {
-            UITableViewCell* cell = sender;
-            NSDictionary* entry = [_networkServerEntries objectAtIndex:cell.tag];
-            NSURL* url = [entry objectForKey:@"url"];
-            vc.url = url;
+        else if (indexPath.section == 1) {
+            entry = [_networkServerEntries objectAtIndex:indexPath.row];
         }
+        NSURL* url = [entry objectForKey:@"url"];
+        vc.url = url;
     }
 }
 
@@ -178,29 +182,12 @@
 
 - (IBAction)refresh:(id)sender {
     [_logFileEntries removeAllObjects];
+    [_networkServerEntries removeAllObjects];
     
     [self scanDocumentsDirectory];
     [_networkClient discoverServers];
     
-    [self.localFilesTableView reloadData];
-    [self.networkServersTableView reloadData];
-}
-
-- (IBAction)sourceChanged:(UISegmentedControl *)sender {
-    switch (sender.selectedSegmentIndex) {
-        case 0:
-            self.localFilesTableView.hidden = NO;
-            self.networkServersTableView.hidden = YES;
-            break;
-            
-        case 1:
-            self.localFilesTableView.hidden = YES;
-            self.networkServersTableView.hidden = NO;
-            break;
-            
-        default:
-            break;
-    }
+    [self.logsTableView reloadData];
 }
 
 @end

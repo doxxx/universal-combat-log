@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Gordon Tyler. All rights reserved.
 //
 
+#import "UCLLogsViewController.h"
 #import "UCLFightViewController.h"
 #import "UCLActorsViewController.h"
 
@@ -20,14 +21,23 @@
     NSDictionary* _playerDetails;
     UCLEntity* _selectedActor;
     
-    UIPopoverController* _summaryTypesPopoverController;
-    UIPopoverController* _playersPopoverController;
+    UIPopoverController* _uclPopoverController;
 }
 
-@synthesize fight;
+@synthesize fight = _fight;
 @synthesize fightLineChartView;
 @synthesize playersTableView;
 @synthesize playersTableModeToggleControl;
+
+- (void)setFight:(UCLFight *)fight
+{
+    if (_uclPopoverController) {
+        [_uclPopoverController dismissPopoverAnimated:YES];
+        _uclPopoverController = nil;
+    }
+    _fight = fight;
+    [self processEvents];
+}
 
 - (void)viewDidLoad
 {
@@ -53,7 +63,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+    return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -236,8 +246,8 @@
 
 - (void)setSummaryType:(UCLSummaryType)summaryType
 {
-    [_summaryTypesPopoverController dismissPopoverAnimated:YES];
-    _summaryTypesPopoverController = nil;
+    [_uclPopoverController dismissPopoverAnimated:YES];
+    _uclPopoverController = nil;
     
     _summaryType = summaryType;
     switch (summaryType) {
@@ -258,22 +268,24 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:@"SummaryTypes"]) {
-        if (_summaryTypesPopoverController) {
-            [_summaryTypesPopoverController dismissPopoverAnimated:NO];
-        }
-        UIStoryboardPopoverSegue* popSegue = (UIStoryboardPopoverSegue*)segue;
-        _summaryTypesPopoverController = popSegue.popoverController;
-        UCLSummaryTypesViewController* summaryTypesController = popSegue.destinationViewController;
+    if (_uclPopoverController) {
+        [_uclPopoverController dismissPopoverAnimated:NO];
+    }
+    if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
+        _uclPopoverController = ((UIStoryboardPopoverSegue*)segue).popoverController;
+    }
+
+    if ([segue.identifier isEqualToString:@"LogsFightsPopover"]) {
+        UINavigationController* navController = segue.destinationViewController;
+        UCLLogsViewController* logsController = (UCLLogsViewController*)navController.topViewController;
+        logsController.fightViewController = self;
+    }
+    else if ([segue.identifier isEqualToString:@"SummaryTypes"]) {
+        UCLSummaryTypesViewController* summaryTypesController = segue.destinationViewController;
         summaryTypesController.delegate = self;
     }
     else if ([segue.identifier isEqualToString:@"Players"]) {
-        if (_playersPopoverController) {
-            [_playersPopoverController dismissPopoverAnimated:NO];
-        }
-        UIStoryboardPopoverSegue* popSegue = (UIStoryboardPopoverSegue*)segue;
-        _playersPopoverController = popSegue.popoverController;
-        UCLActorsViewController* actorsViewController = popSegue.destinationViewController;
+        UCLActorsViewController* actorsViewController = segue.destinationViewController;
         [actorsViewController setFight:self.fight summaryType:_summaryType];
         if (_selectedActor) {
             actorsViewController.selectedActor = _selectedActor;

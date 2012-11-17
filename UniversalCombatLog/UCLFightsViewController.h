@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-#import "UCLActorViewController.h"
+#import "UCLFightViewController.h"
 
 @interface UCLFightsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate>
 
+@property (strong, nonatomic) UCLFightViewController* fightViewController;
 @property (strong, nonatomic) NSURL* url;
 @property (strong, nonatomic) NSArray* fights;
 

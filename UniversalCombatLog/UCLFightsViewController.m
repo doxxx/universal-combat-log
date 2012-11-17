@@ -17,6 +17,7 @@
 
 #pragma mark - Properties
 
+@synthesize fightViewController;
 @synthesize url;
 @synthesize fights;
 @synthesize fightsTableView;
@@ -78,7 +79,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	return YES;
+    return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
 #pragma mark - Table view data source
@@ -134,15 +135,9 @@ NSString* formatDuration(NSTimeInterval duration) {
     return nil;
 }
 
-#pragma mark - Segue
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([[segue identifier] isEqualToString:@"Fight"]) {
-        UCLFightViewController* vc = [segue destinationViewController];
-        NSIndexPath* indexPath = [self.fightsTableView indexPathForCell:sender];
-        vc.fight = [self.fights objectAtIndex:indexPath.row];
-    }
+    self.fightViewController.fight = [self.fights objectAtIndex:indexPath.row];
 }
 
 @end

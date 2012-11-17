@@ -22,7 +22,7 @@
 
 #pragma mark - Properties
 
-@synthesize actorViewController;
+@synthesize fightViewController;
 @synthesize documentsDirectory;
 @synthesize localFilesTableView;
 @synthesize networkServersTableView;
@@ -31,6 +31,7 @@
 
 - (void)awakeFromNib
 {
+    self.documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     _logFileEntries = [NSMutableArray array];
     _networkServerEntries = [NSMutableArray array];
     _networkClient = [[UCLNetworkClient alloc] init];
@@ -70,7 +71,7 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+    return UIInterfaceOrientationIsLandscape(interfaceOrientation);
 }
 
 #pragma mark - Table View Data Source
@@ -127,7 +128,7 @@
 {
     if ([[segue identifier] isEqualToString:@"LocalFile"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
-//        vc.actorViewController = self.actorViewController;
+        vc.fightViewController = self.fightViewController;
         if ([sender isKindOfClass:[UITableViewCell class]]) {
             UITableViewCell* cell = sender;
             NSDictionary* entry = [_logFileEntries objectAtIndex:cell.tag];
@@ -137,7 +138,7 @@
     }
     else if ([[segue identifier] isEqualToString:@"NetworkServer"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
-//        vc.actorViewController = self.actorViewController;
+        vc.fightViewController = self.fightViewController;
         if ([sender isKindOfClass:[UITableViewCell class]]) {
             UITableViewCell* cell = sender;
             NSDictionary* entry = [_networkServerEntries objectAtIndex:cell.tag];

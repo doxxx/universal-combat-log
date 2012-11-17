@@ -7,14 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreData/CoreData.h>
 
-#import "UCLActorViewController.h"
-#import "UCLLogFile.h"
+#import "UCLFightViewController.h"
 
 @interface UCLLogsViewController : UIViewController
 
-@property (strong, nonatomic) UCLActorViewController* actorViewController;
+@property (strong, nonatomic) UCLFightViewController* fightViewController;
 @property (strong, nonatomic) NSURL* documentsDirectory;
 
 @property (weak, nonatomic) IBOutlet UITableView *localFilesTableView;

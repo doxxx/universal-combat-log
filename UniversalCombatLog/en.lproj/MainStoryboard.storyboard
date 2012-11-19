@@ -173,7 +173,7 @@
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="2894" y="364"/>
+            <point key="canvasLocation" x="1458" y="28"/>
         </scene>
         <!--Logs/Fights Nav Controller-->
         <scene sceneID="GOo-gv-ZZe">
@@ -190,7 +190,7 @@
                     </connections>
                 </navigationController>
             </objects>
-            <point key="canvasLocation" x="1991" y="1531"/>
+            <point key="canvasLocation" x="555" y="1195"/>
         </scene>
         <!--Logs View Controller - Logs-->
         <scene sceneID="efp-wI-gGy">
@@ -257,7 +257,7 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="2496" y="1531"/>
+            <point key="canvasLocation" x="1060" y="1195"/>
         </scene>
         <!--Fights View Controller - Fights-->
         <scene sceneID="zwr-xK-Viv">
@@ -339,9 +339,9 @@
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="3001" y="1531"/>
+            <point key="canvasLocation" x="1565" y="1195"/>
         </scene>
-        <!--Fight View Controller - Fight-->
+        <!--Fight View Controller-->
         <scene sceneID="3w3-Aa-f52">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="njk-wF-JvX" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -362,50 +362,38 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="kw4-PH-iL9"/>
-                                    <barButtonItem title="Item" id="MgD-JX-l6H"/>
+                                    <barButtonItem title="DPS" id="tyL-T9-dVA">
+                                        <connections>
+                                            <segue destination="UP3-aA-MWw" kind="popover" identifier="SummaryTypes" popoverAnchorBarButtonItem="tyL-T9-dVA" id="cY1-18-d1Y">
+                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                            </segue>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="iic-4p-3Wa"/>
+                                    <barButtonItem title="Players" id="MgD-JX-l6H">
+                                        <connections>
+                                            <segue destination="qFk-Za-qsy" kind="popover" identifier="Players" popoverAnchorBarButtonItem="MgD-JX-l6H" id="GPo-TD-Vi3">
+                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                            </segue>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                             </toolbar>
                             <view contentMode="redraw" id="OVg-IP-AU6" customClass="UCLLineChartView">
-                                <rect key="frame" x="0.0" y="44" width="1024" height="333"/>
+                                <rect key="frame" x="0.0" y="44" width="1024" height="704"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="u6T-Hs-qoV">
-                                <rect key="frame" x="906" y="690" width="98" height="38"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
-                                <state key="normal" title="Players">
-                                    <color key="titleColor" red="0.19607843137254902" green="0.30980392156862746" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="qFk-Za-qsy" kind="popover" identifier="Players" popoverAnchorView="u6T-Hs-qoV" id="5e0-vq-xZy">
-                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                    </segue>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Fight" id="Dis-gJ-Ekm">
-                        <barButtonItem key="rightBarButtonItem" title="DPS" id="jnf-vX-vvA">
-                            <connections>
-                                <segue destination="UP3-aA-MWw" kind="popover" identifier="SummaryTypes" popoverAnchorBarButtonItem="jnf-vX-vvA" id="HOI-0b-8Av">
-                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                </segue>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
                     <connections>
                         <outlet property="fightLineChartView" destination="OVg-IP-AU6" id="WXt-1V-Uvn"/>
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="746" y="731"/>
+            <point key="canvasLocation" x="-690" y="395"/>
         </scene>
         <!--Actors View Controller - Actors-->
         <scene sceneID="qP4-QN-KUy">
@@ -460,7 +448,7 @@
                     <splitViewMasterSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="2433" y="399"/>
+            <point key="canvasLocation" x="997" y="63"/>
         </scene>
         <!--Summary Types View Controller-->
         <scene sceneID="2C7-oL-0xw">
@@ -523,7 +511,7 @@
                     <splitViewMasterSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="1991" y="-106"/>
+            <point key="canvasLocation" x="555" y="-442"/>
         </scene>
     </scenes>
     <classes>
@@ -572,7 +560,6 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLLogsViewController.h"/>
             <relationships>
                 <relationship kind="action" name="refresh:"/>
-                <relationship kind="action" name="sourceChanged:" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="logsTableView" candidateClass="UITableView"/>
             </relationships>
         </class>

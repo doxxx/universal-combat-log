@@ -89,24 +89,6 @@
     self.fightLineChartView.rotating = NO;
 }
 
-- (void)viewDidLayoutSubviews
-{
-    // resize fight line chart view
-    CGRect frame = self.fightLineChartView.frame;
-    CGSize viewSize = self.view.bounds.size;
-    CGFloat newHeight = MIN(viewSize.height, viewSize.width / 1.45);
-    frame.size.height = newHeight;
-    self.fightLineChartView.frame = frame;
-
-    // reposition players table mode toggle control
-//    CGRect tableFrame = self.playersTableView.frame;
-//    CGRect controlFrame = self.playersTableModeToggleControl.frame;
-//    CGFloat controlX = tableFrame.origin.x + tableFrame.size.width - controlFrame.size.width;
-//    CGFloat controlY = tableFrame.origin.y - controlFrame.size.height - 3;
-//    CGRect newFrame = CGRectMake(controlX, controlY, controlFrame.size.width, controlFrame.size.height);
-//    self.playersTableModeToggleControl.frame = newFrame;
-}
-
 - (void)processEvents
 {
     NSUInteger duration = ceil(self.fight.duration);

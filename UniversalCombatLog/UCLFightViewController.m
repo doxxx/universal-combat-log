@@ -36,6 +36,10 @@
         _uclPopoverController = nil;
     }
     _fight = fight;
+    _selectedActor = nil;
+    
+    [self.fightLineChartView removeAllLines];
+    
     [self processEvents];
     
     [self.playersButton setEnabled:YES];

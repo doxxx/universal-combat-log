@@ -24,6 +24,7 @@
 @property (strong, nonatomic) NSArray* values;
 @property (nonatomic) CGFloat xScale;
 @property (nonatomic) CGFloat yScale;
+@property (nonatomic) BOOL zooming;
 
 - (id)initWithValues:(NSArray*)values;
 
@@ -36,6 +37,7 @@
 @synthesize values = _values;
 @synthesize xScale = _xScale;
 @synthesize yScale = _yScale;
+@synthesize zooming;
 
 - (id)initWithValues:(NSArray*)values
 {
@@ -78,8 +80,11 @@
 
 - (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event
 {
-    // prevent animation of the individual layers so that zooming doesn't cause weird jitter
-    return (id<CAAction>)[NSNull null];
+    if (self.zooming) {
+        // prevent animation of the individual layers so that zooming doesn't cause weird jitter
+        return (id<CAAction>)[NSNull null];
+    }
+    return nil;
 }
 
 @end
@@ -223,6 +228,19 @@
 {
     _sizeAtZoomStart = CGSizeApplyAffineTransform(self.frame.size, CGAffineTransformMakeScale(1/self.scale, 1));
     _scaleAtZoomStart = self.scale;
+
+    for (NSString* key in _lines) {
+        ChartLine* line = [_lines objectForKey:key];
+        line.zooming = YES;
+    }
+}
+
+- (void)endZoom
+{
+    for (NSString* key in _lines) {
+        ChartLine* line = [_lines objectForKey:key];
+        line.zooming = NO;
+    }
 }
 
 - (void)layoutSubviews
@@ -359,6 +377,8 @@
     
     [_chartView recalculate];
     [_chartView setNeedsDisplay];
+    
+    [_chartView endZoom];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView

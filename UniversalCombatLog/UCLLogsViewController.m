@@ -19,6 +19,7 @@
     NSMutableArray* _logFileEntries;
     NSMutableArray* _networkServerEntries;
     UCLNetworkClient* _networkClient;
+    UCLLogFile* _preloadedLogFile;
 }
 
 #pragma mark - Properties
@@ -139,17 +140,29 @@
     if ([[segue identifier] isEqualToString:@"Fights"]) {
         UCLFightsViewController* vc = [segue destinationViewController];
         vc.fightViewController = self.fightViewController;
-        NSIndexPath* indexPath = [self.logsTableView indexPathForCell:sender];
-        NSDictionary* entry;
-        if (indexPath.section == 0) {
-            entry = [_logFileEntries objectAtIndex:indexPath.row];
+        if ([sender isKindOfClass:[UITableViewCell class]]) {
+            NSIndexPath* indexPath = [self.logsTableView indexPathForCell:sender];
+            NSDictionary* entry;
+            if (indexPath.section == 0) {
+                entry = [_logFileEntries objectAtIndex:indexPath.row];
+            }
+            else if (indexPath.section == 1) {
+                entry = [_networkServerEntries objectAtIndex:indexPath.row];
+            }
+            NSURL* url = [entry objectForKey:@"url"];
+            vc.url = url;
         }
-        else if (indexPath.section == 1) {
-            entry = [_networkServerEntries objectAtIndex:indexPath.row];
+        else if (_preloadedLogFile) {
+            vc.logFile = _preloadedLogFile;
         }
-        NSURL* url = [entry objectForKey:@"url"];
-        vc.url = url;
+        _preloadedLogFile = nil;
     }
+}
+
+- (void)navigateToLogFile:(UCLLogFile*)logFile;
+{
+    _preloadedLogFile = logFile;
+    [self performSegueWithIdentifier:@"Fights" sender:nil];
 }
 
 - (void)scanDocumentsDirectory

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "UCLFightViewController.h"
+#import "UCLLogFile.h"
 
 @interface UCLLogsViewController : UIViewController <UITableViewDataSource,UITableViewDelegate>
 
@@ -16,6 +17,8 @@
 @property (strong, nonatomic) NSURL* documentsDirectory;
 
 @property (weak, nonatomic) IBOutlet UITableView *logsTableView;
+
+- (void)navigateToLogFile:(UCLLogFile*)logFile;
 
 - (IBAction)refresh:(id)sender;
 

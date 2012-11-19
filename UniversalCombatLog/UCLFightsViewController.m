@@ -19,7 +19,7 @@
 
 @synthesize fightViewController;
 @synthesize url;
-@synthesize fights;
+@synthesize logFile;
 @synthesize fightsTableView;
 
 - (void)setUrl:(NSURL *)newURL
@@ -28,9 +28,9 @@
     [self refresh:nil];
 }
 
-- (void)setFights:(NSArray *)newFights
+- (void)setLogFile:(UCLLogFile *)newLogFile
 {
-    fights = newFights;
+    logFile = newLogFile;
     [self.fightsTableView reloadData];
 }
 
@@ -49,10 +49,10 @@
         }
         else {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                UCLLogFile* logFile = [UCLLogFileLoader loadFromData:data];
+                UCLLogFile* newLogFile = [UCLLogFileLoader loadFromData:data];
                 NSLog(@"Loaded %d fight(s) from %@", [logFile.fights count], self.url);
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.fights = logFile.fights;
+                    self.logFile = newLogFile;
                 });
             });
         }
@@ -61,7 +61,7 @@
                                        queue:[NSOperationQueue mainQueue] 
                            completionHandler:handler];
     
-    self.fights = nil;
+    self.logFile = nil;
     [self.fightsTableView reloadData];
 }
 
@@ -87,10 +87,10 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 0) {
-        if (self.url != nil && self.fights == nil) {
+        if (self.logFile == nil) {
             return 1;
         }
-        return [self.fights count];
+        return [self.logFile.fights count];
     }
     
     return 0;
@@ -120,11 +120,11 @@ NSString* formatDuration(NSTimeInterval duration) {
     
     if ([indexPath section] == 0) {
         UITableViewCell *cell;
-        if (indexPath.row == 0 && self.url != nil && self.fights == nil) {
+        if (indexPath.row == 0 && self.url != nil && self.logFile == nil) {
             cell = [tableView dequeueReusableCellWithIdentifier:loadingCellID];
         }
         else {
-            UCLFight* fight = [self.fights objectAtIndex:indexPath.row];
+            UCLFight* fight = [self.logFile.fights objectAtIndex:indexPath.row];
             cell = [tableView dequeueReusableCellWithIdentifier:fightCellID];
             cell.textLabel.text = fight.title;
             cell.detailTextLabel.text = formatDuration(fight.duration);
@@ -137,7 +137,8 @@ NSString* formatDuration(NSTimeInterval duration) {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    self.fightViewController.fight = [self.fights objectAtIndex:indexPath.row];
+    UCLFight* fight = [self.logFile.fights objectAtIndex:indexPath.row];
+    [self.fightViewController showFight:fight inLogFile:self.logFile];
 }
 
 @end

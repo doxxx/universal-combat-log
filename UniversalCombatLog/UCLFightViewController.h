@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UCLLineChartView.h"
+#import "UCLLogFile.h"
 #import "UCLFight.h"
 #import "UCLSummaryTypesViewController.h"
 #import "UCLActorsViewController.h"
@@ -19,5 +20,7 @@
 @property (weak, nonatomic) IBOutlet UCLLineChartView *fightLineChartView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *playersButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *summaryTypeButton;
+
+- (void)showFight:(UCLFight *)fight inLogFile:(UCLLogFile *)logFile;
 
 @end

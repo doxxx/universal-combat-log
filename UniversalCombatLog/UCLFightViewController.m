@@ -16,6 +16,7 @@
 
 @implementation UCLFightViewController
 {
+    UCLLogFile* _logFile;
     UCLSummaryType _summaryType;
     NSArray* _players;
     NSDictionary* _playerDetails;
@@ -29,13 +30,15 @@
 @synthesize playersButton = _playersButton;
 @synthesize summaryTypeButton = _summaryTypeButton;
 
-- (void)setFight:(UCLFight *)fight
+- (void)showFight:(UCLFight *)fight inLogFile:(UCLLogFile *)logFile
 {
     if (_uclPopoverController) {
         [_uclPopoverController dismissPopoverAnimated:YES];
         _uclPopoverController = nil;
     }
-    _fight = fight;
+
+    self.fight = fight;
+    _logFile = logFile;
     _selectedActor = nil;
     
     [self.fightLineChartView removeAllLines];
@@ -263,6 +266,9 @@
         UINavigationController* navController = segue.destinationViewController;
         UCLLogsViewController* logsController = (UCLLogsViewController*)navController.topViewController;
         logsController.fightViewController = self;
+        if (_logFile) {
+            [logsController navigateToLogFile:_logFile];
+        }
     }
     else if ([segue.identifier isEqualToString:@"SummaryTypes"]) {
         UCLSummaryTypesViewController* summaryTypesController = segue.destinationViewController;

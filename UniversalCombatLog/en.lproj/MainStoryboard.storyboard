@@ -362,7 +362,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="kw4-PH-iL9"/>
-                                    <barButtonItem title="DPS" id="tyL-T9-dVA">
+                                    <barButtonItem enabled="NO" title="DPS" id="tyL-T9-dVA">
                                         <connections>
                                             <segue destination="UP3-aA-MWw" kind="popover" identifier="SummaryTypes" popoverAnchorBarButtonItem="tyL-T9-dVA" id="cY1-18-d1Y">
                                                 <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
@@ -370,7 +370,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="iic-4p-3Wa"/>
-                                    <barButtonItem title="Players" id="MgD-JX-l6H">
+                                    <barButtonItem enabled="NO" title="Players" id="MgD-JX-l6H">
                                         <connections>
                                             <segue destination="qFk-Za-qsy" kind="popover" identifier="Players" popoverAnchorBarButtonItem="MgD-JX-l6H" id="GPo-TD-Vi3">
                                                 <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
@@ -390,6 +390,8 @@
                     </view>
                     <connections>
                         <outlet property="fightLineChartView" destination="OVg-IP-AU6" id="WXt-1V-Uvn"/>
+                        <outlet property="playersButton" destination="MgD-JX-l6H" id="IrK-zJ-Qpk"/>
+                        <outlet property="summaryTypeButton" destination="tyL-T9-dVA" id="bmj-xE-ecp"/>
                     </connections>
                 </viewController>
             </objects>
@@ -537,10 +539,9 @@
         <class className="UCLFightViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/UCLFightViewController.h"/>
             <relationships>
-                <relationship kind="action" name="playerTableModeToggled:" candidateClass="UISegmentedControl"/>
                 <relationship kind="outlet" name="fightLineChartView" candidateClass="UCLLineChartView"/>
-                <relationship kind="outlet" name="playersTableModeToggleControl" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="playersTableView" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="playersButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="summaryTypeButton" candidateClass="UIBarButtonItem"/>
             </relationships>
         </class>
         <class className="UCLFightsViewController" superclassName="UIViewController">

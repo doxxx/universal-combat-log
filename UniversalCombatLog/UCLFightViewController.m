@@ -26,8 +26,8 @@
 
 @synthesize fight = _fight;
 @synthesize fightLineChartView;
-@synthesize playersTableView;
-@synthesize playersTableModeToggleControl;
+@synthesize playersButton = _playersButton;
+@synthesize summaryTypeButton = _summaryTypeButton;
 
 - (void)setFight:(UCLFight *)fight
 {
@@ -37,6 +37,9 @@
     }
     _fight = fight;
     [self processEvents];
+    
+    [self.playersButton setEnabled:YES];
+    [self.summaryTypeButton setEnabled:YES];
 }
 
 - (void)viewDidLoad
@@ -55,8 +58,8 @@
     _selectedActor = nil;
     
     self.fightLineChartView = nil;
-    self.playersTableView = nil;
-    self.playersTableModeToggleControl = nil;
+    self.playersButton = nil;
+    self.summaryTypeButton = nil;
     
     [super viewDidUnload];
 }
@@ -161,7 +164,7 @@
 
     free(totals);
 }
-
+/*
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView == self.playersTableView) {
@@ -201,6 +204,7 @@
         [self.fightLineChartView removeLineForKey:player.name];
     }
 }
+*/
 
 - (NSArray*)chartDataForEntity:(UCLEntity*)entity
 {
@@ -238,12 +242,6 @@
     return chartData;
 }
 
-- (IBAction)playerTableModeToggled:(UISegmentedControl *)sender {
-    _summaryType = sender.selectedSegmentIndex;
-    [self processEvents];
-    [self.playersTableView reloadData];
-}
-
 - (void)setSummaryType:(UCLSummaryType)summaryType
 {
     [_uclPopoverController dismissPopoverAnimated:YES];
@@ -263,7 +261,7 @@
             break;
     }
     [self processEvents];
-    [self.playersTableView reloadData];
+//    [self.playersTableView reloadData];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

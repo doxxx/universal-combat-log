@@ -12,14 +12,12 @@
 #import "UCLSummaryTypesViewController.h"
 #import "UCLActorsViewController.h"
 
-@interface UCLFightViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,UCLSummaryTypesViewDelegate,UCLActorsViewDelegate>
+@interface UCLFightViewController : UIViewController<UCLSummaryTypesViewDelegate,UCLActorsViewDelegate>
 
 @property (strong, nonatomic) UCLFight* fight;
 
 @property (weak, nonatomic) IBOutlet UCLLineChartView *fightLineChartView;
-@property (weak, nonatomic) IBOutlet UITableView *playersTableView;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *playersTableModeToggleControl;
-
-- (IBAction)playerTableModeToggled:(UISegmentedControl *)sender;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *playersButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *summaryTypeButton;
 
 @end

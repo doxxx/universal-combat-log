@@ -295,18 +295,21 @@
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
 {
     [_chartView addLineWithValues:values forKey:key];
+    [self setNeedsLayout];
     [self setNeedsDisplay];
 }
 
 - (void)removeLineForKey:(NSString *)key
 {
     [_chartView removeLineForKey:key];
+    [self setNeedsLayout];
     [self setNeedsDisplay];
 }
 
 - (void)removeAllLines
 {
     [_chartView removeAllLines];
+    [self setNeedsLayout];
     [self setNeedsDisplay];
 }
 

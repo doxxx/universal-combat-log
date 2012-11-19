@@ -381,7 +381,7 @@
                             </toolbar>
                             <view contentMode="redraw" id="OVg-IP-AU6" customClass="UCLLineChartView">
                                 <rect key="frame" x="0.0" y="44" width="1024" height="704"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>

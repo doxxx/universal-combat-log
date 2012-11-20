@@ -45,6 +45,7 @@
     if (self) {
         _layer = [CALayer layer];
         _layer.delegate = self;
+        _layer.needsDisplayOnBoundsChange = YES;
         _values = values;
     }
     return self;
@@ -243,21 +244,14 @@
     }
 }
 
-- (void)layoutSubviews
+- (void)layoutSublayersOfLayer:(CALayer *)layer
 {
-    CGSize size = self.frame.size;
-    for (NSString* key in _lines) {
-        ChartLine* line = [_lines objectForKey:key];
-        line.layer.frame = CGRectMake(0, 0, size.width, size.height);
-    }
-}
-
-- (void)setNeedsDisplay
-{
-    [super setNeedsDisplay];
-    for (NSString* key in _lines) {
-        ChartLine* line = [_lines objectForKey:key];
-        [line.layer setNeedsDisplay];
+    if (layer == self.layer) {
+        CGSize size = layer.frame.size;
+        for (NSString* key in _lines) {
+            ChartLine* line = [_lines objectForKey:key];
+            line.layer.frame = CGRectMake(0, 0, size.width, size.height);
+        }
     }
 }
 

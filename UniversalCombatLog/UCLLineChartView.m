@@ -151,6 +151,7 @@
 
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
 {
+    [self removeLineForKey:key];
     ChartLine* line = [[ChartLine alloc] initWithValues:values];
     CGSize size = self.layer.bounds.size;
     line.layer.frame = CGRectMake(0, 0, size.width, size.height);

@@ -10,7 +10,6 @@
 
 #import "UCLLogFileLoader.h"
 #import "UCLFightsViewController.h"
-#import "UCLActorViewController.h"
 #import "UCLNetworkClient.h"
 
 @implementation UCLLogsViewController

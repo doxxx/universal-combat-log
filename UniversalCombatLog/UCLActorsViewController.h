@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "UCLActorViewController.h"
 #import "UCLSummaryTypesViewController.h"
 
 #import "UCLFight.h"

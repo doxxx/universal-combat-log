@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UCLLineChartView.h"
+#import "UCLPieChartView.h"
 #import "UCLLogFile.h"
 #import "UCLFight.h"
 #import "UCLSummaryTypesViewController.h"

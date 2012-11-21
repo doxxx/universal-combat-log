@@ -210,10 +210,6 @@
 
 - (void)actorsView:(UCLActorsViewController *)actorsView didSelectActor:(UCLEntity *)actor
 {
-    if (_selectedActor) {
-        [self.fightLineChartView removeLineForKey:_selectedActor.name];
-    }
-    
     _selectedActor = actor;
     
     _selectedActorEvents = [self.fight filterEventsUsingPredicate:^BOOL(UCLLogEvent* event) {
@@ -234,6 +230,12 @@
         self.playerDetailsView.alpha = 1;
         self.playerDetailsView.hidden = NO;
     }
+}
+
+- (void)actorsView:(UCLActorsViewController *)actorsView didDeselectActor:(UCLEntity *)actor
+{
+    [self.fightLineChartView removeLineForKey:actor.name];
+    _selectedActor = nil;
 }
 
 #pragma mark - TableView DataSource & Delegate Methods

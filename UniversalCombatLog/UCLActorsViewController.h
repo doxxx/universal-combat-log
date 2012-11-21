@@ -17,6 +17,7 @@
 @protocol UCLActorsViewDelegate <NSObject>
 
 - (void)actorsView:(UCLActorsViewController*)actorsView didSelectActor:(UCLEntity*)actor;
+- (void)actorsView:(UCLActorsViewController*)actorsView didDeselectActor:(UCLEntity*)actor;
 
 @end
 

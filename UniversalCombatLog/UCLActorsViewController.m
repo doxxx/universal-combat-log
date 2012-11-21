@@ -180,4 +180,10 @@
     [self.delegate actorsView:self didSelectActor:self.selectedActor];
 }
 
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
+    [self.delegate actorsView:self didDeselectActor:summaryEntry.item];
+}
+
 @end

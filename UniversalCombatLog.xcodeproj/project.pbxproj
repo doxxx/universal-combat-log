@@ -37,7 +37,6 @@
 		F8FDE37815C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */; };
 		F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */; };
 		F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */; };
-		F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,8 +129,6 @@
 		F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryEntry.m; sourceTree = "<group>"; };
 		F8FDE38815CAB0D50094FE26 /* UCLSummaryTypesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryTypesViewController.h; sourceTree = "<group>"; };
 		F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryTypesViewController.m; sourceTree = "<group>"; };
-		F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLActorViewController.h; sourceTree = "<group>"; };
-		F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLActorViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,8 +213,6 @@
 				F88649B615B8BEA800073204 /* Model */,
 				F85BA6011612599D0020653D /* Network */,
 				F886498415B82E8F00073204 /* MainStoryboard.storyboard */,
-				F8FDE38B15CBFA5A0094FE26 /* UCLActorViewController.h */,
-				F8FDE38C15CBFA5B0094FE26 /* UCLActorViewController.m */,
 				F85AFDDB16487CA8001024D5 /* UCLActorsViewController.h */,
 				F85AFDDC16487CA8001024D5 /* UCLActorsViewController.m */,
 				F886498115B82E8F00073204 /* UCLAppDelegate.h */,
@@ -394,7 +389,6 @@
 				F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */,
 				F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */,
 				F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */,
-				F8FDE38D15CBFA5B0094FE26 /* UCLActorViewController.m in Sources */,
 				F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */,
 				F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */,
 				F85BA605161259F30020653D /* UCLNetworkClient.m in Sources */,

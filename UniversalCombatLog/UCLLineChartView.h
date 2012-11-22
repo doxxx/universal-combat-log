@@ -26,9 +26,6 @@
 - (void)addLineWithValues:(NSArray*)values forKey:(NSString*)key;
 - (void)removeLineForKey:(NSString*)key;
 - (void)removeAllLines;
-- (void)resetView;
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration;
-
+- (void)resetZoom;
 
 @end

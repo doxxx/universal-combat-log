@@ -101,12 +101,6 @@
     self.fightLineChartView.rotating = YES;
 }
 
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    [self.fightLineChartView willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
-}
-
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     self.fightLineChartView.rotating = NO;
@@ -155,6 +149,7 @@
     _visibleRange = NSMakeRange(0, ceil(self.fight.duration));
     _selectedActor = nil;
     
+    [self.fightLineChartView resetZoom];
     [self.fightLineChartView removeAllLines];
     
     [self updateOverview];

@@ -24,7 +24,7 @@
 @property (strong, nonatomic) NSArray* values;
 @property (nonatomic) CGFloat xScale;
 @property (nonatomic) CGFloat yScale;
-@property (nonatomic) BOOL zooming;
+@property (nonatomic) BOOL disableAnimation;
 
 - (id)initWithValues:(NSArray*)values;
 
@@ -37,7 +37,7 @@
 @synthesize values = _values;
 @synthesize xScale = _xScale;
 @synthesize yScale = _yScale;
-@synthesize zooming;
+@synthesize disableAnimation;
 
 - (id)initWithValues:(NSArray*)values
 {
@@ -81,7 +81,7 @@
 
 - (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event
 {
-    if (self.zooming) {
+    if (self.disableAnimation) {
         // prevent animation of the individual layers so that zooming doesn't cause weird jitter
         return (id<CAAction>)[NSNull null];
     }
@@ -144,9 +144,6 @@
 {
     self.scale = _scaleAtZoomStart * transform.a;
     self.frame = CGRectMake(0, 0, _sizeAtZoomStart.width * self.scale, _sizeAtZoomStart.height);
-
-    [self recalculate];
-    [self setNeedsDisplay];
 }
 
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
@@ -233,7 +230,7 @@
 
     for (NSString* key in _lines) {
         ChartLine* line = [_lines objectForKey:key];
-        line.zooming = YES;
+        line.disableAnimation = YES;
     }
 }
 
@@ -241,13 +238,14 @@
 {
     for (NSString* key in _lines) {
         ChartLine* line = [_lines objectForKey:key];
-        line.zooming = NO;
+        line.disableAnimation = NO;
     }
 }
 
 - (void)layoutSublayersOfLayer:(CALayer *)layer
 {
     if (layer == self.layer) {
+        [self recalculate];
         CGSize size = layer.frame.size;
         for (NSString* key in _lines) {
             ChartLine* line = [_lines objectForKey:key];
@@ -326,10 +324,14 @@
     [self setNeedsDisplay];
 }
 
-- (void)resetView
+- (void)resetZoom
 {
-    // TODO: Implement this?
-    _scrollView.zoomScale = 1.0;
+    CGSize size = _scrollView.bounds.size;
+    _chartView.scale = 1;
+    _chartView.frame = CGRectMake(0, 0, size.width, size.height);
+    _scrollView.contentSize = size;
+    _scrollView.contentOffset = CGPointMake(0, 0);
+    
     [self setNeedsDisplay];
 }
 
@@ -357,7 +359,6 @@
     newScale = MAX(newScale, kMinZoomScale);
     newScale = MIN(newScale, kMaxZoomScale);
     
-    [_scrollView setZoomScale:1.0 animated:NO];
     _scrollView.minimumZoomScale = kMinZoomScale / newScale;
     _scrollView.maximumZoomScale = kMaxZoomScale / newScale;
     
@@ -367,11 +368,7 @@
     
     _chartView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
     _scrollView.contentSize = newContentSize;
-    
     [_scrollView setContentOffset:contentOffset animated:NO];
-    
-    [_chartView recalculate];
-    [_chartView setNeedsDisplay];
     
     [_chartView endZoom];
 }
@@ -480,14 +477,7 @@
         _scrollView.contentSize = chartSize;
 
         _chartView.frame = CGRectMake(0, 0, chartSize.width, chartSize.height);
-        
-        [_chartView recalculate];
     }
-}
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-//    [self configureLayersWithAnimation:YES overDuration:duration];
 }
 
 #pragma mark - Helper Methods

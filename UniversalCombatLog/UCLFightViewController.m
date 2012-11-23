@@ -79,7 +79,7 @@
     self.playerDetailsView.frame = playerDetailsFrame;
     self.playerDetailsView.alpha = 0;
     self.playerDetailsView.hidden = YES;
-
+    
     [self updateOverview];
 }
 
@@ -158,16 +158,7 @@
     [self.summaryTypeButton setEnabled:YES];
     
     if (!self.playerDetailsView.hidden) {
-        CGRect chartFrame = self.fightLineChartView.frame;
-        chartFrame.size.width = 1024;
-        self.fightLineChartView.frame = chartFrame;
-        
-        CGRect detailsFrame = self.playerDetailsView.frame;
-        detailsFrame.origin.x = 1024;
-        self.playerDetailsView.frame = detailsFrame;
-        
-        self.playerDetailsView.alpha = 0;
-        self.playerDetailsView.hidden = YES;
+        [self hidePlayerDetails];
     }
 }
 
@@ -214,16 +205,7 @@
     [self updatePlayerDetails];
 
     if (self.playerDetailsView.hidden) {
-        CGRect chartFrame = self.fightLineChartView.frame;
-        chartFrame.size.width = 768;
-        self.fightLineChartView.frame = chartFrame;
-        
-        CGRect detailsFrame = self.playerDetailsView.frame;
-        detailsFrame.origin.x = 768;
-        self.playerDetailsView.frame = detailsFrame;
-        
-        self.playerDetailsView.alpha = 1;
-        self.playerDetailsView.hidden = NO;
+        [self showPlayerDetails];
     }
 }
 
@@ -469,6 +451,48 @@
     self.spellAvgDamageLabel.text = [NSString stringWithFormat:@"%.0f", average];
     
     self.spellStatsView.hidden = NO;
+}
+
+- (void)showPlayerDetails
+{
+    self.playerDetailsView.hidden = NO;
+    [UIView animateWithDuration:0.25
+                          delay:0
+                        options:UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionAllowAnimatedContent
+                     animations:^{
+                         CGRect chartFrame = self.fightLineChartView.frame;
+                         chartFrame.size.width = 768;
+                         self.fightLineChartView.frame = chartFrame;
+                         
+                         CGRect detailsFrame = self.playerDetailsView.frame;
+                         detailsFrame.origin.x = 768;
+                         self.playerDetailsView.frame = detailsFrame;
+                         
+                         self.playerDetailsView.alpha = 1;
+                     } 
+                     completion:^(BOOL finished){
+                     }];
+}
+
+- (void)hidePlayerDetails
+{
+    [UIView animateWithDuration:0.25
+                          delay:0
+                        options:UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionAllowAnimatedContent
+                     animations:^{
+                         CGRect chartFrame = self.fightLineChartView.frame;
+                         chartFrame.size.width = 1024;
+                         self.fightLineChartView.frame = chartFrame;
+                         
+                         CGRect detailsFrame = self.playerDetailsView.frame;
+                         detailsFrame.origin.x = 1024;
+                         self.playerDetailsView.frame = detailsFrame;
+                         
+                         self.playerDetailsView.alpha = 0;
+                     } 
+                     completion:^(BOOL finished){
+                         self.playerDetailsView.hidden = YES;
+                     }];
 }
 
 @end

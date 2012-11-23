@@ -15,87 +15,11 @@
 #define kAxisMarkerLength 5
 #define kAxisLineWidth 2
 
-////////////////////////////////////////////////////////////////////////////
-#pragma mark - ChartLine
-
-@interface ChartLine : NSObject
-
-@property (strong, nonatomic) CALayer* layer;
-@property (strong, nonatomic) NSArray* values;
-@property (nonatomic) CGFloat xScale;
-@property (nonatomic) CGFloat yScale;
-@property (nonatomic) BOOL disableAnimation;
-
-- (id)initWithValues:(NSArray*)values;
-
-@end
-
-
-@implementation ChartLine
-
-@synthesize layer = _layer;
-@synthesize values = _values;
-@synthesize xScale = _xScale;
-@synthesize yScale = _yScale;
-@synthesize disableAnimation;
-
-- (id)initWithValues:(NSArray*)values
-{
-    self = [super init];
-    if (self) {
-        _layer = [CALayer layer];
-        _layer.delegate = self;
-        _layer.needsDisplayOnBoundsChange = YES;
-        _values = values;
-    }
-    return self;
-}
-
-- (void)drawLayer:(CALayer *)l inContext:(CGContextRef)ctx
-{
-    // Setup line color and style
-    CGContextSetRGBStrokeColor(ctx, 0, 1, 0, 1);
-    CGContextSetLineWidth(ctx, 2);
-    CGContextSetLineJoin(ctx, kCGLineJoinRound);
-    CGContextSetLineCap(ctx, kCGLineCapRound);
-    
-    //    CGContextClipToRect(ctx, CGRectMake(0, 0, size.width, size.height));
-    
-    // Draw line(s)
-    NSUInteger index = 0;
-    NSUInteger count = [_values count];
-    while (index < count) {
-        NSNumber* value = [_values objectAtIndex:index];
-        CGFloat x = index * _xScale;
-        CGFloat y = [value doubleValue] * _yScale;
-        if (index == 0) {
-            CGContextMoveToPoint(ctx, x, y);
-        }
-        else {
-            CGContextAddLineToPoint(ctx, x, y);
-        }
-        index++;
-    }
-    CGContextStrokePath(ctx);
-}
-
-- (id<CAAction>)actionForLayer:(CALayer *)layer forKey:(NSString *)event
-{
-    if (self.disableAnimation) {
-        // prevent animation of the individual layers so that zooming doesn't cause weird jitter
-        return (id<CAAction>)[NSNull null];
-    }
-    return nil;
-}
-
-@end
-
-
 
 ////////////////////////////////////////////////////////////////////////////
-#pragma mark - ChartView
+#pragma mark - LinesView
 
-@interface ChartView : UIView
+@interface LinesView : UIView
 
 @property (nonatomic) double scale;
 @property (nonatomic,readonly) uint32_t maxDataCount;
@@ -107,15 +31,19 @@
 - (void)removeAllLines;
 - (void)recalculate;
 - (void)beginZoom;
+- (void)endZoom;
+- (void)resetZoomWithStartSize:(CGSize)size;
 
 @end
 
 
-@implementation ChartView
+@implementation LinesView
 {
     NSMutableDictionary* _lines;
     CGSize _sizeAtZoomStart;
     double _scaleAtZoomStart;
+    CGFloat _xScale;
+    CGFloat _yScale;
 }
 
 @synthesize scale = _scale;
@@ -136,6 +64,7 @@
         self.contentMode = UIViewContentModeRedraw;
         self.layer.geometryFlipped = YES;
         self.opaque = YES;
+        self.backgroundColor = [UIColor blackColor];
     }
     return self;
 }
@@ -149,21 +78,14 @@
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
 {
     [self removeLineForKey:key];
-    ChartLine* line = [[ChartLine alloc] initWithValues:values];
-    CGSize size = self.layer.bounds.size;
-    line.layer.frame = CGRectMake(0, 0, size.width, size.height);
-    [self.layer addSublayer:line.layer];
-    [_lines setObject:line forKey:key];
+    [_lines setObject:values forKey:key];
     [self recalculate];
-    
-    [line.layer setNeedsDisplay];
 }
 
 - (void)removeLineForKey:(NSString *)key
 {
-    ChartLine* line = [_lines objectForKey:key];
-    if (line != nil) {
-        [line.layer removeFromSuperlayer];
+    NSArray* values = [_lines objectForKey:key];
+    if (values != nil) {
         [_lines removeObjectForKey:key];
         [self recalculate];
     }
@@ -171,10 +93,6 @@
 
 - (void)removeAllLines
 {
-    for (NSString* key in _lines) {
-        ChartLine* line = [_lines objectForKey:key];
-        [line.layer removeFromSuperlayer];
-    }
     [_lines removeAllObjects];
     [self recalculate];
 }
@@ -185,15 +103,15 @@
     double newMaxDataCount = 0;
     
     for (NSString* key in _lines) {
-        ChartLine* line = [_lines objectForKey:key];
-        for (NSNumber* value in line.values) {
+        NSArray* values = [_lines objectForKey:key];
+        for (NSNumber* value in values) {
             double v = [value doubleValue];
             if (v > newMaxValue) {
                 newMaxValue = v;
             }
         }
-        if (line.values.count > newMaxDataCount) {
-            newMaxDataCount = line.values.count;
+        if (values.count > newMaxDataCount) {
+            newMaxDataCount = values.count;
         }
     }
     
@@ -212,14 +130,8 @@
         _yInterval = newYInterval;
         
         CGSize size = self.frame.size;
-        CGFloat xScale = size.width / _maxDataCount; // * _scale;
-        CGFloat yScale = size.height / _maxValue;
-        
-        for (NSString* key in _lines) {
-            ChartLine* line = [_lines objectForKey:key];
-            line.xScale = xScale;
-            line.yScale = yScale;
-        }
+        _xScale = size.width / _maxDataCount;
+        _yScale = size.height / _maxValue;
     }
 }
 
@@ -227,31 +139,49 @@
 {
     _sizeAtZoomStart = CGSizeApplyAffineTransform(self.frame.size, CGAffineTransformMakeScale(1/self.scale, 1));
     _scaleAtZoomStart = self.scale;
-
-    for (NSString* key in _lines) {
-        ChartLine* line = [_lines objectForKey:key];
-        line.disableAnimation = YES;
-    }
 }
 
 - (void)endZoom
 {
+}
+
+- (void)resetZoomWithStartSize:(CGSize)size
+{
+    _sizeAtZoomStart = size;
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    
+    // Setup line color and style
+    CGContextSetRGBStrokeColor(ctx, 0, 1, 0, 1);
+    CGContextSetLineWidth(ctx, 2);
+    CGContextSetLineJoin(ctx, kCGLineJoinRound);
+    CGContextSetLineCap(ctx, kCGLineCapRound);
+
+    // Draw line(s)
     for (NSString* key in _lines) {
-        ChartLine* line = [_lines objectForKey:key];
-        line.disableAnimation = NO;
+        NSArray* values = [_lines objectForKey:key];
+        NSUInteger index = 0;
+        for (NSNumber* value in values) {
+            CGFloat x = index * _xScale;
+            CGFloat y = [value doubleValue] * _yScale;
+            if (index == 0) {
+                CGContextMoveToPoint(ctx, x, y);
+            }
+            else {
+                CGContextAddLineToPoint(ctx, x, y);
+            }
+            index++;
+        }
+        CGContextStrokePath(ctx);
     }
 }
 
-- (void)layoutSublayersOfLayer:(CALayer *)layer
+- (void)layoutSubviews
 {
-    if (layer == self.layer) {
-        [self recalculate];
-        CGSize size = layer.frame.size;
-        for (NSString* key in _lines) {
-            ChartLine* line = [_lines objectForKey:key];
-            line.layer.frame = CGRectMake(0, 0, size.width, size.height);
-        }
-    }
+    [self recalculate];
 }
 
 @end
@@ -265,7 +195,7 @@
 {
     NSDictionary* _textAttributes;
     UIScrollView* _scrollView;
-    ChartView* _chartView;
+    LinesView* _linesView;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -277,7 +207,6 @@
         CGRect scrollViewRect = CGRectMake(kChartInset, 0, self.bounds.size.width - kChartInset, self.bounds.size.height - kChartInset);
 
         _scrollView = [[UIScrollView alloc] initWithFrame:scrollViewRect];
-        _scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         _scrollView.minimumZoomScale = 1.0;
         _scrollView.maximumZoomScale = 10.0;
         _scrollView.showsVerticalScrollIndicator = NO;
@@ -288,8 +217,8 @@
         [self addSubview:_scrollView];
         
         CGRect chartRect = CGRectMake(0, 0, scrollViewRect.size.width, scrollViewRect.size.height);
-        _chartView = [[ChartView alloc] initWithFrame:chartRect];
-        [_scrollView addSubview:_chartView];
+        _linesView = [[LinesView alloc] initWithFrame:chartRect];
+        [_scrollView addSubview:_linesView];
         _scrollView.contentSize = chartRect.size;
         
         _scrollView.delegate = self;
@@ -305,30 +234,30 @@
 
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
 {
-    [_chartView addLineWithValues:values forKey:key];
-    [self setNeedsLayout];
+    [_linesView addLineWithValues:values forKey:key];
+    [self relayoutScrollview];
     [self setNeedsDisplay];
 }
 
 - (void)removeLineForKey:(NSString *)key
 {
-    [_chartView removeLineForKey:key];
-    [self setNeedsLayout];
+    [_linesView removeLineForKey:key];
+    [self relayoutScrollview];
     [self setNeedsDisplay];
 }
 
 - (void)removeAllLines
 {
-    [_chartView removeAllLines];
-    [self setNeedsLayout];
+    [_linesView removeAllLines];
+    [self relayoutScrollview];
     [self setNeedsDisplay];
 }
 
 - (void)resetZoom
 {
     CGSize size = _scrollView.bounds.size;
-    _chartView.scale = 1;
-    _chartView.frame = CGRectMake(0, 0, size.width, size.height);
+    _linesView.scale = 1;
+    _linesView.frame = CGRectMake(0, 0, size.width, size.height);
     _scrollView.contentSize = size;
     _scrollView.contentOffset = CGPointMake(0, 0);
     
@@ -339,12 +268,12 @@
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
-    return _chartView;
+    return _linesView;
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
-    [_chartView beginZoom];
+    [_linesView beginZoom];
 }
 
 #define kMinZoomScale 1.0
@@ -355,22 +284,29 @@
     CGSize size = scrollView.bounds.size;
     CGPoint contentOffset = _scrollView.contentOffset;
     
-    CGFloat newScale = _chartView.scale;
+    CGFloat newScale = _linesView.scale;
     newScale = MAX(newScale, kMinZoomScale);
     newScale = MIN(newScale, kMaxZoomScale);
     
     _scrollView.minimumZoomScale = kMinZoomScale / newScale;
     _scrollView.maximumZoomScale = kMaxZoomScale / newScale;
     
-    _chartView.scale = newScale;
+    _linesView.scale = newScale;
     
     CGSize newContentSize = CGSizeMake(size.width * newScale, size.height);
     
-    _chartView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
-    _scrollView.contentSize = newContentSize;
-    [_scrollView setContentOffset:contentOffset animated:NO];
+    [UIView animateWithDuration:0.25
+                          delay:0
+                        options:UIViewAnimationOptionAllowAnimatedContent
+                     animations:^{
+                         _linesView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
+                         [_scrollView setContentOffset:contentOffset animated:YES];
+                         _scrollView.contentSize = newContentSize;
+                     }
+                     completion:^(BOOL fininshed){
+                     }];
     
-    [_chartView endZoom];
+    [_linesView endZoom];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -386,7 +322,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    if (_chartView.maxDataCount == 0) {
+    if (_linesView.maxDataCount == 0) {
         return;
     }
     
@@ -394,8 +330,8 @@
     
     CGSize size = _scrollView.frame.size;
     
-    CGFloat xScale = size.width / _chartView.maxDataCount * _chartView.scale;
-    CGFloat yScale = size.height / _chartView.maxValue;
+    CGFloat xScale = size.width / _linesView.maxDataCount * _linesView.scale;
+    CGFloat yScale = size.height / _linesView.maxValue;
 
     // Flip geometry
     CGContextScaleCTM(ctx, 1, -1);
@@ -417,14 +353,14 @@
     CGContextStrokePath(ctx);
     
     // Draw markers on axes.
-    NSUInteger yMarkerCount = floor(_chartView.maxValue / _chartView.yInterval);
+    NSUInteger yMarkerCount = floor(_linesView.maxValue / _linesView.yInterval);
     for (NSUInteger i = 1; i <= yMarkerCount; i++) {
-        CGFloat y = (i * _chartView.yInterval) * yScale;
+        CGFloat y = (i * _linesView.yInterval) * yScale;
         CGContextMoveToPoint(ctx, 0, y);
         CGContextAddLineToPoint(ctx, -kAxisMarkerLength, y);
         CGContextStrokePath(ctx);
         
-        NSString* markerLabel = [NSString stringWithFormat:@"%.0f", (i * _chartView.yInterval)];
+        NSString* markerLabel = [NSString stringWithFormat:@"%.0f", (i * _linesView.yInterval)];
         NSAttributedString* attrStr = [[NSAttributedString alloc] initWithString:markerLabel 
                                                                       attributes:_textAttributes];
         CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attrStr);
@@ -465,31 +401,43 @@
 
 - (void)layoutSubviews
 {
-    [super layoutSubviews];
-    
-    if (!self.rotating) {
-        CGSize viewSize = self.bounds.size;
-        CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:_chartView.maxValue];
-        CGFloat xInset = MAX(kChartInset, maxLabelWidth + kAxisMarkerLength + 8);
-        CGSize chartSize = CGSizeMake(viewSize.width - (xInset + kChartInset), viewSize.height - kChartInset*2);
-        CGRect newScrollFrame = CGRectMake(xInset, kChartInset, chartSize.width, chartSize.height);
-        _scrollView.frame = newScrollFrame;
-        _scrollView.contentSize = chartSize;
-
-        _chartView.frame = CGRectMake(0, 0, chartSize.width, chartSize.height);
-    }
+    [self relayoutScrollview];
 }
 
 #pragma mark - Helper Methods
+
+- (void)relayoutScrollview
+{
+    CGSize viewSize = self.bounds.size;
+    CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:_linesView.maxValue];
+    CGFloat xInset = MAX(kChartInset, maxLabelWidth + kAxisMarkerLength + 8);
+    CGRect newScrollFrame = CGRectMake(xInset, kChartInset, viewSize.width - (xInset + kChartInset), viewSize.height - kChartInset*2);
+    CGSize newContentSize = newScrollFrame.size;
+    double scale = _linesView.scale;
+    newContentSize.width *= scale;
+
+    CGPoint offset = _scrollView.contentOffset;
+    double offsetRatio = offset.x / _scrollView.contentSize.width;
+    offset.x = offsetRatio * newContentSize.width;
+
+    _scrollView.frame = newScrollFrame;
+    _scrollView.contentSize = newContentSize;
+    
+    [_linesView resetZoomWithStartSize:_scrollView.bounds.size];
+    _linesView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
+    
+    // TODO: Not quite right, but it'll do for now.
+    [_scrollView setContentOffset:offset animated:YES];
+}
 
 - (NSRange)makeRangeForVisibleData
 {
     CGFloat chartWidth = _scrollView.contentSize.width;
     CGFloat visibleWidth = _scrollView.bounds.size.width;
-    CGFloat xScale = chartWidth / _chartView.maxDataCount;
+    CGFloat xScale = chartWidth / _linesView.maxDataCount;
     CGFloat posOffset = _scrollView.contentOffset.x;
     NSUInteger start = MAX(0, ceil(posOffset / xScale));
-    NSUInteger length = MIN(_chartView.maxDataCount, floor((posOffset + visibleWidth) / xScale) - start);
+    NSUInteger length = MIN(_linesView.maxDataCount, floor((posOffset + visibleWidth) / xScale) - start);
     return NSMakeRange(start, length);
 }
 

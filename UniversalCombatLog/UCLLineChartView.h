@@ -8,15 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class UCLLineChartView;
-
-@protocol UCLLineChartViewDelegate <NSObject>
-
-@optional
-
-- (void)lineChartView:(UCLLineChartView*)lineChartView didZoomToRange:(NSRange)range;
-
-@end
+@protocol UCLLineChartViewDelegate;
 
 @interface UCLLineChartView : UIView <UIScrollViewDelegate>
 
@@ -27,5 +19,13 @@
 - (void)removeLineForKey:(NSString*)key;
 - (void)removeAllLines;
 - (void)resetZoom;
+
+@end
+
+@protocol UCLLineChartViewDelegate <NSObject>
+
+@optional
+
+- (void)lineChartView:(UCLLineChartView*)lineChartView didZoomToRange:(NSRange)range;
 
 @end

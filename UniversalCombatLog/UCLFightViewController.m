@@ -9,6 +9,7 @@
 #import "UCLLogsViewController.h"
 #import "UCLFightViewController.h"
 #import "UCLActorsViewController.h"
+#import "UCLFight+Filtering.h"
 
 #import <QuartzCore/QuartzCore.h>
 

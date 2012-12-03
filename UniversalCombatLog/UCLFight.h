@@ -11,8 +11,6 @@
 #import "UCLEntity.h"
 #import "UCLLogEvent.h"
 
-typedef BOOL (^UCLLogEventPredicate)(UCLLogEvent* event);
-
 @interface UCLFight : NSObject
 
 @property (readonly, strong, nonatomic) NSArray* events;
@@ -23,8 +21,6 @@ typedef BOOL (^UCLLogEventPredicate)(UCLLogEvent* event);
 - (NSDate*)startTime;
 - (NSDate*)endTime;
 - (NSTimeInterval)duration;
-
-- (NSArray*)filterEventsUsingPredicate:(UCLLogEventPredicate)predicate;
 
 + (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle;
 

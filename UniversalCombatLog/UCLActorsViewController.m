@@ -9,6 +9,7 @@
 #import "UCLActorsViewController.h"
 #import "UCLSummaryTypesViewController.h"
 #import "UCLSummaryEntry.h"
+#import "UCLFight+Filtering.h"
 
 @implementation UCLActorsViewController
 {

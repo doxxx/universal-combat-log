@@ -40,17 +40,6 @@
     return [[self endTime] timeIntervalSinceDate:[self startTime]];
 }
 
-- (NSArray*)filterEventsUsingPredicate:(UCLLogEventPredicate)predicate
-{
-    NSMutableArray *result = [NSMutableArray array];
-    for (UCLLogEvent* event in self.events) {
-        if (predicate(event)) {
-            [result addObject:event];
-        }
-    }
-    return result;
-}
-
 + (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle
 {
     return [[UCLFight alloc] initWithEvents:theEvents title:theTitle];

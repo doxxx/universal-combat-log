@@ -76,9 +76,10 @@
 
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
 {
-    [self removeLineForKey:key];
+    [_lines removeObjectForKey:key];
     [_lines setObject:values forKey:key];
     [self recalculate];
+    [self setNeedsDisplay];
 }
 
 - (void)removeLineForKey:(NSString *)key
@@ -87,6 +88,7 @@
     if (values != nil) {
         [_lines removeObjectForKey:key];
         [self recalculate];
+        [self setNeedsDisplay];
     }
 }
 
@@ -94,6 +96,7 @@
 {
     [_lines removeAllObjects];
     [self recalculate];
+    [self setNeedsDisplay];
 }
 
 - (void)recalculate

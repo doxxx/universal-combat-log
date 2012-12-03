@@ -32,7 +32,6 @@
 - (void)recalculate;
 - (void)beginZoom;
 - (void)endZoom;
-- (void)resetZoomWithStartSize:(CGSize)size;
 
 @end
 
@@ -143,11 +142,6 @@
 
 - (void)endZoom
 {
-}
-
-- (void)resetZoomWithStartSize:(CGSize)size
-{
-    _sizeAtZoomStart = size;
 }
 
 - (void)drawRect:(CGRect)rect
@@ -279,29 +273,35 @@
 #define kMinZoomScale 1.0
 #define kMaxZoomScale 10.0
 
-- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)zoomScale
 {
     CGSize size = scrollView.bounds.size;
     CGPoint contentOffset = _scrollView.contentOffset;
+    CGSize contentSize = _linesView.frame.size;
     
-    CGFloat newScale = _linesView.scale;
-    newScale = MAX(newScale, kMinZoomScale);
-    newScale = MIN(newScale, kMaxZoomScale);
+    double scale = _linesView.scale;
+    double newScale = MIN(MAX(scale, kMinZoomScale), kMaxZoomScale);
     
     _scrollView.minimumZoomScale = kMinZoomScale / newScale;
     _scrollView.maximumZoomScale = kMaxZoomScale / newScale;
     
-    _linesView.scale = newScale;
-    
     CGSize newContentSize = CGSizeMake(size.width * newScale, size.height);
+    CGFloat newOffsetX = (contentOffset.x + size.width/2) / contentSize.width * newContentSize.width - (size.width/2);
     
+    if (newScale == kMinZoomScale) {
+        newOffsetX = 0;
+    }
+    
+    CGPoint newContentOffset = CGPointMake(newOffsetX, 0);
+
     [UIView animateWithDuration:0.25
                           delay:0
                         options:UIViewAnimationOptionAllowAnimatedContent
                      animations:^{
+                         _linesView.scale = newScale;
                          _linesView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
-                         [_scrollView setContentOffset:contentOffset animated:YES];
                          _scrollView.contentSize = newContentSize;
+                         [_scrollView setContentOffset:newContentOffset animated:YES];
                      }
                      completion:^(BOOL fininshed){
                      }];
@@ -412,19 +412,16 @@
     CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:_linesView.maxValue];
     CGFloat xInset = MAX(kChartInset, maxLabelWidth + kAxisMarkerLength + 8);
     CGRect newScrollFrame = CGRectMake(xInset, kChartInset, viewSize.width - (xInset + kChartInset), viewSize.height - kChartInset*2);
-    CGSize newContentSize = newScrollFrame.size;
-    double scale = _linesView.scale;
-    newContentSize.width *= scale;
+    double scale = _linesView.frame.size.width / _scrollView.frame.size.width;
+    CGSize newContentSize = CGSizeApplyAffineTransform(newScrollFrame.size, CGAffineTransformMakeScale(scale, 1));
 
     CGPoint offset = _scrollView.contentOffset;
     double offsetRatio = offset.x / _scrollView.contentSize.width;
     offset.x = offsetRatio * newContentSize.width;
 
     _scrollView.frame = newScrollFrame;
-    _scrollView.contentSize = newContentSize;
-    
-    [_linesView resetZoomWithStartSize:_scrollView.bounds.size];
     _linesView.frame = CGRectMake(0, 0, newContentSize.width, newContentSize.height);
+    _scrollView.contentSize = newContentSize;
     
     // TODO: Not quite right, but it'll do for now.
     [_scrollView setContentOffset:offset animated:YES];

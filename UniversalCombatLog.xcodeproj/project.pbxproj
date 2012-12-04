@@ -481,6 +481,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UniversalCombatLog/UniversalCombatLog-Prefix.pch";
 				INFOPLIST_FILE = "UniversalCombatLog/UniversalCombatLog-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -496,6 +497,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UniversalCombatLog/UniversalCombatLog-Prefix.pch";
 				INFOPLIST_FILE = "UniversalCombatLog/UniversalCombatLog-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

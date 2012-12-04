@@ -109,7 +109,7 @@ NSString* formatDuration(NSTimeInterval duration) {
         return [NSString stringWithFormat:@"%dm %ds", minutes, seconds];
     }
     else {
-        return [NSString stringWithFormat:@"%ds", duration];
+        return [NSString stringWithFormat:@"%.0fs", duration];
     }
 }
 

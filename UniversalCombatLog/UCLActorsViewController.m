@@ -10,6 +10,7 @@
 #import "UCLSummaryTypesViewController.h"
 #import "UCLSummaryEntry.h"
 #import "UCLFight+Filtering.h"
+#import "UCLFight+Summarizing.h"
 
 @implementation UCLActorsViewController
 {
@@ -113,27 +114,9 @@
 
 - (NSArray*)summarizeActorsUsingPredicate:(UCLLogEventPredicate)predicate
 {
-    NSMutableDictionary* amounts = [NSMutableDictionary dictionary];
+    NSDictionary* amountsPerSecond = [_fight sumActorAmountsPerSecondWithPredicate:predicate];
     
-    for (UCLLogEvent* event in _fight.events) {
-        if (predicate != NULL && predicate(event)) {
-            NSNumber* amount = [amounts objectForKey:event.actor];
-            if (amount == nil) {
-                amount = event.amount;
-            }
-            else {
-                amount = [NSNumber numberWithLong:([amount longValue] + [event.amount longValue])];
-            }
-            [amounts setObject:amount forKey:event.actor];
-        }
-    }
-    
-    for (UCLEntity* actor in [amounts allKeys]) {
-        double value = ([[amounts objectForKey:actor] doubleValue] / self.fight.duration);
-        [amounts setObject:[NSNumber numberWithLong:value] forKey:actor];
-    }
-    
-    NSArray* sortedActors = [amounts keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
+    NSArray* sortedActors = [amountsPerSecond keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
         if ([val1 longValue] > [val2 longValue]) {
             return NSOrderedAscending;
         }
@@ -143,9 +126,9 @@
         return NSOrderedSame;
     }];
     
-    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amounts count]];
+    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amountsPerSecond count]];
     for (UCLEntity* actor in sortedActors) {
-        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:[amounts objectForKey:actor]]];
+        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:[amountsPerSecond objectForKey:actor]]];
     }
     
     return [NSArray arrayWithArray:result];

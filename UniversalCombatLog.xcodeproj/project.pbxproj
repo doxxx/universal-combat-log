@@ -30,6 +30,7 @@
 		F88649BF15B8C31900073204 /* UCLSpell.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649BE15B8C31900073204 /* UCLSpell.m */; };
 		F88649C215B9A06F00073204 /* UCLFight.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C115B9A06F00073204 /* UCLFight.m */; };
 		F88649C515B9A9D900073204 /* UCLLogFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F88649C415B9A9D900073204 /* UCLLogFile.m */; };
+		F890328C166DB1E00076A837 /* UCLFight+Summarizing.m in Sources */ = {isa = PBXBuildFile; fileRef = F890328B166DB1E00076A837 /* UCLFight+Summarizing.m */; };
 		F8DBA40515E068DA00A3A9F8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */; };
 		F8F2191B166D6441002B9A97 /* UCLFight+Filtering.m in Sources */ = {isa = PBXBuildFile; fileRef = F8F2191A166D6441002B9A97 /* UCLFight+Filtering.m */; };
 		F8FDE34115BDF8680094FE26 /* UCLLogFileLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE34015BDF8680094FE26 /* UCLLogFileLoader.m */; };
@@ -119,6 +120,8 @@
 		F88649C115B9A06F00073204 /* UCLFight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFight.m; sourceTree = "<group>"; };
 		F88649C315B9A9D900073204 /* UCLLogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLLogFile.h; sourceTree = "<group>"; };
 		F88649C415B9A9D900073204 /* UCLLogFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLLogFile.m; sourceTree = "<group>"; };
+		F890328A166DB1E00076A837 /* UCLFight+Summarizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UCLFight+Summarizing.h"; sourceTree = "<group>"; };
+		F890328B166DB1E00076A837 /* UCLFight+Summarizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UCLFight+Summarizing.m"; sourceTree = "<group>"; };
 		F8DBA40415E068DA00A3A9F8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F8F21919166D6441002B9A97 /* UCLFight+Filtering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UCLFight+Filtering.h"; sourceTree = "<group>"; };
 		F8F2191A166D6441002B9A97 /* UCLFight+Filtering.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UCLFight+Filtering.m"; sourceTree = "<group>"; };
@@ -282,6 +285,8 @@
 				F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */,
 				F8F21919166D6441002B9A97 /* UCLFight+Filtering.h */,
 				F8F2191A166D6441002B9A97 /* UCLFight+Filtering.m */,
+				F890328A166DB1E00076A837 /* UCLFight+Summarizing.h */,
+				F890328B166DB1E00076A837 /* UCLFight+Summarizing.m */,
 			);
 			name = "Data Analysis";
 			sourceTree = "<group>";
@@ -417,6 +422,7 @@
 				F87C58A21637852900267520 /* UCLFightViewController.m in Sources */,
 				F85AFDDD16487CA8001024D5 /* UCLActorsViewController.m in Sources */,
 				F8F2191B166D6441002B9A97 /* UCLFight+Filtering.m in Sources */,
+				F890328C166DB1E00076A837 /* UCLFight+Summarizing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

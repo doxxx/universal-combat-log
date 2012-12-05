@@ -108,14 +108,11 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if (_uclPopoverController) {
-        [_uclPopoverController dismissPopoverAnimated:NO];
-    }
     if ([segue isKindOfClass:[UIStoryboardPopoverSegue class]]) {
         _uclPopoverController = ((UIStoryboardPopoverSegue*)segue).popoverController;
     }
-    
-    if ([segue.identifier isEqualToString:@"LogsFightsPopover"]) {
+
+    if ([segue.identifier isEqualToString:@"Logs"]) {
         UINavigationController* navController = segue.destinationViewController;
         UCLLogsViewController* logsController = (UCLLogsViewController*)navController.topViewController;
         logsController.fightViewController = self;
@@ -159,6 +156,36 @@
     
     if (!self.playerDetailsView.hidden) {
         [self hidePlayerDetails];
+    }
+}
+
+- (IBAction)showPlayersPopover:(id)sender
+{
+    [self showPopover:@"Players"];
+}
+
+- (IBAction)showSummaryTypesPopover:(id)sender
+{
+    [self showPopover:@"SummaryTypes"];
+}
+
+- (IBAction)showLogsPopover:(id)sender
+{
+    [self showPopover:@"Logs"];
+}
+
+- (void)showPopover:(NSString*)identifier
+{
+    BOOL perform = YES;
+
+    if (_uclPopoverController.popoverVisible) {
+        perform = ![_uclPopoverController.contentViewController.title isEqualToString:identifier];
+        [_uclPopoverController dismissPopoverAnimated:YES];
+        _uclPopoverController = nil;
+    }
+
+    if (perform) {
+        [self performSegueWithIdentifier:identifier sender:nil];
     }
 }
 

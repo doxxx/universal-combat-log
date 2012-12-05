@@ -35,4 +35,8 @@
 
 - (void)showFight:(UCLFight *)fight inLogFile:(UCLLogFile *)logFile;
 
+- (IBAction)showPlayersPopover:(id)sender;
+- (IBAction)showSummaryTypesPopover:(id)sender;
+- (IBAction)showLogsPopover:(id)sender;
+
 @end

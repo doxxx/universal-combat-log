@@ -255,11 +255,9 @@
 
 - (void)pieChartView:(UCLPieChartView *)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex
 {
-    [self.spellTableView cellForRowAtIndexPath:[self.spellTableView indexPathForSelectedRow]].accessoryType = UITableViewCellAccessoryNone;
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:segmentIndex inSection:0];
     [self.spellTableView selectRowAtIndexPath:indexPath
                                 animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-    [self.spellTableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     [self updateSpellStats];
 }
 

@@ -83,6 +83,12 @@
 
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
+    if (section == 0 && _logFileEntries.count == 0) {
+        return nil;
+    }
+    if (section == 1 && _networkServerEntries.count == 0) {
+        return nil;
+    }
     return [_tableViewSectionTitles objectAtIndex:section];
 }
 

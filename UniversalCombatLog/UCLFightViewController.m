@@ -223,6 +223,9 @@
 
 - (void)actorsView:(UCLActorsViewController *)actorsView didSelectActor:(UCLEntity *)actor
 {
+    [_uclPopoverController dismissPopoverAnimated:YES];
+    _uclPopoverController = nil;
+
     _selectedActor = actor;
     
     _selectedActorEvents = [self.fight filterEventsUsingPredicate:^BOOL(UCLLogEvent* event) {

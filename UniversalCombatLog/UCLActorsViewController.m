@@ -38,7 +38,7 @@
 - (void)setFight:(UCLFight *)fight summaryType:(UCLSummaryType)summaryType
 {
     _fight = fight;
-    _summaryType = _summaryType;
+    _summaryType = summaryType;
     self.selectedActor = nil;
     [self configureView];
 }
@@ -91,12 +91,12 @@
 {
     if (self.fight != nil) {
         UCLLogEventPredicate predicate = NULL;
-        if (self.summaryType == 0) {
+        if (self.summaryType == UCLSummaryDPS) {
             predicate = ^BOOL(UCLLogEvent* event) {
                 return event.actor != nil && event.actor.type == Player && [event isDamage];
             };
         }
-        else if (self.summaryType == 1) {
+        else if (self.summaryType == UCLSummaryHPS) {
             predicate = ^BOOL(UCLLogEvent* event) {
                 return event.actor != nil && event.actor.type == Player && [event isHealing];
             };

@@ -197,11 +197,11 @@
     _summaryType = summaryType;
     switch (summaryType) {
         case UCLSummaryDPS:
-            self.navigationItem.rightBarButtonItem.title = @"DPS";
+            self.summaryTypeButton.title = @"DPS";
             break;
             
         case UCLSummaryHPS:
-            self.navigationItem.rightBarButtonItem.title = @"HPS";
+            self.summaryTypeButton.title = @"HPS";
             break;
             
         default:
@@ -302,6 +302,10 @@
 
 - (void)updatePlayerDetails
 {
+    if (!_selectedActor) {
+        return;
+    }
+    
     NSArray* lineValues = [self chartLineValuesFromEvents:_selectedActorEvents];
     [self.fightLineChartView addLineWithValues:lineValues forKey:_selectedActor.name];
     [self updateSpellBreakdownsNewData:YES];

@@ -37,7 +37,6 @@
 		F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */; };
 		F8FDE37615C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */; };
 		F8FDE37815C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */; };
-		F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */; };
 		F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -131,8 +130,6 @@
 		F8FDE36015C03ADA0094FE26 /* UCLFightsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLFightsViewController.m; sourceTree = "<group>"; };
 		F8FDE37515C5CF6B0094FE26 /* 144px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "144px-Sword_battleaxe_shield.png"; path = "../144px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
 		F8FDE37715C5CF7C0094FE26 /* 72px-Sword_battleaxe_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "72px-Sword_battleaxe_shield.png"; path = "../72px-Sword_battleaxe_shield.png"; sourceTree = "<group>"; };
-		F8FDE37F15C5D4C60094FE26 /* UCLSummaryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryEntry.h; sourceTree = "<group>"; };
-		F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryEntry.m; sourceTree = "<group>"; };
 		F8FDE38815CAB0D50094FE26 /* UCLSummaryTypesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UCLSummaryTypesViewController.h; sourceTree = "<group>"; };
 		F8FDE38915CAB0D50094FE26 /* UCLSummaryTypesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UCLSummaryTypesViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -281,8 +278,6 @@
 		F8F21912166D62B5002B9A97 /* Data Analysis */ = {
 			isa = PBXGroup;
 			children = (
-				F8FDE37F15C5D4C60094FE26 /* UCLSummaryEntry.h */,
-				F8FDE38015C5D4C60094FE26 /* UCLSummaryEntry.m */,
 				F8F21919166D6441002B9A97 /* UCLFight+Filtering.h */,
 				F8F2191A166D6441002B9A97 /* UCLFight+Filtering.m */,
 				F890328A166DB1E00076A837 /* UCLFight+Summarizing.h */,
@@ -413,7 +408,6 @@
 				F88649C515B9A9D900073204 /* UCLLogFile.m in Sources */,
 				F8FDE34115BDF8680094FE26 /* UCLLogFileLoader.m in Sources */,
 				F8FDE36115C03ADA0094FE26 /* UCLFightsViewController.m in Sources */,
-				F8FDE38115C5D4C70094FE26 /* UCLSummaryEntry.m in Sources */,
 				F8FDE38A15CAB0D50094FE26 /* UCLSummaryTypesViewController.m in Sources */,
 				F82F334215CC827600E9BA79 /* UCLLineChartView.m in Sources */,
 				F844999B15D28D8B0090D3EB /* UCLPieChartView.m in Sources */,

@@ -8,9 +8,65 @@
 
 #import "UCLActorsViewController.h"
 #import "UCLSummaryTypesViewController.h"
-#import "UCLSummaryEntry.h"
 #import "UCLFight+Filtering.h"
 #import "UCLFight+Summarizing.h"
+
+#pragma mark - UCLSummaryEntry
+
+@interface UCLSummaryEntry : NSObject <NSCopying>
+
+@property (readonly, nonatomic) id item;
+@property (readonly, nonatomic) NSNumber* amount;
+
+- (id)initWithItem:(id)item amount:(NSNumber*)amount;
+
+- (BOOL)isEqualToSummaryEntry:(UCLSummaryEntry*)summaryEntry;
+
+@end
+
+@implementation UCLSummaryEntry
+
+@synthesize item=_item, amount=_amount;
+
+- (id)initWithItem:(id)item amount:(NSNumber*)amount
+{
+    self = [super init];
+    if (self) {
+        _item = item;
+        _amount = amount;
+    }
+    return self;
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if ([object class] != [self class]) {
+        return NO;
+    }
+    return [self isEqualToSummaryEntry:object];
+}
+
+- (BOOL)isEqualToSummaryEntry:(UCLSummaryEntry*)summaryEntry
+{
+    return [self.item isEqual:summaryEntry.item] && [self.amount isEqualToNumber:summaryEntry.amount];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    // Immutable class, can return original instead of copying.
+    return self;
+}
+
+- (NSUInteger)hash
+{
+    return 31 ^ [self.item hash] ^ [self.amount hash];
+}
+
+@end
+
+
+
+#pragma mark - UCLActorsViewController
 
 @implementation UCLActorsViewController
 {
@@ -92,7 +148,7 @@
 -(void)configureView
 {
     if (self.fight != nil) {
-        UCLLogEventPredicate predicate = NULL;
+        UCLLogEventPredicate predicate = nil;
         if (self.summaryType == UCLSummaryDPS) {
             predicate = ^BOOL(UCLLogEvent* event) {
                 return event.actor != nil && event.actor.type == Player && [event isDamage];

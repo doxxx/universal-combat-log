@@ -217,7 +217,7 @@
                             </view>
                             <view contentMode="scaleToFill" id="Uuq-1U-Ros" userLabel="Player Details View">
                                 <rect key="frame" x="768" y="44" width="256" height="704"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="redraw" id="hAe-Bt-LZD" customClass="UCLPieChartView">
                                         <rect key="frame" x="0.0" y="0.0" width="256" height="256"/>

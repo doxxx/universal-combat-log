@@ -10,6 +10,7 @@
 #import "UCLFightViewController.h"
 #import "UCLActorsViewController.h"
 #import "UCLFight+Filtering.h"
+#import "UCLFight+Summarizing.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -22,7 +23,6 @@
     UCLSummaryType _summaryType;
     NSRange _visibleRange;
     UCLEntity* _selectedActor;
-    NSArray* _selectedActorEvents;
     NSDictionary* _spellBreakdown;
     NSArray* _sortedSpells;
     NSArray* _sortedSpellValues;
@@ -229,10 +229,6 @@
 
     _selectedActor = actor;
     
-    _selectedActorEvents = [self.fight filterEventsUsingPredicate:^BOOL(UCLLogEvent* event) {
-        return [event.actor isEqualToEntity:_selectedActor];
-    }];
-    
     [self updatePlayerDetails];
 
     if (self.playerDetailsView.hidden) {
@@ -300,7 +296,16 @@
 
 - (void)updateOverview
 {
-    NSArray* lineValues = [self chartLineValuesFromEvents:self.fight.events];
+    if (!self.fight) {
+        return;
+    }
+
+    UCLLogEventPredicate predicate = ^BOOL(UCLLogEvent *event) {
+        return ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+                (_summaryType == UCLSummaryHPS && [event isHealing]));
+    };
+    NSArray* lineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
+                                                        withPredicate:predicate];
     [self.fightLineChartView addLineWithValues:lineValues forKey:@"Total"];
 }
 
@@ -309,45 +314,17 @@
     if (!_selectedActor) {
         return;
     }
-    
-    NSArray* lineValues = [self chartLineValuesFromEvents:_selectedActorEvents];
+
+    UCLLogEventPredicate predicate = ^BOOL(UCLLogEvent *event) {
+        return (((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+                 (_summaryType == UCLSummaryHPS && [event isHealing])) &&
+                [event.actor isEqualToEntity:_selectedActor]);
+    };
+    NSArray* lineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
+                                                        withPredicate:predicate];
     [self.fightLineChartView addLineWithValues:lineValues forKey:_selectedActor.name];
     [self updateSpellBreakdownsNewData:YES];
     [self updateSpellStats];
-}
-
-- (NSArray*)chartLineValuesFromEvents:(NSArray*)events
-{
-    NSDate* startTime = self.fight.startTime;
-    NSUInteger duration = ceil(self.fight.duration);
-    double* totals = malloc(sizeof(double) * duration);
-    
-    for (NSUInteger i = 0; i < duration; i++) {
-        totals[i] = 0;
-    }
-    
-    for (UCLLogEvent* event in events) {
-        uint32_t index = floor([event.time timeIntervalSinceDate:startTime]);
-        if ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-            (_summaryType == UCLSummaryHPS && [event isHealing])) {
-            totals[index] = totals[index] + [event.amount doubleValue];
-        }
-    }
-    
-    NSMutableArray* chartData = [NSMutableArray arrayWithCapacity:duration];
-    
-    for (NSUInteger i = 0; i < duration; i++) {
-        double value = 0;
-        NSUInteger windowSize = MIN(PER_SECOND_WINDOW_SIZE, i + 1);
-        for (NSInteger j = i - windowSize + 1; j <= i; j++) {
-            value += totals[j];
-        }
-        [chartData addObject:[NSNumber numberWithDouble:(value / windowSize)]];
-    }
-    
-    free(totals);
-    
-    return chartData;
 }
 
 - (void)updateSpellBreakdownsNewData:(BOOL)newData
@@ -404,38 +381,20 @@
 
 - (NSDictionary *)calculateSpellBreakdown
 {
-    NSMutableDictionary* spellBreakdown = [NSMutableDictionary dictionary];
-    
     NSDate* startTime = self.fight.startTime;
-    
-    NSRange range = [self visibleRange];
-    
-    for (UCLLogEvent* event in _selectedActorEvents) {
-        if ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-            (_summaryType == UCLSummaryHPS && [event isHealing])) {
-            NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
-            if (timeDiff < range.location || timeDiff >= range.location + range.length) {
-                continue;
-            }
-            NSNumber* amount = [spellBreakdown objectForKey:event.spell];
-            if (amount == nil) {
-                [spellBreakdown setObject:event.amount forKey:event.spell];
-            }
-            else {
-                long eventAmount = [event.amount longValue];
-                long currentAmount = amount.longValue;
-                long newAmount = eventAmount + currentAmount;
-                [spellBreakdown setObject:[NSNumber numberWithLong:newAmount] forKey:event.spell];
-            }
-        }
-    }
-    
-    return spellBreakdown;
-}
+    NSRange range = _visibleRange;
 
-- (NSRange)visibleRange 
-{
-    return _visibleRange;
+    return [self.fight spellBreakdownWithPredicate:^BOOL(UCLLogEvent *event) {
+        NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
+        if (timeDiff < range.location || timeDiff >= range.location + range.length) {
+            return NO;
+        }
+
+        return [event.actor isEqualToEntity:_selectedActor] &&
+        ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+         (_summaryType == UCLSummaryHPS && [event isHealing]));
+
+    }];
 }
 
 - (void)updateSpellStats 
@@ -453,9 +412,9 @@
     
     NSDate* startTime = _fight.startTime;
     
-    NSRange range = [self visibleRange];
-    
-    for (UCLLogEvent* event in _selectedActorEvents) {
+    NSRange range = _visibleRange;
+
+    for (UCLLogEvent* event in self.fight.events) {
         NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
         if (timeDiff < range.location || timeDiff >= range.location + range.length) {
             continue;

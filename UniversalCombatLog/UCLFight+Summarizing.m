@@ -10,7 +10,7 @@
 
 @implementation UCLFight (Summarizing)
 
-- (NSDictionary*)sumActorAmountsWithPredicate:(UCLLogEventPredicate)predicate 
+- (NSDictionary*)sumAmountsPerActorWithPredicate:(UCLLogEventPredicate)predicate 
 {
     NSMutableDictionary* amounts = [NSMutableDictionary dictionary];
     
@@ -28,19 +28,6 @@
     }
     
     return amounts;
-}
-
-- (NSDictionary*)sumActorAmountsPerSecondWithPredicate:(UCLLogEventPredicate)predicate
-{
-    NSDictionary* amounts = [self sumActorAmountsWithPredicate:predicate];
-    NSMutableDictionary* amountsPerSecond = [NSMutableDictionary dictionaryWithCapacity:amounts.count];
-
-    for (UCLEntity* actor in [amounts allKeys]) {
-        double value = ([[amounts objectForKey:actor] doubleValue] / self.duration);
-        [amountsPerSecond setObject:[NSNumber numberWithLong:value] forKey:actor];
-    }
-
-    return amountsPerSecond;
 }
 
 - (NSArray*)amountsPerSecondUsingWindowSize:(NSUInteger)windowSize withPredicate:(UCLLogEventPredicate)predicate

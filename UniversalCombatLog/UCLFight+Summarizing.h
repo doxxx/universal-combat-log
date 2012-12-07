@@ -11,8 +11,7 @@
 
 @interface UCLFight (Summarizing)
 
-- (NSDictionary*)sumActorAmountsWithPredicate:(UCLLogEventPredicate)predicate;
-- (NSDictionary*)sumActorAmountsPerSecondWithPredicate:(UCLLogEventPredicate)predicate;
+- (NSDictionary*)sumAmountsPerActorWithPredicate:(UCLLogEventPredicate)predicate;
 - (NSArray*)amountsPerSecondUsingWindowSize:(NSUInteger)windowSize withPredicate:(UCLLogEventPredicate)predicate;
 - (NSDictionary *)spellBreakdownWithPredicate:(UCLLogEventPredicate)predicate;
 

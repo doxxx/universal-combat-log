@@ -170,9 +170,9 @@
 
 - (NSArray*)summarizeActorsUsingPredicate:(UCLLogEventPredicate)predicate
 {
-    NSDictionary* amountsPerSecond = [_fight sumActorAmountsPerSecondWithPredicate:predicate];
+    NSDictionary* amounts = [_fight sumAmountsPerActorWithPredicate:predicate];
     
-    NSArray* sortedActors = [amountsPerSecond keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
+    NSArray* sortedActors = [amounts keysSortedByValueUsingComparator:^(NSNumber* val1, NSNumber* val2) {
         if ([val1 longValue] > [val2 longValue]) {
             return NSOrderedAscending;
         }
@@ -182,9 +182,10 @@
         return NSOrderedSame;
     }];
     
-    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amountsPerSecond count]];
+    NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amounts count]];
     for (UCLEntity* actor in sortedActors) {
-        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:[amountsPerSecond objectForKey:actor]]];
+        NSNumber* amountPerSecond = [NSNumber numberWithInt:round([[amounts objectForKey:actor] doubleValue] / _fight.duration)];
+        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:amountPerSecond]];
     }
     
     return [NSArray arrayWithArray:result];
@@ -206,7 +207,7 @@
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
     UCLEntity* actor = summaryEntry.item;
     cell.textLabel.text = actor.name;
-    cell.detailTextLabel.text = [summaryEntry.amount stringValue];
+    cell.detailTextLabel.text = summaryEntry.amount.stringValue;
     
     return cell;
 }

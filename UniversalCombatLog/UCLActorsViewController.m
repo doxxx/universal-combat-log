@@ -184,8 +184,8 @@
     
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amounts count]];
     for (UCLEntity* actor in sortedActors) {
-        NSNumber* amountPerSecond = [NSNumber numberWithInt:round([[amounts objectForKey:actor] doubleValue] / _fight.duration)];
-        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:amountPerSecond]];
+        int amountPerSecond = (int) round([[amounts objectForKey:actor] doubleValue] / _fight.duration);
+        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:[NSNumber numberWithInt:amountPerSecond]]];
     }
     
     return [NSArray arrayWithArray:result];

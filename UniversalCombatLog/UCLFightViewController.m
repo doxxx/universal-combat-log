@@ -332,6 +332,9 @@
 
 - (void)updatePlayerDetailsNewData:(BOOL)newData
 {
+    if (!_selectedActor) {
+        return;
+    }
     [self updateSpellBreakdownsNewData:newData];
 }
 

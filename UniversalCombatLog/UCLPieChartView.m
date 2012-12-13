@@ -110,6 +110,9 @@
         CGPathCloseSubpath(path);
 
         UIColor* color = [self.delegate pieChartView:self colorForSegment:segmentIndex];
+        if (color == nil) {
+            color = [UIColor blackColor];
+        }
         CGContextSetFillColorWithColor(c, color.CGColor);
         CGContextAddPath(c, path);
         CGContextFillPath(c);

@@ -414,10 +414,9 @@
             return NO;
         }
 
-        return [event.actor isEqualToEntity:_selectedActor] &&
-                ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-                 (_summaryType == UCLSummaryHPS && [event isHealing]));
-
+        BOOL matchesSummaryType = ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+                                   (_summaryType == UCLSummaryHPS && [event isHealing]));
+        return matchesSummaryType && [event.actor isEqualToEntity:_selectedActor];
     }];
 }
 

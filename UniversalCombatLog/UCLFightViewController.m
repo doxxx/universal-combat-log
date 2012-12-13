@@ -402,17 +402,18 @@
 - (NSDictionary *)calculateSpellBreakdown
 {
     NSDate* startTime = self.fight.startTime;
-    NSRange range = _visibleRange;
+    NSUInteger start = _visibleRange.location;
+    NSUInteger end = _visibleRange.location + _visibleRange.length;
 
     return [self.fight spellBreakdownWithPredicate:^BOOL(UCLLogEvent *event) {
         NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
-        if (timeDiff < range.location || timeDiff >= range.location + range.length) {
+        if (timeDiff < start || timeDiff >= end) {
             return NO;
         }
 
         return [event.actor isEqualToEntity:_selectedActor] &&
-        ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-         (_summaryType == UCLSummaryHPS && [event isHealing]));
+                ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
+                 (_summaryType == UCLSummaryHPS && [event isHealing]));
 
     }];
 }

@@ -37,7 +37,7 @@
 
 - (BOOL)isEqualToEntity:(UCLEntity*)entity
 {
-    return self.idNum == entity.idNum;
+    return _idNum == entity.idNum;
 }
 
 - (BOOL)isPlayerOrPet

@@ -81,7 +81,7 @@
     self.playerDetailsView.alpha = 0;
     self.playerDetailsView.hidden = YES;
     
-    [self updateOverview];
+    [self updateLineChart];
 }
 
 - (void)viewDidUnload
@@ -150,7 +150,7 @@
     [self.fightLineChartView resetZoom];
     [self.fightLineChartView removeAllLines];
     
-    [self updateOverview];
+    [self updateLineChart];
     
     [self.playersButton setEnabled:YES];
     [self.summaryTypeButton setEnabled:YES];
@@ -209,8 +209,8 @@
             break;
     }
     
-    [self updateOverview];
-    [self updatePlayerDetails];
+    [self updateLineChart];
+    [self updatePlayerDetailsNewData:YES];
 }
 
 #pragma mark - LineChartView Delegate Methods
@@ -218,8 +218,8 @@
 - (void)lineChartView:(UCLLineChartView *)lineChartView didZoomToRange:(NSRange)range
 {
     _visibleRange = range;
-    [self updateSpellBreakdownsNewData:NO];
-    [self updateSpellStats];
+
+    [self updatePlayerDetailsNewData:NO];
 }
 
 - (void)actorsView:(UCLActorsViewController *)actorsView didSelectActor:(UCLEntity *)actor
@@ -229,7 +229,8 @@
 
     _selectedActor = actor;
     
-    [self updatePlayerDetails];
+    [self updateLineChart];
+    [self updatePlayerDetailsNewData:YES];
 
     if (self.playerDetailsView.hidden) {
         [self showPlayerDetails];
@@ -255,14 +256,20 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    
-    UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
-    NSNumber* value = [_spellBreakdown objectForKey:spell];
-    cell.textLabel.text = spell.name;
-    cell.textLabel.textColor = [_spellColors objectForKey:spell];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f%%", 
-                                 ([value doubleValue] / _spellBreakdownSum * 100)];
-    cell.detailTextLabel.textColor = [_spellColors objectForKey:spell];
+
+    if (indexPath.row < _sortedSpells.count) {
+        UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
+        NSNumber* value = [_spellBreakdown objectForKey:spell];
+        cell.textLabel.text = spell.name;
+        cell.textLabel.textColor = [_spellColors objectForKey:spell];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f%%", 
+                                     ([value doubleValue] / _spellBreakdownSum * 100)];
+        cell.detailTextLabel.textColor = [_spellColors objectForKey:spell];
+    }
+    else {
+        cell.textLabel.text = @"";
+        cell.detailTextLabel.text = @"";
+    }
     
     return cell;
 }
@@ -290,11 +297,16 @@
 
 - (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
 {
-    UCLSpell* spell = [_sortedSpells objectAtIndex:segmentIndex];
-    return [_spellColors objectForKey:spell];
+    if (segmentIndex < _sortedSpells.count) {
+        UCLSpell* spell = [_sortedSpells objectAtIndex:segmentIndex];
+        return [_spellColors objectForKey:spell];
+    }
+    else {
+        return nil;
+    }
 }
 
-- (void)updateOverview
+- (void)updateLineChart
 {
     if (!self.fight) {
         return;
@@ -307,76 +319,84 @@
     NSArray* lineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
                                                         withPredicate:predicate];
     [self.fightLineChartView addLineWithValues:lineValues forKey:@"Total"];
+
+    if (_selectedActor) {
+        UCLLogEventPredicate playerPredicate = ^BOOL(UCLLogEvent *event) {
+            return (predicate(event) && [event.actor isEqualToEntity:_selectedActor]);
+        };
+        NSArray* playerLineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
+                                                            withPredicate:playerPredicate];
+        [self.fightLineChartView addLineWithValues:playerLineValues forKey:_selectedActor.name];
+    }
 }
 
-- (void)updatePlayerDetails
+- (void)updatePlayerDetailsNewData:(BOOL)newData
 {
-    if (!_selectedActor) {
-        return;
-    }
-
-    UCLLogEventPredicate predicate = ^BOOL(UCLLogEvent *event) {
-        return (((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-                 (_summaryType == UCLSummaryHPS && [event isHealing])) &&
-                [event.actor isEqualToEntity:_selectedActor]);
-    };
-    NSArray* lineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
-                                                        withPredicate:predicate];
-    [self.fightLineChartView addLineWithValues:lineValues forKey:_selectedActor.name];
-    [self updateSpellBreakdownsNewData:YES];
-    [self updateSpellStats];
+    [self updateSpellBreakdownsNewData:newData];
 }
 
 - (void)updateSpellBreakdownsNewData:(BOOL)newData
 {
-    UCLSpell* selectedSpell = nil;
-    NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
-    if (indexPath != nil) {
-        selectedSpell = [_sortedSpells objectAtIndex:indexPath.row];
-    }
-    
-    _spellBreakdown = [self calculateSpellBreakdown];
-    
-    _sortedSpells = [_spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
-        return [amount2 compare:amount1];
-    }];
-    
-    if (newData) {
-        NSMutableDictionary* spellColors = [NSMutableDictionary dictionaryWithCapacity:[_sortedSpells count]];
-        NSUInteger colorIndex = 0;
-        for (UCLSpell* spell in _sortedSpells) {
-            UIColor* color = [UIColor whiteColor];
-            if (colorIndex < [_pieChartColors count]) {
-                color = [_pieChartColors objectAtIndex:colorIndex];
-            }
-            [spellColors setObject:color forKey:spell];
-            colorIndex++;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UCLSpell* selectedSpell = nil;
+        NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
+        if (indexPath != nil) {
+            selectedSpell = [_sortedSpells objectAtIndex:indexPath.row];
         }
-        _spellColors = [NSDictionary dictionaryWithDictionary:spellColors];
-    }
-    
-    NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[_sortedSpells count]];
-    for (UCLSpell* spell in _sortedSpells) {
-        [sortedSpellValues addObject:[_spellBreakdown objectForKey:spell]];
-    }
-    _sortedSpellValues = [NSArray arrayWithArray:sortedSpellValues];
-    
-    double sum = 0;
-    for (NSNumber* value in [_spellBreakdown allValues]) {
-        sum += [value doubleValue];
-    }
-    _spellBreakdownSum = sum;
-    
-    self.spellPieChartView.data = _sortedSpellValues;
-    [self.spellTableView reloadData];
-    
-    if (!newData && selectedSpell != nil) {
-        NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpell];
-        [self.spellPieChartView selectSegment:selectedRow];
-        [self.spellTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0] 
-                                         animated:NO 
-                                   scrollPosition:UITableViewScrollPositionNone];
-    }
+
+        NSDictionary* newSpellBreakdown = [self calculateSpellBreakdown];
+        NSArray* newSortedSpells = [newSpellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
+            return [amount2 compare:amount1];
+        }];
+
+        NSMutableDictionary* newSpellColors = nil;
+        if (newData) {
+            newSpellColors = [NSMutableDictionary dictionaryWithCapacity:[newSortedSpells count]];
+            NSUInteger colorIndex = 0;
+            for (UCLSpell* spell in newSortedSpells) {
+                UIColor* color = [UIColor whiteColor];
+                if (colorIndex < [_pieChartColors count]) {
+                    color = [_pieChartColors objectAtIndex:colorIndex];
+                }
+                [newSpellColors setObject:color forKey:spell];
+                colorIndex++;
+            }
+        }
+
+        NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[newSortedSpells count]];
+        for (UCLSpell* spell in newSortedSpells) {
+            [sortedSpellValues addObject:[newSpellBreakdown objectForKey:spell]];
+        }
+
+        double sum = 0;
+        for (NSNumber* value in [newSpellBreakdown allValues]) {
+            sum += [value doubleValue];
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            _spellBreakdown = newSpellBreakdown;
+            _sortedSpells = newSortedSpells;
+            if (newSpellColors) {
+                _spellColors = newSpellColors;
+            }
+            _sortedSpellValues = sortedSpellValues;
+            _spellBreakdownSum = sum;
+
+            [self updateSpellStats];
+
+            self.spellPieChartView.data = _sortedSpellValues;
+            [self.spellTableView reloadData];
+
+            if (!newData && selectedSpell != nil) {
+                NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpell];
+                [self.spellPieChartView selectSegment:selectedRow];
+                NSIndexPath* indexPath = [NSIndexPath indexPathForRow:selectedRow inSection:0];
+                [self.spellTableView selectRowAtIndexPath:indexPath
+                                                 animated:NO
+                                           scrollPosition:UITableViewScrollPositionNone];
+            }
+        });
+    });
 }
 
 - (NSDictionary *)calculateSpellBreakdown
@@ -397,7 +417,7 @@
     }];
 }
 
-- (void)updateSpellStats 
+- (void)updateSpellStats
 {
     NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
     if (indexPath == nil) {
@@ -435,14 +455,16 @@
     }
     
     average = total / hitCount;
-    
-    self.spellHitsLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", hitCount, (float)hitCount / (float)attackCount * 100.0];
-    self.spellCritsLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", critCount, (float)critCount / (float)hitCount * 100.0];
-    self.spellMinDamageLabel.text = [NSString stringWithFormat:@"%.0f", min];
-    self.spellMaxDamageLabel.text = [NSString stringWithFormat:@"%.0f", max];
-    self.spellAvgDamageLabel.text = [NSString stringWithFormat:@"%.0f", average];
-    
-    self.spellStatsView.hidden = NO;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.spellHitsLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", hitCount, (float)hitCount / (float)attackCount * 100.0];
+        self.spellCritsLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", critCount, (float)critCount / (float)hitCount * 100.0];
+        self.spellMinDamageLabel.text = [NSString stringWithFormat:@"%.0f", min];
+        self.spellMaxDamageLabel.text = [NSString stringWithFormat:@"%.0f", max];
+        self.spellAvgDamageLabel.text = [NSString stringWithFormat:@"%.0f", average];
+
+        self.spellStatsView.hidden = NO;
+    });
 }
 
 - (void)showPlayerDetails

@@ -24,7 +24,6 @@
     UCLEntity* _selectedActor;
     NSDictionary* _spellBreakdown;
     NSArray* _sortedSpells;
-    NSArray* _sortedSpellValues;
     NSDictionary* _spellColors;
     double _spellBreakdownSum;
     
@@ -383,12 +382,11 @@
             if (newSpellColors) {
                 _spellColors = newSpellColors;
             }
-            _sortedSpellValues = sortedSpellValues;
             _spellBreakdownSum = sum;
 
             [self updateSpellStats];
 
-            self.spellPieChartView.data = _sortedSpellValues;
+            self.spellPieChartView.data = sortedSpellValues;
             [self.spellTableView reloadData];
 
             if (!newData && selectedSpellID != nil) {

@@ -41,28 +41,20 @@ enum EventType {
     ETCritHeal = 28,
 };
 
-@interface UCLLogEvent : NSObject
+typedef struct s_UCLLogEvent {
+    uint64_t time;
+    enum EventType eventType;
+    uint64_t actorID;
+    uint64_t targetID;
+    uint64_t spellID;
+    uint64_t amount;
+    char* text;
+} UCLLogEvent;
 
-@property (readonly, strong, nonatomic) NSDate* time;
-@property (readonly, nonatomic) enum EventType eventType;
-@property (readonly, strong, nonatomic) UCLEntity* actor;
-@property (readonly, strong, nonatomic) UCLEntity* target;
-@property (readonly, strong, nonatomic) UCLSpell* spell;
-@property (readonly, strong, nonatomic) NSNumber* amount;
-@property (readonly, strong, nonatomic) NSString* text;
+UCLLogEvent* createLogEvent(uint64_t time, enum EventType eventType, uint64_t actorID, uint64_t targetID,
+                            uint64_t spellID, uint64_t amount, char* text);
 
-- (id)initWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
-             actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
-             spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText;
-
-- (BOOL)isDamage;
-- (BOOL)isHealing;
-- (BOOL)isMiss;
-- (BOOL)isCrit;
-
-+ (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
-                           actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
-                           spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText;
-
-
-@end
+BOOL isLogEventDamage(UCLLogEvent* event);
+BOOL isLogEventHealing(UCLLogEvent* event);
+BOOL isLogEventMiss(UCLLogEvent* event);
+BOOL isLogEventCrit(UCLLogEvent* event);

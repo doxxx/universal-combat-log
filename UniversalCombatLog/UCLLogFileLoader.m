@@ -97,12 +97,13 @@
                 rel = NoRelation;
                 break;
         }
-        
-        UCLEntity* owner = [entityIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
-        NSString* name = [self readUTF8];
+
+        uint64_t ownerIDNum = [self readUInt64];
+        UCLEntity* owner = [entityIndex objectForKey:@(ownerIDNum)];
+        NSString* name = [self readUTF8asNSString];
         
         UCLEntity* entity = [UCLEntity entityWithIdNum:idNum type:type relationship:rel owner:owner name:name];
-        [entityIndex setObject:entity forKey:[NSNumber numberWithLongLong:idNum]];
+        [entityIndex setObject:entity forKey:@(idNum)];
         
         entityCount--;
     }
@@ -118,10 +119,10 @@
     
     while (spellCount > 0) {
         uint64_t idNum = [self readUInt64];
-        NSString* name = [self readUTF8];
+        NSString* name = [self readUTF8asNSString];
         
         UCLSpell* spell = [UCLSpell spellWithIdNum:idNum name:name];
-        [spellIndex setObject:spell forKey:[NSNumber numberWithLongLong:idNum]];
+        [spellIndex setObject:spell forKey:@(idNum)];
         
         spellCount--;
     }
@@ -136,28 +137,23 @@
     fights = [NSMutableArray arrayWithCapacity:fightCount];
     
     while (fightCount > 0) {
-        NSString* name = [self readUTF8];
+        NSString* title = [self readUTF8asNSString];
                 
         uint32_t eventCount = [self readUInt32];
-        NSMutableArray* events = [NSMutableArray arrayWithCapacity:eventCount];
-        
-        while (eventCount > 0) {
-            NSDate* time = [NSDate dateWithTimeIntervalSince1970:([self readUInt64] / 1000.0)];
-            enum EventType type = [self readUInt8];
-            UCLEntity* actor = [entityIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
-            UCLEntity* target = [entityIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
-            UCLSpell* spell = [spellIndex objectForKey:[NSNumber numberWithLongLong:[self readUInt64]]];
-            uint64_t amount = [self readUInt64];
-            NSString* text = [self readUTF8];
+        UCLLogEvent* events = malloc(eventCount * sizeof(UCLLogEvent));
+        UCLLogEvent* event = events;
 
-            [events addObject:[UCLLogEvent logEventWithTime:time eventType:type actor:actor target:target 
-                                                      spell:spell amount:[NSNumber numberWithLongLong:amount] 
-                                                       text:text]];
-            
-            eventCount--;
+        for (uint32_t i = 0; i < eventCount; i++, event++) {
+            event->time = [self readUInt64];
+            event->eventType = [self readUInt8];
+            event->actorID = [self readUInt64];
+            event->targetID = [self readUInt64];
+            event->spellID = [self readUInt64];
+            event->amount = [self readUInt64];
+            event->text = [self readUTF8];
         }
-        
-        [fights addObject:[UCLFight fightWithEvents:events title:name]];
+
+        [fights addObject:[UCLFight fightWithEvents:events count:eventCount title:title entityIndex:entityIndex spellIndex:spellIndex]];
         
         fightCount--;
     }
@@ -199,7 +195,7 @@
     return value;
 }
 
-- (NSString*)readUTF8
+- (NSString*)readUTF8asNSString
 {
     uint16_t length = [self readUInt16];
     
@@ -208,6 +204,18 @@
     NSString* string = [[NSString alloc] initWithBytes:_cursor length:length encoding:NSUTF8StringEncoding];
     _cursor += length;
     return string;
+}
+
+- (char*)readUTF8
+{
+    uint16_t length = [self readUInt16];
+
+    CHECK_LENGTH(length)
+
+    char* s = malloc(length+1);
+    strlcpy(s, _cursor, length+1);
+    _cursor += length;
+    return s;
 }
 
 + (UCLLogFile *)loadFromData:(NSData *)data

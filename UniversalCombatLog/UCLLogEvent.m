@@ -8,86 +8,69 @@
 
 #import "UCLLogEvent.h"
 
-@implementation UCLLogEvent
-
-@synthesize time=_time, eventType=_eventType, actor=_actor, target=_target, spell=_spell, amount=_amount, text=_text;
-
-- (id)initWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
-             actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
-             spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText
+UCLLogEvent* createLogEvent(uint64_t time, enum EventType eventType, uint64_t actorID, uint64_t targetID,
+                            uint64_t spellID, uint64_t amount, char* text)
 {
-    self = [super init];
-    if (self) {
-        _time = theTime;
-        _eventType = theEventType;
-        _actor = theActor;
-        _target = theTarget;
-        _spell = theSpell;
-        _amount = theAmount;
-        _text = theText;
-    }
-    return self;
+    UCLLogEvent* event = malloc(sizeof(UCLLogEvent));
+    event->time = time;
+    event->eventType = eventType;
+    event->actorID = actorID;
+    event->targetID = targetID;
+    event->spellID = spellID;
+    event->amount = amount;
+    strcpy(event->text, text);
+    return event;
 }
 
-- (BOOL)isDamage
+BOOL isLogEventDamage(UCLLogEvent* event)
 {
-    switch (self.eventType) {
+    switch (event->eventType) {
         case ETDirectDamage:
         case ETDamageOverTime:
         case ETCritDamage:
         case ETEnvDamage:
             return YES;
-            
+
         default:
             return NO;
     }
 }
 
-- (BOOL)isHealing
+BOOL isLogEventHealing(UCLLogEvent* event)
 {
-    switch (self.eventType) {
+    switch (event->eventType) {
         case ETHeal:
         case ETCritHeal:
             return YES;
-            
+
         default:
             return NO;
     }
 }
 
-- (BOOL)isMiss
+BOOL isLogEventMiss(UCLLogEvent* event)
 {
-    switch (self.eventType) {
+    switch (event->eventType) {
         case ETMiss:
         case ETResist:
         case ETDodge:
         case ETParry:
         case ETImmune:
             return YES;
-            
+
         default:
             return NO;
     }
 }
 
-- (BOOL)isCrit
+BOOL isLogEventCrit(UCLLogEvent* event)
 {
-    switch (self.eventType) {
+    switch (event->eventType) {
         case ETCritDamage:
         case ETCritHeal:
             return YES;
-            
+
         default:
             return NO;
     }
 }
-
-+ (UCLLogEvent*)logEventWithTime:(NSDate*)theTime eventType:(enum EventType)theEventType 
-                           actor:(UCLEntity*)theActor target:(UCLEntity*)theTarget 
-                           spell:(UCLSpell*)theSpell amount:(NSNumber*)theAmount text:(NSString*)theText
-{
-    return [[UCLLogEvent alloc] initWithTime:theTime eventType:theEventType actor:theActor 
-                                      target:theTarget spell:theSpell amount:theAmount text:theText];
-}
-
-@end

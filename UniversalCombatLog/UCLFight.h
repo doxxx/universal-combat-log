@@ -13,15 +13,18 @@
 
 @interface UCLFight : NSObject
 
-@property (readonly, strong, nonatomic) NSArray* events;
+@property (readonly, nonatomic) UCLLogEvent* events;
+@property (readonly, nonatomic) uint32_t count;
 @property (readonly, strong, nonatomic) NSString* title;
 
-- (id)initWithEvents:(NSArray*)theEvents title:(NSString*)theTitle;
+- (id)initWithEvents:(UCLLogEvent*)events count:(uint32_t)count title:(NSString*)title entityIndex:(NSDictionary*)entityIndex spellIndex:(NSDictionary*)spellIndex;
 
-- (NSDate*)startTime;
-- (NSDate*)endTime;
-- (NSTimeInterval)duration;
+- (uint64_t)startTime;
+- (uint64_t)endTime;
+- (uint64_t)duration;
+- (UCLEntity*)entityForID:(uint64_t)entityID;
+- (UCLSpell*)spellForID:(uint64_t)spellID;
 
-+ (UCLFight*)fightWithEvents:(NSArray*)theEvents title:(NSString*)theTitle;
++ (UCLFight*)fightWithEvents:(UCLLogEvent*)events count:(uint32_t)count title:(NSString*)title entityIndex:(NSDictionary*)entityIndex spellIndex:(NSDictionary*)spellIndex;
 
 @end

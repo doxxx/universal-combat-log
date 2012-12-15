@@ -127,7 +127,7 @@ NSString* formatDuration(NSTimeInterval duration) {
             UCLFight* fight = [self.logFile.fights objectAtIndex:indexPath.row];
             cell = [tableView dequeueReusableCellWithIdentifier:fightCellID];
             cell.textLabel.text = fight.title;
-            cell.detailTextLabel.text = formatDuration(fight.duration);
+            cell.detailTextLabel.text = formatDuration(fight.duration / 1000.0);
         }
         return cell;
     }

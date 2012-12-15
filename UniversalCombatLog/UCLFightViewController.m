@@ -9,7 +9,6 @@
 #import "UCLLogsViewController.h"
 #import "UCLFightViewController.h"
 #import "UCLActorsViewController.h"
-#import "UCLFight+Filtering.h"
 #import "UCLFight+Summarizing.h"
 
 #import <QuartzCore/QuartzCore.h>
@@ -144,7 +143,7 @@
     
     self.fight = fight;
     _logFile = logFile;
-    _visibleRange = NSMakeRange(0, ceil(self.fight.duration));
+    _visibleRange = NSMakeRange(0, ceil(self.fight.duration / 1000.0));
     _selectedActor = nil;
     
     [self.fightLineChartView resetZoom];
@@ -258,13 +257,14 @@
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
 
     if (indexPath.row < _sortedSpells.count) {
-        UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
-        NSNumber* value = [_spellBreakdown objectForKey:spell];
+        NSNumber* spellID = [_sortedSpells objectAtIndex:indexPath.row];
+        UCLSpell* spell = [self.fight spellForID:spellID.longLongValue];
+        NSNumber* value = [_spellBreakdown objectForKey:spellID];
         cell.textLabel.text = spell.name;
-        cell.textLabel.textColor = [_spellColors objectForKey:spell];
+        cell.textLabel.textColor = [_spellColors objectForKey:spellID];
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%.1f%%", 
                                      ([value doubleValue] / _spellBreakdownSum * 100)];
-        cell.detailTextLabel.textColor = [_spellColors objectForKey:spell];
+        cell.detailTextLabel.textColor = [_spellColors objectForKey:spellID];
     }
     else {
         cell.textLabel.text = @"";
@@ -298,8 +298,8 @@
 - (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
 {
     if (segmentIndex < _sortedSpells.count) {
-        UCLSpell* spell = [_sortedSpells objectAtIndex:segmentIndex];
-        return [_spellColors objectForKey:spell];
+        NSNumber* spellID = [_sortedSpells objectAtIndex:segmentIndex];
+        return [_spellColors objectForKey:spellID];
     }
     else {
         return nil;
@@ -313,16 +313,17 @@
     }
 
     UCLLogEventPredicate predicate = ^BOOL(UCLLogEvent *event) {
-        return ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-                (_summaryType == UCLSummaryHPS && [event isHealing]));
+        return ((_summaryType == UCLSummaryDPS && isLogEventDamage(event)) ||
+                (_summaryType == UCLSummaryHPS && isLogEventHealing(event)));
     };
     NSArray* lineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
                                                         withPredicate:predicate];
     [self.fightLineChartView addLineWithValues:lineValues forKey:@"Total"];
 
     if (_selectedActor) {
+        uint64_t selectedActorID = _selectedActor.idNum;
         UCLLogEventPredicate playerPredicate = ^BOOL(UCLLogEvent *event) {
-            return (predicate(event) && [event.actor isEqualToEntity:_selectedActor]);
+            return predicate(event) && event->actorID == selectedActorID;
         };
         NSArray* playerLineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
                                                             withPredicate:playerPredicate];
@@ -341,10 +342,10 @@
 - (void)updateSpellBreakdownsNewData:(BOOL)newData
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UCLSpell* selectedSpell = nil;
+        NSNumber* selectedSpellID = nil;
         NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
         if (indexPath != nil) {
-            selectedSpell = [_sortedSpells objectAtIndex:indexPath.row];
+            selectedSpellID = [_sortedSpells objectAtIndex:indexPath.row];
         }
 
         NSDictionary* newSpellBreakdown = [self calculateSpellBreakdown];
@@ -356,19 +357,19 @@
         if (newData) {
             newSpellColors = [NSMutableDictionary dictionaryWithCapacity:[newSortedSpells count]];
             NSUInteger colorIndex = 0;
-            for (UCLSpell* spell in newSortedSpells) {
+            for (NSNumber* spellID in newSortedSpells) {
                 UIColor* color = [UIColor whiteColor];
                 if (colorIndex < [_pieChartColors count]) {
                     color = [_pieChartColors objectAtIndex:colorIndex];
                 }
-                [newSpellColors setObject:color forKey:spell];
+                [newSpellColors setObject:color forKey:spellID];
                 colorIndex++;
             }
         }
 
         NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[newSortedSpells count]];
-        for (UCLSpell* spell in newSortedSpells) {
-            [sortedSpellValues addObject:[newSpellBreakdown objectForKey:spell]];
+        for (NSNumber* spellID in newSortedSpells) {
+            [sortedSpellValues addObject:[newSpellBreakdown objectForKey:spellID]];
         }
 
         double sum = 0;
@@ -390,8 +391,8 @@
             self.spellPieChartView.data = _sortedSpellValues;
             [self.spellTableView reloadData];
 
-            if (!newData && selectedSpell != nil) {
-                NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpell];
+            if (!newData && selectedSpellID != nil) {
+                NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpellID];
                 [self.spellPieChartView selectSegment:selectedRow];
                 NSIndexPath* indexPath = [NSIndexPath indexPathForRow:selectedRow inSection:0];
                 [self.spellTableView selectRowAtIndexPath:indexPath
@@ -404,19 +405,21 @@
 
 - (NSDictionary *)calculateSpellBreakdown
 {
-    NSDate* startTime = self.fight.startTime;
+    uint64_t startTime = self.fight.startTime;
     NSUInteger start = _visibleRange.location;
     NSUInteger end = _visibleRange.location + _visibleRange.length;
+    uint64_t selectedActorID = _selectedActor.idNum;
 
     return [self.fight spellBreakdownWithPredicate:^BOOL(UCLLogEvent *event) {
-        NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
-        if (timeDiff < start || timeDiff >= end) {
+        uint64_t timeSinceStart = event->time - startTime;
+        NSUInteger index = timeSinceStart / 1000;
+        if (index < start || index >= end) {
             return NO;
         }
 
-        BOOL matchesSummaryType = ((_summaryType == UCLSummaryDPS && [event isDamage]) ||
-                                   (_summaryType == UCLSummaryHPS && [event isHealing]));
-        return matchesSummaryType && [event.actor isEqualToEntity:_selectedActor];
+        BOOL matchesSummaryType = ((_summaryType == UCLSummaryDPS && isLogEventDamage(event)) ||
+                                   (_summaryType == UCLSummaryHPS && isLogEventHealing(event)));
+        return matchesSummaryType && event->actorID == selectedActorID;
     }];
 }
 
@@ -428,28 +431,31 @@
         return;
     }
     
-    UCLSpell* spell = [_sortedSpells objectAtIndex:indexPath.row];
-    
+    uint64_t spellID = [[_sortedSpells objectAtIndex:indexPath.row] longLongValue];
+
     NSUInteger attackCount = 0, hitCount = 0, critCount = 0;
     double min = NSUIntegerMax, max = 0, total = 0, average = 0;
     
-    NSDate* startTime = _fight.startTime;
-    
-    NSRange range = _visibleRange;
+    uint64_t startTime = self.fight.startTime;
+    NSUInteger start = _visibleRange.location;
+    NSUInteger end = _visibleRange.location + _visibleRange.length;
+    uint64_t selectedActorID = _selectedActor.idNum;
 
-    for (UCLLogEvent* event in self.fight.events) {
-        NSTimeInterval timeDiff = [event.time timeIntervalSinceDate:startTime];
-        if (timeDiff < range.location || timeDiff >= range.location + range.length) {
+    UCLLogEvent* event = self.fight.events;
+    for (uint32_t i = 0; i < self.fight.count; i++, event++) {
+        uint64_t timeSinceStart = event->time - startTime;
+        NSUInteger index = timeSinceStart / 1000;
+        if (index < start || index >= end) {
             continue;
         }
-        if ([event.actor isEqualToEntity:_selectedActor] && [event.spell isEqualToSpell:spell]) {
+        if (event->actorID == selectedActorID && event->spellID == spellID) {
             attackCount++;
-            if (![event isMiss]) {
+            if (!isLogEventMiss(event)) {
                 hitCount++;
-                if ([event isCrit]) {
+                if (isLogEventCrit(event)) {
                     critCount++;
                 }
-                double amount = [event.amount doubleValue];
+                double amount = event->amount;
                 min = MIN(min, amount);
                 max = MAX(max, amount);
                 total += amount;

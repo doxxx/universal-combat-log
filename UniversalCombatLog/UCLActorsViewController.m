@@ -8,17 +8,16 @@
 
 #import "UCLActorsViewController.h"
 #import "UCLSummaryTypesViewController.h"
-#import "UCLFight+Filtering.h"
 #import "UCLFight+Summarizing.h"
 
 #pragma mark - UCLSummaryEntry
 
 @interface UCLSummaryEntry : NSObject <NSCopying>
 
-@property (readonly, nonatomic) id item;
+@property (readonly, nonatomic) UCLEntity* actor;
 @property (readonly, nonatomic) NSNumber* amount;
 
-- (id)initWithItem:(id)item amount:(NSNumber*)amount;
+- (id)initWithActor:(UCLEntity*)actor amount:(NSNumber*)amount;
 
 - (BOOL)isEqualToSummaryEntry:(UCLSummaryEntry*)summaryEntry;
 
@@ -26,13 +25,13 @@
 
 @implementation UCLSummaryEntry
 
-@synthesize item=_item, amount=_amount;
+@synthesize actor=_actor, amount=_amount;
 
-- (id)initWithItem:(id)item amount:(NSNumber*)amount
+- (id)initWithActor:(UCLEntity*)actor amount:(NSNumber*)amount
 {
     self = [super init];
     if (self) {
-        _item = item;
+        _actor = actor;
         _amount = amount;
     }
     return self;
@@ -48,7 +47,7 @@
 
 - (BOOL)isEqualToSummaryEntry:(UCLSummaryEntry*)summaryEntry
 {
-    return [self.item isEqual:summaryEntry.item] && [self.amount isEqualToNumber:summaryEntry.amount];
+    return [self.actor isEqual:summaryEntry.actor] && [self.amount isEqualToNumber:summaryEntry.amount];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -59,7 +58,7 @@
 
 - (NSUInteger)hash
 {
-    return 31 ^ [self.item hash] ^ [self.amount hash];
+    return 31 ^ [self.actor hash] ^ [self.amount hash];
 }
 
 @end
@@ -126,8 +125,9 @@
     [super viewDidAppear:animated];
     
     if (self.selectedActor) {
-        NSUInteger index = [_summary indexOfObjectPassingTest:^(UCLSummaryEntry* obj, NSUInteger idx, BOOL* stop) {
-            return [[obj item] isEqualToEntity:self.selectedActor];
+        uint64_t selectedActorIDNum = self.selectedActor.idNum;
+        NSUInteger index = [_summary indexOfObjectPassingTest:^BOOL(UCLSummaryEntry* obj, NSUInteger idx, BOOL* stop) {
+            return obj.actor.idNum == selectedActorIDNum;
         }];
         if (index == NSNotFound) {
             return;
@@ -151,12 +151,20 @@
         UCLLogEventPredicate predicate = nil;
         if (self.summaryType == UCLSummaryDPS) {
             predicate = ^BOOL(UCLLogEvent* event) {
-                return event.actor != nil && event.actor.type == Player && [event isDamage];
+                if (event->actorID == 0) {
+                    return NO;
+                }
+                UCLEntity* actor = [self.fight entityForID:event->actorID];
+                return actor.type == Player && isLogEventDamage(event);
             };
         }
         else if (self.summaryType == UCLSummaryHPS) {
             predicate = ^BOOL(UCLLogEvent* event) {
-                return event.actor != nil && event.actor.type == Player && [event isHealing];
+                if (event->actorID == 0) {
+                    return NO;
+                }
+                UCLEntity* actor = [self.fight entityForID:event->actorID];
+                return actor.type == Player && isLogEventHealing(event);
             };
         }
         _summary = [self summarizeActorsUsingPredicate:predicate];
@@ -183,9 +191,10 @@
     }];
     
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amounts count]];
-    for (UCLEntity* actor in sortedActors) {
-        int amountPerSecond = (int) round([[amounts objectForKey:actor] doubleValue] / _fight.duration);
-        [result addObject:[[UCLSummaryEntry alloc] initWithItem:actor amount:[NSNumber numberWithInt:amountPerSecond]]];
+    for (NSNumber* actorID in sortedActors) {
+        UCLEntity* actor = [self.fight entityForID:actorID.longLongValue];
+        int amountPerSecond = (int) round([[amounts objectForKey:actorID] doubleValue] / (_fight.duration / 1000.0));
+        [result addObject:[[UCLSummaryEntry alloc] initWithActor:actor amount:@(amountPerSecond)]];
     }
     
     return [NSArray arrayWithArray:result];
@@ -205,7 +214,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
     
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
-    UCLEntity* actor = summaryEntry.item;
+    UCLEntity* actor = summaryEntry.actor;
     cell.textLabel.text = actor.name;
     cell.detailTextLabel.text = summaryEntry.amount.stringValue;
     
@@ -217,14 +226,17 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
-    self.selectedActor = summaryEntry.item;
+    UCLEntity* actor = summaryEntry.actor;
+    self.selectedActor = actor;
     [self.delegate actorsView:self didSelectActor:self.selectedActor];
 }
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UCLSummaryEntry* summaryEntry = [_summary objectAtIndex:indexPath.row];
-    [self.delegate actorsView:self didDeselectActor:summaryEntry.item];
+    UCLEntity* actor = summaryEntry.actor;
+    self.selectedActor = nil;
+    [self.delegate actorsView:self didDeselectActor:actor];
 }
 
 @end

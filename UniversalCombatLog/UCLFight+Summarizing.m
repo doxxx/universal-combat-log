@@ -72,13 +72,14 @@
     UCLLogEvent* event = self.events;
     for (uint32_t i = 0; i < self.count; i++, event++) {
         if (predicate(event)) {
-            NSNumber* amount = [spellBreakdown objectForKey:@(event->spellID)];
-            if (amount == nil) {
-                [spellBreakdown setObject:@(event->amount) forKey:@(event->spellID)];
+            NSNumber* key = @(event->spellID);
+            NSNumber* currentAmount = [spellBreakdown objectForKey:key];
+            if (currentAmount == nil) {
+                [spellBreakdown setObject:@(event->amount) forKey:key];
             }
             else {
-                uint64_t newAmount = event->amount + amount.longLongValue;
-                [spellBreakdown setObject:@(newAmount) forKey:@(event->spellID)];
+                uint64_t newAmount = event->amount + currentAmount.longLongValue;
+                [spellBreakdown setObject:@(newAmount) forKey:key];
             }
         }
     }

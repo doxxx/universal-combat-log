@@ -7,7 +7,8 @@
 //
 
 #import "UCLFight.h"
-#import "UCLFight+Filtering.h"
+
+typedef BOOL (^UCLLogEventPredicate)(UCLLogEvent* event);
 
 @interface UCLFight (Summarizing)
 

@@ -155,7 +155,7 @@
                     return NO;
                 }
                 UCLEntity* actor = [self.fight entityForID:event->actorID];
-                return actor.type == Player && isLogEventDamage(event);
+                return actor.type == Player && UCLLogEventIsDamage(event);
             };
         }
         else if (self.summaryType == UCLSummaryHPS) {
@@ -164,7 +164,7 @@
                     return NO;
                 }
                 UCLEntity* actor = [self.fight entityForID:event->actorID];
-                return actor.type == Player && isLogEventHealing(event);
+                return actor.type == Player && UCLLogEventIsHealing(event);
             };
         }
         _summary = [self summarizeActorsUsingPredicate:predicate];

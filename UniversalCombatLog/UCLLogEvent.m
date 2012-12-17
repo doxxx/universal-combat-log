@@ -8,7 +8,7 @@
 
 #import "UCLLogEvent.h"
 
-BOOL isLogEventDamage(UCLLogEvent* event)
+BOOL UCLLogEventIsDamage(UCLLogEvent* event)
 {
     switch (event->eventType) {
         case ETDirectDamage:
@@ -22,7 +22,7 @@ BOOL isLogEventDamage(UCLLogEvent* event)
     }
 }
 
-BOOL isLogEventHealing(UCLLogEvent* event)
+BOOL UCLLogEventIsHealing(UCLLogEvent* event)
 {
     switch (event->eventType) {
         case ETHeal:
@@ -34,7 +34,7 @@ BOOL isLogEventHealing(UCLLogEvent* event)
     }
 }
 
-BOOL isLogEventMiss(UCLLogEvent* event)
+BOOL UCLLogEventIsMiss(UCLLogEvent* event)
 {
     switch (event->eventType) {
         case ETMiss:
@@ -49,7 +49,7 @@ BOOL isLogEventMiss(UCLLogEvent* event)
     }
 }
 
-BOOL isLogEventCrit(UCLLogEvent* event)
+BOOL UCLLogEventIsCrit(UCLLogEvent* event)
 {
     switch (event->eventType) {
         case ETCritDamage:

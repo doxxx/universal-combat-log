@@ -51,7 +51,7 @@ typedef struct s_UCLLogEvent {
     char* text;
 } UCLLogEvent;
 
-BOOL isLogEventDamage(UCLLogEvent* event);
-BOOL isLogEventHealing(UCLLogEvent* event);
-BOOL isLogEventMiss(UCLLogEvent* event);
-BOOL isLogEventCrit(UCLLogEvent* event);
+BOOL UCLLogEventIsDamage(UCLLogEvent* event);
+BOOL UCLLogEventIsHealing(UCLLogEvent* event);
+BOOL UCLLogEventIsMiss(UCLLogEvent* event);
+BOOL UCLLogEventIsCrit(UCLLogEvent* event);

@@ -312,8 +312,8 @@
     }
 
     UCLLogEventPredicate predicate = ^BOOL(UCLLogEvent *event) {
-        return ((_summaryType == UCLSummaryDPS && isLogEventDamage(event)) ||
-                (_summaryType == UCLSummaryHPS && isLogEventHealing(event)));
+        return ((_summaryType == UCLSummaryDPS && UCLLogEventIsDamage(event)) ||
+                (_summaryType == UCLSummaryHPS && UCLLogEventIsHealing(event)));
     };
     NSArray* lineValues = [self.fight amountsPerSecondUsingWindowSize:PER_SECOND_WINDOW_SIZE
                                                         withPredicate:predicate];
@@ -415,8 +415,8 @@
             return NO;
         }
 
-        BOOL matchesSummaryType = ((_summaryType == UCLSummaryDPS && isLogEventDamage(event)) ||
-                                   (_summaryType == UCLSummaryHPS && isLogEventHealing(event)));
+        BOOL matchesSummaryType = ((_summaryType == UCLSummaryDPS && UCLLogEventIsDamage(event)) ||
+                                   (_summaryType == UCLSummaryHPS && UCLLogEventIsHealing(event)));
         return matchesSummaryType && event->actorID == selectedActorID;
     }];
 }
@@ -448,9 +448,9 @@
         }
         if (event->actorID == selectedActorID && event->spellID == spellID) {
             attackCount++;
-            if (!isLogEventMiss(event)) {
+            if (!UCLLogEventIsMiss(event)) {
                 hitCount++;
-                if (isLogEventCrit(event)) {
+                if (UCLLogEventIsCrit(event)) {
                     critCount++;
                 }
                 double amount = event->amount;

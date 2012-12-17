@@ -390,8 +390,6 @@
             }
             _spellBreakdownSum = sum;
 
-            [self updateSpellStats];
-
             self.spellPieChartView.data = sortedSpellValues;
             [self.spellTableView reloadData];
 
@@ -403,6 +401,8 @@
                                                  animated:NO
                                            scrollPosition:UITableViewScrollPositionNone];
             }
+
+            [self updateSpellStats];
         });
     });
 }

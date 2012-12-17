@@ -346,11 +346,14 @@
                         <outlet property="fightLineChartView" destination="OVg-IP-AU6" id="WXt-1V-Uvn"/>
                         <outlet property="playerDetailsView" destination="Uuq-1U-Ros" id="XVJ-nW-k6m"/>
                         <outlet property="playersButton" destination="MgD-JX-l6H" id="IrK-zJ-Qpk"/>
-                        <outlet property="spellAvgDamageLabel" destination="8a6-oO-bZs" id="ccl-Z9-T4E"/>
-                        <outlet property="spellCritsLabel" destination="ole-Vf-elb" id="X08-Qv-K5G"/>
-                        <outlet property="spellHitsLabel" destination="6RA-iV-5L4" id="mq9-fZ-gTf"/>
-                        <outlet property="spellMaxDamageLabel" destination="23W-Zf-OxS" id="khv-ZL-aWc"/>
-                        <outlet property="spellMinDamageLabel" destination="DDO-Px-jgd" id="yec-oo-m3A"/>
+                        <outlet property="spellAvgAmountLabel" destination="8a6-oO-bZs" id="Wdg-x3-ddP"/>
+                        <outlet property="spellAvgLabel" destination="kvq-Br-PKa" id="9Lm-fQ-Ywx"/>
+                        <outlet property="spellCritsAmountLabel" destination="ole-Vf-elb" id="Fzd-10-xUI"/>
+                        <outlet property="spellHitsAmountLabel" destination="6RA-iV-5L4" id="HF1-jc-qoV"/>
+                        <outlet property="spellMaxAmountLabel" destination="23W-Zf-OxS" id="H6D-bj-jV4"/>
+                        <outlet property="spellMaxLabel" destination="J4J-QO-iyo" id="GCI-J8-mQ6"/>
+                        <outlet property="spellMinAmountLabel" destination="DDO-Px-jgd" id="P3d-4l-MJb"/>
+                        <outlet property="spellMinLabel" destination="jQq-4f-AIF" id="RLP-G6-meS"/>
                         <outlet property="spellPieChartView" destination="hAe-Bt-LZD" id="dwE-mh-5cp"/>
                         <outlet property="spellStatsView" destination="ksb-4U-893" id="Fu0-EL-vIs"/>
                         <outlet property="spellTableView" destination="Uml-Qc-k3i" id="ooj-Q5-1EM"/>
@@ -495,11 +498,14 @@
                 <relationship kind="outlet" name="fightLineChartView" candidateClass="UCLLineChartView"/>
                 <relationship kind="outlet" name="playerDetailsView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="playersButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="spellAvgDamageLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="spellCritsLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="spellHitsLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="spellMaxDamageLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="spellMinDamageLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellAvgAmountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellAvgLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellCritsAmountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellHitsAmountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellMaxAmountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellMaxLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellMinAmountLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="spellMinLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="spellPieChartView" candidateClass="UCLPieChartView"/>
                 <relationship kind="outlet" name="spellStatsView" candidateClass="UIView"/>
                 <relationship kind="outlet" name="spellTableView" candidateClass="UITableView"/>

@@ -38,11 +38,11 @@
 @synthesize spellPieChartView = _pieChartView;
 @synthesize spellTableView = _spellTableView;
 @synthesize spellStatsView = _spellStatsView;
-@synthesize spellHitsLabel = _spellHitPercentLabel;
-@synthesize spellCritsLabel = _spellCritPercentLabel;
-@synthesize spellMinDamageLabel = _spellMinDamageLabel;
-@synthesize spellMaxDamageLabel = _spellMaxDamageLabel;
-@synthesize spellAvgDamageLabel = _spellAvgDamageLabel;
+@synthesize spellHitsAmountLabel = _spellHitAmountLabel;
+@synthesize spellCritsAmountLabel = _spellCritAmountLabel;
+@synthesize spellMinAmountLabel = _spellMinAmountLabel;
+@synthesize spellMaxAmountLabel = _spellMaxAmountLabel;
+@synthesize spellAvgAmountLabel = _spellAvgAmountLabel;
 
 - (void)viewDidLoad
 {
@@ -197,10 +197,16 @@
     switch (summaryType) {
         case UCLSummaryDPS:
             self.summaryTypeButton.title = @"DPS";
+            self.spellMinLabel.text = @"@Min Damage";
+            self.spellMaxLabel.text = @"@Max Damage";
+            self.spellAvgLabel.text = @"@Avg Damage";
             break;
             
         case UCLSummaryHPS:
             self.summaryTypeButton.title = @"HPS";
+            self.spellMinLabel.text = @"Min Healing";
+            self.spellMaxLabel.text = @"Max Healing";
+            self.spellAvgLabel.text = @"Avg Healing";
             break;
             
         default:
@@ -464,11 +470,11 @@
     average = total / hitCount;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.spellHitsLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", hitCount, (float)hitCount / (float)attackCount * 100.0];
-        self.spellCritsLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", critCount, (float)critCount / (float)hitCount * 100.0];
-        self.spellMinDamageLabel.text = [NSString stringWithFormat:@"%.0f", min];
-        self.spellMaxDamageLabel.text = [NSString stringWithFormat:@"%.0f", max];
-        self.spellAvgDamageLabel.text = [NSString stringWithFormat:@"%.0f", average];
+        self.spellHitsAmountLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", hitCount, (float)hitCount / (float)attackCount * 100.0];
+        self.spellCritsAmountLabel.text = [NSString stringWithFormat:@"%d (%.1f%%)", critCount, (float)critCount / (float)hitCount * 100.0];
+        self.spellMinAmountLabel.text = [NSString stringWithFormat:@"%.0f", min];
+        self.spellMaxAmountLabel.text = [NSString stringWithFormat:@"%.0f", max];
+        self.spellAvgAmountLabel.text = [NSString stringWithFormat:@"%.0f", average];
 
         self.spellStatsView.hidden = NO;
     });

@@ -25,13 +25,14 @@
 @property (weak, nonatomic) IBOutlet UCLPieChartView *spellPieChartView;
 @property (weak, nonatomic) IBOutlet UITableView *spellTableView;
 @property (weak, nonatomic) IBOutlet UIView *spellStatsView;
-@property (weak, nonatomic) IBOutlet UILabel *spellHitsLabel;
-@property (weak, nonatomic) IBOutlet UILabel *spellCritsLabel;
-@property (weak, nonatomic) IBOutlet UILabel *spellMinDamageLabel;
-@property (weak, nonatomic) IBOutlet UILabel *spellMaxDamageLabel;
-@property (weak, nonatomic) IBOutlet UILabel *spellAvgDamageLabel;
-
-- (void)showFight:(UCLFight *)fight inLogFile:(UCLLogFile *)logFile;
+@property (weak, nonatomic) IBOutlet UILabel *spellMinLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellMaxLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellAvgLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellHitsAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellCritsAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellMinAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellMaxAmountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *spellAvgAmountLabel;
 
 - (void)showFight:(UCLFight *)fight inLogFile:(UCLLogFile *)logFile;
 

@@ -18,6 +18,7 @@ UCLLogEvent* createLogEvent(uint64_t time, enum EventType eventType, uint64_t ac
     event->targetID = targetID;
     event->spellID = spellID;
     event->amount = amount;
+    event->text = malloc(strlen(text)+1);
     strcpy(event->text, text);
     return event;
 }

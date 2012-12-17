@@ -8,21 +8,6 @@
 
 #import "UCLLogEvent.h"
 
-UCLLogEvent* createLogEvent(uint64_t time, enum EventType eventType, uint64_t actorID, uint64_t targetID,
-                            uint64_t spellID, uint64_t amount, char* text)
-{
-    UCLLogEvent* event = malloc(sizeof(UCLLogEvent));
-    event->time = time;
-    event->eventType = eventType;
-    event->actorID = actorID;
-    event->targetID = targetID;
-    event->spellID = spellID;
-    event->amount = amount;
-    event->text = malloc(strlen(text)+1);
-    strcpy(event->text, text);
-    return event;
-}
-
 BOOL isLogEventDamage(UCLLogEvent* event)
 {
     switch (event->eventType) {

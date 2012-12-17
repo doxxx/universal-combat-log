@@ -51,9 +51,6 @@ typedef struct s_UCLLogEvent {
     char* text;
 } UCLLogEvent;
 
-UCLLogEvent* createLogEvent(uint64_t time, enum EventType eventType, uint64_t actorID, uint64_t targetID,
-                            uint64_t spellID, uint64_t amount, char* text);
-
 BOOL isLogEventDamage(UCLLogEvent* event);
 BOOL isLogEventHealing(UCLLogEvent* event);
 BOOL isLogEventMiss(UCLLogEvent* event);

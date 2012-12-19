@@ -232,7 +232,8 @@
     _uclPopoverController = nil;
 
     _selectedActor = actor;
-    
+
+    [self updateSpellColors];
     [self updateLineChart];
     [self updatePlayerDetailsNewData:YES];
 
@@ -311,6 +312,31 @@
     }
 }
 
+- (void)updateSpellColors
+{
+    NSRange range = NSMakeRange(0, ceil(self.fight.duration / 1000.0));
+    NSDictionary* spellBreakdown = [self calculateSpellBreakdownForRange:range];
+    NSArray* sortedSpells = [spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
+        return [amount2 compare:amount1];
+    }];
+
+    NSMutableDictionary* newSpellColors = [NSMutableDictionary dictionaryWithCapacity:[sortedSpells count]];
+    NSUInteger colorIndex = 0;
+    for (NSNumber* spellID in sortedSpells) {
+        UIColor* color = nil;
+        if (colorIndex < [_pieChartColors count]) {
+            color = [_pieChartColors objectAtIndex:colorIndex];
+        }
+        if (!color) {
+            color = [UIColor whiteColor];
+        }
+        [newSpellColors setObject:color forKey:spellID];
+        colorIndex++;
+    }
+    
+    _spellColors = newSpellColors;
+}
+
 - (void)updateLineChart
 {
     if (!self.fight) {
@@ -346,31 +372,18 @@
 
 - (void)updateSpellBreakdownsNewData:(BOOL)newData
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSNumber* selectedSpellID = nil;
-        NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
-        if (indexPath != nil) {
-            selectedSpellID = [_sortedSpells objectAtIndex:indexPath.row];
-        }
+    NSNumber* selectedSpellID = nil;
+    NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
+    if (indexPath != nil) {
+        selectedSpellID = [_sortedSpells objectAtIndex:indexPath.row];
+    }
+    NSRange range = _visibleRange;
 
-        NSDictionary* newSpellBreakdown = [self calculateSpellBreakdown];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary* newSpellBreakdown = [self calculateSpellBreakdownForRange:range];
         NSArray* newSortedSpells = [newSpellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
             return [amount2 compare:amount1];
         }];
-
-        NSMutableDictionary* newSpellColors = nil;
-        if (newData) {
-            newSpellColors = [NSMutableDictionary dictionaryWithCapacity:[newSortedSpells count]];
-            NSUInteger colorIndex = 0;
-            for (NSNumber* spellID in newSortedSpells) {
-                UIColor* color = [UIColor whiteColor];
-                if (colorIndex < [_pieChartColors count]) {
-                    color = [_pieChartColors objectAtIndex:colorIndex];
-                }
-                [newSpellColors setObject:color forKey:spellID];
-                colorIndex++;
-            }
-        }
 
         NSMutableArray* sortedSpellValues = [NSMutableArray arrayWithCapacity:[newSortedSpells count]];
         for (NSNumber* spellID in newSortedSpells) {
@@ -385,9 +398,6 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             _spellBreakdown = newSpellBreakdown;
             _sortedSpells = newSortedSpells;
-            if (newSpellColors) {
-                _spellColors = newSpellColors;
-            }
             _spellBreakdownSum = sum;
 
             self.spellPieChartView.data = sortedSpellValues;
@@ -407,11 +417,11 @@
     });
 }
 
-- (NSDictionary *)calculateSpellBreakdown
+- (NSDictionary *)calculateSpellBreakdownForRange:(NSRange)range
 {
     uint64_t startTime = self.fight.startTime;
-    NSUInteger start = _visibleRange.location;
-    NSUInteger end = _visibleRange.location + _visibleRange.length;
+    NSUInteger start = range.location;
+    NSUInteger end = range.location + range.length;
     uint64_t selectedActorID = _selectedActor.idNum;
 
     return [self.fight spellBreakdownWithPredicate:^BOOL(UCLLogEvent *event) {

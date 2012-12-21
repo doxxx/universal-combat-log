@@ -1,5 +1,5 @@
 //
-//  UCLFIghtViewController.m
+//  UCLFightViewController.m
 //  UniversalCombatLog
 //
 //  Created by Gordon Tyler on 12-10-23.
@@ -20,7 +20,7 @@
     NSArray* _pieChartColors;
     UCLLogFile* _logFile;
     UCLSummaryType _summaryType;
-    NSRange _visibleRange;
+    NSRange _visibleIndexRange;
     UCLEntity* _selectedActor;
     NSDictionary* _spellBreakdown;
     NSArray* _sortedSpells;
@@ -142,7 +142,7 @@
     
     self.fight = fight;
     _logFile = logFile;
-    _visibleRange = NSMakeRange(0, ceil(self.fight.duration / 1000.0));
+    _visibleIndexRange = NSMakeRange(0, self.fight.count);
     _selectedActor = nil;
     
     [self.fightLineChartView resetZoom];
@@ -221,7 +221,7 @@
 
 - (void)lineChartView:(UCLLineChartView *)lineChartView didZoomToRange:(NSRange)range
 {
-    _visibleRange = range;
+    _visibleIndexRange = [self.fight indexRangeForTimeRange:range];
 
     [self updatePlayerDetailsNewData:NO];
 }
@@ -288,7 +288,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.spellPieChartView selectSegment:indexPath.row];
-    [self updateSpellStats];
+    [self updateSpellStatsForRange:_visibleIndexRange];
 }
 
 #pragma mark - PieChartView Delegate Methods
@@ -298,7 +298,7 @@
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:segmentIndex inSection:0];
     [self.spellTableView selectRowAtIndexPath:indexPath
                                 animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-    [self updateSpellStats];
+    [self updateSpellStatsForRange:_visibleIndexRange];
 }
 
 - (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
@@ -314,8 +314,8 @@
 
 - (void)updateSpellColors
 {
-    NSRange range = NSMakeRange(0, ceil(self.fight.duration / 1000.0));
-    NSDictionary* spellBreakdown = [self calculateSpellBreakdownForRange:range];
+    NSRange indexRange = NSMakeRange(0, self.fight.count);
+    NSDictionary* spellBreakdown = [self calculateSpellBreakdownForIndexRange:indexRange];
     NSArray* sortedSpells = [spellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
         return [amount2 compare:amount1];
     }];
@@ -377,10 +377,10 @@
     if (indexPath != nil) {
         selectedSpellID = [_sortedSpells objectAtIndex:indexPath.row];
     }
-    NSRange range = _visibleRange;
+    NSRange range = _visibleIndexRange;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSDictionary* newSpellBreakdown = [self calculateSpellBreakdownForRange:range];
+        NSDictionary* newSpellBreakdown = [self calculateSpellBreakdownForIndexRange:range];
         NSArray* newSortedSpells = [newSpellBreakdown keysSortedByValueUsingComparator:^(NSNumber* amount1, NSNumber* amount2) {
             return [amount2 compare:amount1];
         }];
@@ -412,32 +412,23 @@
                                            scrollPosition:UITableViewScrollPositionNone];
             }
 
-            [self updateSpellStats];
+            [self updateSpellStatsForRange:range];
         });
     });
 }
 
-- (NSDictionary *)calculateSpellBreakdownForRange:(NSRange)range
+- (NSDictionary *)calculateSpellBreakdownForIndexRange:(NSRange)indexRange
 {
-    uint64_t startTime = self.fight.startTime;
-    NSUInteger start = range.location;
-    NSUInteger end = range.location + range.length;
     uint64_t selectedActorID = _selectedActor.idNum;
 
-    return [self.fight spellBreakdownWithPredicate:^BOOL(UCLLogEvent *event) {
-        uint64_t timeSinceStart = event->time - startTime;
-        NSUInteger index = timeSinceStart / 1000;
-        if (index < start || index >= end) {
-            return NO;
-        }
-
+    return [self.fight spellBreakdownForIndexRange:indexRange withPredicate:^BOOL(UCLLogEvent *event) {
         BOOL matchesSummaryType = ((_summaryType == UCLSummaryDPS && UCLLogEventIsDamage(event)) ||
                                    (_summaryType == UCLSummaryHPS && UCLLogEventIsHealing(event)));
         return matchesSummaryType && event->actorID == selectedActorID;
     }];
 }
 
-- (void)updateSpellStats
+- (void)updateSpellStatsForRange:(NSRange)range
 {
     NSIndexPath* indexPath = [self.spellTableView indexPathForSelectedRow];
     if (indexPath == nil) {
@@ -450,18 +441,10 @@
     NSUInteger attackCount = 0, hitCount = 0, critCount = 0;
     double min = NSUIntegerMax, max = 0, total = 0, average = 0;
     
-    uint64_t startTime = self.fight.startTime;
-    NSUInteger start = _visibleRange.location;
-    NSUInteger end = _visibleRange.location + _visibleRange.length;
     uint64_t selectedActorID = _selectedActor.idNum;
 
-    UCLLogEvent* event = self.fight.events;
-    for (uint32_t i = 0; i < self.fight.count; i++, event++) {
-        uint64_t timeSinceStart = event->time - startTime;
-        NSUInteger index = timeSinceStart / 1000;
-        if (index < start || index >= end) {
-            continue;
-        }
+    UCLLogEvent* event = self.fight.events + range.location;
+    for (uint32_t count = range.length; count > 0; count--, event++) {
         if (event->actorID == selectedActorID && event->spellID == spellID) {
             attackCount++;
             if (!UCLLogEventIsMiss(event)) {

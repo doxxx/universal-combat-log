@@ -24,6 +24,7 @@
 - (uint64_t)duration;
 - (UCLEntity*)entityForID:(uint64_t)entityID;
 - (UCLSpell*)spellForID:(uint64_t)spellID;
+- (NSRange)indexRangeForTimeRange:(NSRange)timeRange;
 
 + (UCLFight*)fightWithEvents:(UCLLogEvent*)events count:(uint32_t)count title:(NSString*)title entityIndex:(NSDictionary*)entityIndex spellIndex:(NSDictionary*)spellIndex;
 

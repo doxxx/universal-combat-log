@@ -65,12 +65,12 @@
     return amounts;
 }
 
-- (NSDictionary *)spellBreakdownWithPredicate:(UCLLogEventPredicate)predicate
+- (NSDictionary *)spellBreakdownForIndexRange:(NSRange)range withPredicate:(UCLLogEventPredicate)predicate
 {
     NSMutableDictionary* spellBreakdown = [NSMutableDictionary dictionary];
 
-    UCLLogEvent* event = self.events;
-    for (uint32_t i = 0; i < self.count; i++, event++) {
+    UCLLogEvent* event = self.events + range.location;
+    for (uint32_t count = range.length; count > 0; count--, event++) {
         if (predicate(event)) {
             NSNumber* key = @(event->spellID);
             NSNumber* currentAmount = [spellBreakdown objectForKey:key];

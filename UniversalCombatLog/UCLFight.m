@@ -15,8 +15,6 @@
     NSDictionary* _spellIndex;
 }
 
-@synthesize events=_events, count=_count, title=_title;
-
 - (id)initWithEvents:(UCLLogEvent*)events count:(uint32_t)count title:(NSString*)title entityIndex:(NSDictionary*)entityIndex spellIndex:(NSDictionary*)spellIndex
 {
     self = [super init];
@@ -63,6 +61,42 @@
 - (UCLSpell*)spellForID:(uint64_t)spellID
 {
     return [_spellIndex objectForKey:@(spellID)];
+}
+
+- (NSRange)indexRangeForTimeRange:(NSRange)timeRange
+{
+    uint64_t startTime = self.startTime;
+    NSUInteger start = timeRange.location;
+    NSUInteger end = timeRange.location + timeRange.length;
+    NSUInteger loc = 0, length = 0;
+
+    UCLLogEvent* event = self.events;
+
+    // find start
+    uint32_t count = self.count;
+    for (uint32_t i = 0; i < count; i++, event++) {
+        uint64_t timeSinceStart = event->time - startTime;
+        NSUInteger index = timeSinceStart / 1000;
+        if (index < start) {
+            continue;
+        }
+        loc = i;
+        break;
+    }
+
+    // find end
+    length = count - loc;
+    for (uint32_t i = loc; i < count; i++, event++) {
+        uint64_t timeSinceStart = event->time - startTime;
+        NSUInteger index = timeSinceStart / 1000;
+        if (index < end) {
+            continue;
+        }
+        length = i - loc;
+        break;
+    }
+
+    return NSMakeRange(loc, length);
 }
 
 + (UCLFight*)fightWithEvents:(UCLLogEvent*)events count:(uint32_t)count title:(NSString*)title entityIndex:(NSDictionary*)entityIndex spellIndex:(NSDictionary*)spellIndex;

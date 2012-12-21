@@ -14,6 +14,6 @@ typedef BOOL (^UCLLogEventPredicate)(UCLLogEvent* event);
 
 - (NSDictionary*)sumAmountsPerActorWithPredicate:(UCLLogEventPredicate)predicate;
 - (NSArray*)amountsPerSecondUsingWindowSize:(NSUInteger)windowSize withPredicate:(UCLLogEventPredicate)predicate;
-- (NSDictionary *)spellBreakdownWithPredicate:(UCLLogEventPredicate)predicate;
+- (NSDictionary *)spellBreakdownForIndexRange:(NSRange)range withPredicate:(UCLLogEventPredicate)predicate;
 
 @end

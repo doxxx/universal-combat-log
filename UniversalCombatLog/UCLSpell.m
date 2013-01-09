@@ -10,14 +10,12 @@
 
 @implementation UCLSpell
 
-@synthesize idNum=_idNum, name=_name;
-
-- (id)initWithIdNum:(uint64_t)theIdNum name:(NSString*)theName
+- (id)initWithIdNum:(uint64_t)idNum name:(NSString*)name
 {
     self = [super init];
     if (self) {
-        _idNum = theIdNum;
-        _name = theName;
+        _idNum = idNum;
+        _name = name;
     }
     return self;
 }
@@ -43,12 +41,12 @@
 
 - (NSUInteger)hash
 {
-    return 31 ^ _idNum ^ [_name hash];
+    return (NSUInteger) (31 ^ _idNum ^ [_name hash]);
 }
 
-+ (UCLSpell*)spellWithIdNum:(uint64_t)theIdNum name:(NSString*)theName
++ (UCLSpell*)spellWithIdNum:(uint64_t)idNum name:(NSString*)name
 {
-    return [[UCLSpell alloc] initWithIdNum:theIdNum name:theName];
+    return [[UCLSpell alloc] initWithIdNum:idNum name:name];
 }
 
 

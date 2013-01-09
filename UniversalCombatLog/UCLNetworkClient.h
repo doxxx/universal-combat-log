@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 
 typedef void (^ServerDiscoveryCallback)(NSURL*);
-typedef void (^LogFileListCallack)(NSArray*);
+typedef void (^LogFileListCallback)(NSArray*);
 
 @interface UCLNetworkClient : NSObject
 
 @property (strong, nonatomic) ServerDiscoveryCallback discoveryCallback;
 
 - (void)discoverServers;
-- (void)listLogFilesAtURL:(NSURL*)url withCallback:(LogFileListCallack)callback;
+- (void)listLogFilesAtURL:(NSURL*)url withCallback:(LogFileListCallback)callback;
 
 @end

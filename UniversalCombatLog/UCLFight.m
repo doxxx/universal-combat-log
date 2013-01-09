@@ -7,7 +7,6 @@
 //
 
 #import "UCLFight.h"
-#import "UCLLogEvent.h"
 
 @implementation UCLFight
 {
@@ -76,7 +75,7 @@
     uint32_t count = self.count;
     for (uint32_t i = 0; i < count; i++, event++) {
         uint64_t timeSinceStart = event->time - startTime;
-        NSUInteger index = timeSinceStart / 1000;
+        NSUInteger index = (NSUInteger) (timeSinceStart / 1000);
         if (index < start) {
             continue;
         }
@@ -88,7 +87,7 @@
     length = count - loc;
     for (uint32_t i = loc; i < count; i++, event++) {
         uint64_t timeSinceStart = event->time - startTime;
-        NSUInteger index = timeSinceStart / 1000;
+        NSUInteger index = (NSUInteger) (timeSinceStart / 1000);
         if (index < end) {
             continue;
         }

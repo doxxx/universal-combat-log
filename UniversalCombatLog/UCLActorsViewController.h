@@ -7,9 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
 #import "UCLSummaryTypesViewController.h"
-
 #import "UCLFight.h"
 
 @class UCLActorsViewController;

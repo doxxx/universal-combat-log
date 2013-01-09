@@ -15,20 +15,17 @@
 @property (weak, nonatomic) IBOutlet id <UCLPieChartViewDelegate> delegate;
 @property (copy, nonatomic) NSArray* data;
 
-- (void)selectSegment:(NSUInteger)segmentIndex;
+- (void)selectSegment:(NSInteger)segmentIndex;
 
 @end
 
 
 @protocol UCLPieChartViewDelegate <NSObject>
 
-@required
-
-- (UIColor*) pieChartView:(UCLPieChartView*)pieChartView colorForSegment:(NSUInteger)segmentIndex;
+- (UIColor*) pieChartView:(UCLPieChartView*)pieChartView colorForSegment:(NSInteger)segmentIndex;
 
 @optional
 
-- (void)pieChartView:(UCLPieChartView*)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex;
+- (void)pieChartView:(UCLPieChartView*)pieChartView didSelectSegmentAtIndex:(NSInteger)segmentIndex;
 
 @end
-

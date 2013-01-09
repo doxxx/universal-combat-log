@@ -10,7 +10,7 @@
 #import "UCLEntity.h"
 #import "UCLSpell.h"
 
-enum EventType {
+typedef enum {
     ETUnknown = 0,
     ETBeginCasting = 1,
     ETInterrupted = 2,
@@ -34,16 +34,16 @@ enum EventType {
     ETUnknown20 = 20,
     ETUnknown21 = 21,
     ETUnknown22 = 22,
-    ETCritDamage = 23,
+    ETCriticalDamage = 23,
     ETFavorGain = 24,
     ETImmune = 26,
     ETPowerGain = 27,
-    ETCritHeal = 28,
-};
+    ETCriticalHeal = 28,
+} EventType;
 
-typedef struct s_UCLLogEvent {
+typedef struct {
     uint64_t time;
-    enum EventType eventType;
+    EventType eventType;
     uint64_t actorID;
     uint64_t targetID;
     uint64_t spellID;
@@ -54,4 +54,4 @@ typedef struct s_UCLLogEvent {
 BOOL UCLLogEventIsDamage(UCLLogEvent* event);
 BOOL UCLLogEventIsHealing(UCLLogEvent* event);
 BOOL UCLLogEventIsMiss(UCLLogEvent* event);
-BOOL UCLLogEventIsCrit(UCLLogEvent* event);
+BOOL UCLLogEventIsCritical(UCLLogEvent* event);

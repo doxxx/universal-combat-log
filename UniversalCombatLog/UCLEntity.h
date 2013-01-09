@@ -8,38 +8,38 @@
 
 #import <Foundation/Foundation.h>
 
-enum EntityType {
+typedef enum {
     Nobody = 0,
     Player = 1,
     NonPlayer = 2
-};
+} EntityType ;
 
-enum EntityRelationship {
+typedef enum {
     NoRelation = 0,
     Self = 1,
     Group = 2,
     Raid = 3,
     Other = 4
-};
+} EntityRelationship;
 
 @interface UCLEntity : NSObject <NSCopying>
 
 @property (readonly, nonatomic) uint64_t idNum;
-@property (readonly, nonatomic) enum EntityType type;
-@property (readonly, nonatomic) enum EntityRelationship relationship;
+@property (readonly, nonatomic) EntityType type;
+@property (readonly, nonatomic) EntityRelationship relationship;
 @property (readonly, weak, nonatomic) UCLEntity* owner;
 @property (readonly, strong, nonatomic) NSString* name;
 
-- (id)initWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
-       relationship:(enum EntityRelationship)theRelationship 
-              owner:(UCLEntity*)theOwner name:(NSString*)theName;
+- (id)initWithIdNum:(uint64_t)idNum type:(EntityType)type
+       relationship:(EntityRelationship)relationship
+              owner:(UCLEntity*)owner name:(NSString*)name;
 
 - (BOOL)isEqualToEntity:(UCLEntity*)entity;
 
 - (BOOL)isPlayerOrPet;
 
-+ (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
-                 relationship:(enum EntityRelationship)theRelationship 
-                        owner:(UCLEntity*)theOwner name:(NSString*)theName;
++ (UCLEntity*)entityWithIdNum:(uint64_t)idNum type:(EntityType)type
+                 relationship:(EntityRelationship)relationship
+                        owner:(UCLEntity*)owner name:(NSString*)name;
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "UCLActorsViewController.h"
-#import "UCLSummaryTypesViewController.h"
 #import "UCLFight+Summarizing.h"
 
 #pragma mark - UCLSummaryEntry
@@ -24,8 +23,6 @@
 @end
 
 @implementation UCLSummaryEntry
-
-@synthesize actor=_actor, amount=_amount;
 
 - (id)initWithActor:(UCLEntity*)actor amount:(NSNumber*)amount
 {
@@ -73,11 +70,6 @@
 }
 
 #pragma mark - Properties
-
-@synthesize fight = _fight;
-@synthesize summaryType = _summaryType;
-@synthesize delegate;
-@synthesize selectedActor;
 
 -(void)setFight:(UCLFight *)fight
 {
@@ -192,7 +184,7 @@
     
     NSMutableArray* result = [NSMutableArray arrayWithCapacity:[amounts count]];
     for (NSNumber* actorID in sortedActors) {
-        UCLEntity* actor = [self.fight entityForID:actorID.longLongValue];
+        UCLEntity* actor = [self.fight entityForID:actorID.unsignedLongLongValue];
         int amountPerSecond = (int) round([[amounts objectForKey:actorID] doubleValue] / (_fight.duration / 1000.0));
         [result addObject:[[UCLSummaryEntry alloc] initWithActor:actor amount:@(amountPerSecond)]];
     }

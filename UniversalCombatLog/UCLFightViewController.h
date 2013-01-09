@@ -14,7 +14,7 @@
 #import "UCLSummaryTypesViewController.h"
 #import "UCLActorsViewController.h"
 
-@interface UCLFightViewController : UIViewController<UCLLineChartViewDelegate,UCLSummaryTypesViewDelegate,UCLActorsViewDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface UCLFightViewController : UIViewController<UCLLineChartViewDelegate,UCLPieChartViewDelegate,UCLSummaryTypesViewDelegate,UCLActorsViewDelegate,UITableViewDataSource,UITableViewDelegate>
 
 @property (strong, nonatomic) UCLFight* fight;
 

@@ -10,7 +10,6 @@
 #import "UCLEntity.h"
 #import "UCLSpell.h"
 #import "UCLFight.h"
-#import "UCLLogEvent.h"
 
 #define CHECK_LENGTH(l) \
     if (_cursor - _data + l > _length) { \
@@ -22,7 +21,7 @@
 {
     const void* _data;
     NSUInteger _length;
-    const void* _cursor;
+    void* _cursor;
 }
 
 - (id)initWithData:(NSData*)data
@@ -31,7 +30,7 @@
     if (self) {
         _data = [data bytes];
         _length = [data length];
-        _cursor = _data;
+        _cursor = (void *)_data;
     }
     return self;
 }
@@ -60,7 +59,7 @@
     while (entityCount > 0) {
         uint64_t idNum = [self readUInt64];
 
-        enum EntityType type;
+        EntityType type;
         switch ([self readUInt8]) {
             case 'P':
                 type = Player;
@@ -75,7 +74,7 @@
                 break;
         }
         
-        enum EntityRelationship rel;
+        EntityRelationship rel;
         switch ([self readUInt8]) {
             case 'C':
                 rel = Self;

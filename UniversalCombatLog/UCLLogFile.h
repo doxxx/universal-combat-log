@@ -12,8 +12,8 @@
 
 @property (readonly, strong, nonatomic) NSArray* fights;
 
-- (id)initWithFights:(NSArray*)theFights;
+- (id)initWithFights:(NSArray*)fights;
 
-+ (UCLLogFile*)logFileWithFights:(NSArray*)theFights;
++ (UCLLogFile*)logFileWithFights:(NSArray*)fights;
 
 @end

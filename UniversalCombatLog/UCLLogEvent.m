@@ -13,7 +13,7 @@ BOOL UCLLogEventIsDamage(UCLLogEvent* event)
     switch (event->eventType) {
         case ETDirectDamage:
         case ETDamageOverTime:
-        case ETCritDamage:
+        case ETCriticalDamage:
         case ETEnvDamage:
             return YES;
 
@@ -26,7 +26,7 @@ BOOL UCLLogEventIsHealing(UCLLogEvent* event)
 {
     switch (event->eventType) {
         case ETHeal:
-        case ETCritHeal:
+        case ETCriticalHeal:
             return YES;
 
         default:
@@ -49,11 +49,11 @@ BOOL UCLLogEventIsMiss(UCLLogEvent* event)
     }
 }
 
-BOOL UCLLogEventIsCrit(UCLLogEvent* event)
+BOOL UCLLogEventIsCritical(UCLLogEvent* event)
 {
     switch (event->eventType) {
-        case ETCritDamage:
-        case ETCritHeal:
+        case ETCriticalDamage:
+        case ETCriticalHeal:
             return YES;
 
         default:

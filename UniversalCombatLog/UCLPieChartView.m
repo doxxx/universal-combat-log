@@ -6,15 +6,12 @@
 //  Copyright (c) 2012 Gordon Tyler. All rights reserved.
 //
 
-#import <math.h>
-#import <CoreText/CoreText.h>
-
 #import "UCLPieChartView.h"
 
 @implementation UCLPieChartView
 {
     double _sum;
-    uint16_t _selectedSegmentIndex;
+    NSInteger _selectedSegmentIndex;
     NSArray* _segmentPaths;
 }
 
@@ -31,23 +28,20 @@
 
 #pragma mark - Properties
 
-@synthesize delegate;
-@synthesize data;
-
-- (void)setData:(NSArray *)newData
+- (void)setData:(NSArray *)data
 {
-    if (newData != nil) {
-        data = newData;
+    if (data != nil) {
+        _data = data;
 
         double sum = 0;
-        for (NSNumber* value in newData) {
+        for (NSNumber* value in data) {
             sum += [value doubleValue];
         }
         
         _sum = sum;
     }
     else {
-        data = nil;
+        _data = nil;
         _sum = 0;
     }
 
@@ -57,7 +51,7 @@
     [self setNeedsDisplay];
 }
 
-- (void)selectSegment:(NSUInteger)segmentIndex
+- (void)selectSegment:(NSInteger)segmentIndex
 {
     _selectedSegmentIndex = segmentIndex;
     [self setNeedsDisplay];

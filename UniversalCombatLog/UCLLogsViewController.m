@@ -7,8 +7,6 @@
 //
 
 #import "UCLLogsViewController.h"
-
-#import "UCLLogFileLoader.h"
 #import "UCLFightsViewController.h"
 #import "UCLNetworkClient.h"
 
@@ -22,10 +20,6 @@
 }
 
 #pragma mark - Properties
-
-@synthesize fightViewController;
-@synthesize documentsDirectory;
-@synthesize logsTableView;
 
 #pragma mark - View methods
 
@@ -172,7 +166,7 @@
 
 - (void)scanDocumentsDirectory
 {
-    NSArray* props = [NSArray arrayWithObjects:NSURLLocalizedNameKey, NSURLCreationDateKey, nil];
+    NSArray* props = @[NSURLLocalizedNameKey, NSURLCreationDateKey];
     NSError* error = nil;
     NSArray* contents = [[NSFileManager defaultManager] 
                          contentsOfDirectoryAtURL:self.documentsDirectory 
@@ -191,7 +185,7 @@
     NSArray* files = [contents filteredArrayUsingPredicate:
                       [NSPredicate predicateWithFormat:@"path endswith '.ucl'"]];
     for (NSURL* url in files) {
-        NSDictionary* entry = [NSDictionary dictionaryWithObjectsAndKeys:@"", @"title", url, @"url", nil];
+        NSDictionary* entry = @{@"title" : @"", @"url" : url};
         [_logFileEntries addObject:entry];
     }
     

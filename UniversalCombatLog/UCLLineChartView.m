@@ -8,7 +8,6 @@
 
 #import <CoreText/CoreText.h>
 #import <QuartzCore/QuartzCore.h>
-
 #import "UCLLineChartView.h"
 
 #define kChartInset 30
@@ -44,11 +43,6 @@
     CGFloat _xScale;
     CGFloat _yScale;
 }
-
-@synthesize scale = _scale;
-@synthesize maxDataCount = _maxDataCount;
-@synthesize maxValue = _maxValue;
-@synthesize yInterval = _yInterval;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -102,7 +96,7 @@
 - (void)recalculate
 {
     double newMaxValue = 0;
-    double newMaxDataCount = 0;
+    NSUInteger newMaxDataCount = 0;
     
     for (NSString* key in _lines) {
         NSArray* values = [_lines objectForKey:key];
@@ -226,27 +220,24 @@
 
 #pragma mark - Properties
 
-@synthesize delegate = _chartDelegate;
-@synthesize rotating;
-
 - (void)addLineWithValues:(NSArray *)values forKey:(NSString *)key
 {
     [_linesView addLineWithValues:values forKey:key];
-    [self relayoutScrollview];
+    [self layoutScrollView];
     [self setNeedsDisplay];
 }
 
 - (void)removeLineForKey:(NSString *)key
 {
     [_linesView removeLineForKey:key];
-    [self relayoutScrollview];
+    [self layoutScrollView];
     [self setNeedsDisplay];
 }
 
 - (void)removeAllLines
 {
     [_linesView removeAllLines];
-    [self relayoutScrollview];
+    [self layoutScrollView];
     [self setNeedsDisplay];
 }
 
@@ -306,7 +297,7 @@
                          _scrollView.contentSize = newContentSize;
                          [_scrollView setContentOffset:newContentOffset animated:YES];
                      }
-                     completion:^(BOOL fininshed){
+                     completion:^(BOOL finished){
                      }];
     
     [_linesView endZoom];
@@ -404,12 +395,12 @@
 
 - (void)layoutSubviews
 {
-    [self relayoutScrollview];
+    [self layoutScrollView];
 }
 
 #pragma mark - Helper Methods
 
-- (void)relayoutScrollview
+- (void)layoutScrollView
 {
     CGSize viewSize = self.bounds.size;
     CGFloat maxLabelWidth = [UCLLineChartView labelWidthForMaxValue:_linesView.maxValue];
@@ -460,9 +451,10 @@
 {
     CTFontRef axisMarkerFont = CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 12, NULL);
     CGColorRef axisMarkerColor = [UIColor whiteColor].CGColor;
-    NSDictionary* attr = [NSDictionary dictionaryWithObjectsAndKeys:
-                          (__bridge id)axisMarkerFont, kCTFontAttributeName,
-                          axisMarkerColor, kCTForegroundColorAttributeName, nil];
+    NSDictionary *attr = @{
+            (__bridge id)kCTFontAttributeName : (__bridge id)axisMarkerFont,
+            (__bridge id)kCTForegroundColorAttributeName : (__bridge id)axisMarkerColor
+    };
     CFRelease(axisMarkerFont);
     return attr;
 }

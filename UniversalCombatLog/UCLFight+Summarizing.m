@@ -78,7 +78,7 @@
                 [spellBreakdown setObject:@(event->amount) forKey:key];
             }
             else {
-                uint64_t newAmount = event->amount + currentAmount.longLongValue;
+                uint64_t newAmount = event->amount + currentAmount.unsignedLongLongValue;
                 [spellBreakdown setObject:@(newAmount) forKey:key];
             }
         }

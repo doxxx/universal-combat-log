@@ -9,19 +9,15 @@
 #import <sys/socket.h>
 #import <netinet/in.h>
 #import <arpa/inet.h>
-#import <fcntl.h>
 
 #import "UCLNetworkClient.h"
-#import "UCLLogFileLoader.h"
 #import "SBJson/SBJson.h"
 
 @implementation UCLNetworkClient
 {
-    int discoverySocket;
-    dispatch_source_t dispatchSource;
+    int _discoverySocket;
+    dispatch_source_t _dispatchSource;
 }
-
-@synthesize discoveryCallback = _discoveryCallback;
 
 - (id)init
 {
@@ -33,26 +29,26 @@
             NSLog(@"Error setting broadcast option on socket: %s", strerror(errno));
             return nil;
         }
-        discoverySocket = sd;
+        _discoverySocket = sd;
     }
     return self;
 }
 
 - (void)close
 {
-    if (dispatchSource) {
-        dispatch_source_cancel(dispatchSource);
-        dispatchSource = NULL;
+    if (_dispatchSource) {
+        dispatch_source_cancel(_dispatchSource);
+        _dispatchSource = NULL;
     }
     
-    close(discoverySocket);
+    close(_discoverySocket);
 }
 
 - (void)setDiscoveryCallback:(ServerDiscoveryCallback)discoveryCallback
 {
-    if (dispatchSource) {
-        dispatch_source_cancel(dispatchSource);
-        dispatchSource = NULL;
+    if (_dispatchSource) {
+        dispatch_source_cancel(_dispatchSource);
+        _dispatchSource = NULL;
     }
     
     _discoveryCallback = discoveryCallback;
@@ -60,17 +56,17 @@
         return;
     }
     
-    dispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, discoverySocket, 0, dispatch_get_main_queue());
-    if (dispatchSource == NULL) {
+    _dispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, _discoverySocket, 0, dispatch_get_main_queue());
+    if (_dispatchSource == NULL) {
         NSLog(@"Could not create GCD dispatch source");
         return;
     }
     
-    dispatch_source_set_event_handler(dispatchSource, ^void(void) {
+    dispatch_source_set_event_handler(_dispatchSource, ^void(void) {
         char data[50];
         struct sockaddr_in remote_address;
         socklen_t remote_address_len;
-        ssize_t bytes = recvfrom(discoverySocket, &data, 50, 0, (struct sockaddr*)&remote_address, &remote_address_len);
+        ssize_t bytes = recvfrom(_discoverySocket, &data, 50, 0, (struct sockaddr*)&remote_address, &remote_address_len);
         if (bytes < 0) {
             NSLog(@"Error receiving discovery reply packet: %s", strerror(errno));
         }
@@ -83,7 +79,7 @@
     });
 
     // Wait for reply
-    dispatch_resume(dispatchSource);
+    dispatch_resume(_dispatchSource);
 }
 
 - (void)discoverServers
@@ -96,14 +92,14 @@
     address.sin_port = htons(5555);
     char* discover_msg = "UCLDISCOVER";
     size_t discover_msg_len = strlen(discover_msg);
-    ssize_t bytes_sent = sendto(discoverySocket, discover_msg, discover_msg_len, 0, (struct sockaddr*)&address, sizeof(address));
+    ssize_t bytes_sent = sendto(_discoverySocket, discover_msg, discover_msg_len, 0, (struct sockaddr*)&address, sizeof(address));
     if (bytes_sent < 0) {
         NSLog(@"Error sending discovery packet: %s", strerror(errno));
         return;
     }
 }
 
-- (void)listLogFilesAtURL:(NSURL *)url withCallback:(LogFileListCallack)callback
+- (void)listLogFilesAtURL:(NSURL *)url withCallback:(LogFileListCallback)callback
 {
     void (^handler)(NSURLResponse* response, NSData* data, NSError* error) = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (data == nil) {

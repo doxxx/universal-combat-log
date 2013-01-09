@@ -7,11 +7,7 @@
 //
 
 #import "UCLLogsViewController.h"
-#import "UCLFightViewController.h"
-#import "UCLActorsViewController.h"
 #import "UCLFight+Summarizing.h"
-
-#import <QuartzCore/QuartzCore.h>
 
 #define PER_SECOND_WINDOW_SIZE 5
 
@@ -29,20 +25,6 @@
     
     UIPopoverController* _uclPopoverController;
 }
-
-@synthesize fight = _fight;
-@synthesize fightLineChartView = _fightLineChartView;
-@synthesize playersButton = _playersButton;
-@synthesize summaryTypeButton = _summaryTypeButton;
-@synthesize playerDetailsView = _playerDetailsView;
-@synthesize spellPieChartView = _pieChartView;
-@synthesize spellTableView = _spellTableView;
-@synthesize spellStatsView = _spellStatsView;
-@synthesize spellHitsAmountLabel = _spellHitAmountLabel;
-@synthesize spellCritsAmountLabel = _spellCritAmountLabel;
-@synthesize spellMinAmountLabel = _spellMinAmountLabel;
-@synthesize spellMaxAmountLabel = _spellMaxAmountLabel;
-@synthesize spellAvgAmountLabel = _spellAvgAmountLabel;
 
 - (void)viewDidLoad
 {
@@ -264,7 +246,7 @@
 
     if (indexPath.row < _sortedSpells.count) {
         NSNumber* spellID = [_sortedSpells objectAtIndex:indexPath.row];
-        UCLSpell* spell = [self.fight spellForID:spellID.longLongValue];
+        UCLSpell* spell = [self.fight spellForID:spellID.unsignedLongLongValue];
         NSNumber* value = [_spellBreakdown objectForKey:spellID];
         cell.textLabel.text = spell.name;
         cell.textLabel.textColor = [_spellColors objectForKey:spellID];
@@ -293,7 +275,7 @@
 
 #pragma mark - PieChartView Delegate Methods
 
-- (void)pieChartView:(UCLPieChartView *)pieChartView didSelectSegmentAtIndex:(NSUInteger)segmentIndex
+- (void)pieChartView:(UCLPieChartView *)pieChartView didSelectSegmentAtIndex:(NSInteger)segmentIndex
 {
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:segmentIndex inSection:0];
     [self.spellTableView selectRowAtIndexPath:indexPath
@@ -301,7 +283,7 @@
     [self updateSpellStatsForRange:_visibleIndexRange];
 }
 
-- (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSUInteger)segmentIndex
+- (UIColor *)pieChartView:(UCLPieChartView *)pieChartView colorForSegment:(NSInteger)segmentIndex
 {
     if (segmentIndex < _sortedSpells.count) {
         NSNumber* spellID = [_sortedSpells objectAtIndex:segmentIndex];
@@ -406,8 +388,7 @@
             if (!newData && selectedSpellID != nil) {
                 NSUInteger selectedRow = [_sortedSpells indexOfObject:selectedSpellID];
                 [self.spellPieChartView selectSegment:selectedRow];
-                NSIndexPath* indexPath = [NSIndexPath indexPathForRow:selectedRow inSection:0];
-                [self.spellTableView selectRowAtIndexPath:indexPath
+                [self.spellTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:selectedRow inSection:0]
                                                  animated:NO
                                            scrollPosition:UITableViewScrollPositionNone];
             }
@@ -436,7 +417,7 @@
         return;
     }
     
-    uint64_t spellID = [[_sortedSpells objectAtIndex:indexPath.row] longLongValue];
+    uint64_t spellID = [[_sortedSpells objectAtIndex:indexPath.row] unsignedLongLongValue];
 
     NSUInteger attackCount = 0, hitCount = 0, critCount = 0;
     double min = NSUIntegerMax, max = 0, total = 0, average = 0;
@@ -449,7 +430,7 @@
             attackCount++;
             if (!UCLLogEventIsMiss(event)) {
                 hitCount++;
-                if (UCLLogEventIsCrit(event)) {
+                if (UCLLogEventIsCritical(event)) {
                     critCount++;
                 }
                 double amount = event->amount;

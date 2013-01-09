@@ -10,20 +10,18 @@
 
 @implementation UCLLogFile
 
-@synthesize fights=_fights;
-
-- (id)initWithFights:(NSArray*)theFights
+- (id)initWithFights:(NSArray*)fights
 {
     self = [super init];
     if (self) {
-        _fights = theFights;
+        _fights = fights;
     }
     return self;
 }
 
-+ (UCLLogFile*)logFileWithFights:(NSArray*)theFights
++ (UCLLogFile*)logFileWithFights:(NSArray*)fights
 {
-    return [[UCLLogFile alloc] initWithFights:theFights];
+    return [[UCLLogFile alloc] initWithFights:fights];
 }
 
 @end

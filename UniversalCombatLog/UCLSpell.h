@@ -13,10 +13,10 @@
 @property (readonly, nonatomic) uint64_t idNum;
 @property (readonly, strong, nonatomic) NSString* name;
 
-- (id)initWithIdNum:(uint64_t)theIdNum name:(NSString*)theName;
+- (id)initWithIdNum:(uint64_t)idNum name:(NSString*)name;
 
 - (BOOL)isEqualToSpell:(UCLSpell*)spell;
 
-+ (UCLSpell*)spellWithIdNum:(uint64_t)theIdNum name:(NSString*)theName;
++ (UCLSpell*)spellWithIdNum:(uint64_t)idNum name:(NSString*)name;
 
 @end

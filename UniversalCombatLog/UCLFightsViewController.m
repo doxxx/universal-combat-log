@@ -7,30 +7,21 @@
 //
 
 #import "UCLFightsViewController.h"
-#import "UCLFIghtViewController.h"
-
-#import "UCLFight.h"
-#import "UCLNetworkClient.h"
 #import "UCLLogFileLoader.h"
 
 @implementation UCLFightsViewController
 
 #pragma mark - Properties
 
-@synthesize fightViewController;
-@synthesize url;
-@synthesize logFile;
-@synthesize fightsTableView;
-
 - (void)setUrl:(NSURL *)newURL
 {
-    url = newURL;
+    _url = newURL;
     [self refresh:nil];
 }
 
 - (void)setLogFile:(UCLLogFile *)newLogFile
 {
-    logFile = newLogFile;
+    _logFile = newLogFile;
     [self.fightsTableView reloadData];
 }
 
@@ -50,7 +41,7 @@
         else {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
                 UCLLogFile* newLogFile = [UCLLogFileLoader loadFromData:data];
-                NSLog(@"Loaded %d fight(s) from %@", [logFile.fights count], self.url);
+                NSLog(@"Loaded %d fight(s) from %@", [self.logFile.fights count], self.url);
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.logFile = newLogFile;
                 });

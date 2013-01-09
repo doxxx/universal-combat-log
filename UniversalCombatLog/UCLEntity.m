@@ -10,19 +10,17 @@
 
 @implementation UCLEntity
 
-@synthesize idNum=_idNum, type=_type, relationship=_relationship, owner=_owner, name=_name;
-
-- (id)initWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
-       relationship:(enum EntityRelationship)theRelationship 
-              owner:(UCLEntity*)theOwner name:(NSString*)theName
+- (id)initWithIdNum:(uint64_t)idNum type:(EntityType)type
+       relationship:(EntityRelationship)relationship
+              owner:(UCLEntity*)owner name:(NSString*)name
 {
     self = [super init];
     if (self) {
-        _idNum = theIdNum;
-        _type = theType;
-        _relationship = theRelationship;
-        _owner = theOwner;
-        _name = theName;
+        _idNum = idNum;
+        _type = type;
+        _relationship = relationship;
+        _owner = owner;
+        _name = name;
     }
     return self;
 }
@@ -56,11 +54,12 @@
     return 31 ^ _idNum ^ _type ^ _relationship ^ [_owner hash] ^ [_name hash];
 }
 
-+ (UCLEntity*)entityWithIdNum:(uint64_t)theIdNum type:(enum EntityType)theType 
-                 relationship:(enum EntityRelationship)theRelationship 
-                        owner:(UCLEntity*)theOwner name:(NSString*)theName {
-    return [[UCLEntity alloc] initWithIdNum:theIdNum type:theType relationship:theRelationship owner:theOwner 
-                                       name:theName];
++ (UCLEntity*)entityWithIdNum:(uint64_t)idNum type:(EntityType)type
+                 relationship:(EntityRelationship)relationship
+                        owner:(UCLEntity*)owner name:(NSString*)name
+{
+    return [[UCLEntity alloc] initWithIdNum:idNum type:type relationship:relationship owner:owner
+                                       name:name];
 }
 
 
